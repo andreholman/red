@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Red: {{user.username}}</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+
+<body>
+    <h1>{{user.username}}</h1>
+    <ul>
+        <li>Created: {{user.created}}</li>
+        <li>Points: {{user.points}}</li>
+        <li>Followers: {{user.followers}}</li>
+    </ul>
+    <h2>Posts</h2>
+    {% if user_posts %}
+    <ul>
+        {% for post in user_posts %}
+        <li>
+            <p>+{{post.likes}} | -{{post.dislikes}}, {{ post.created}} </p> 
+            <a href='{% url "post" post.id %}'>{{ post.title }}</a>
+            <p>{{ post.content }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>{{user.username}} has never posted.</p>
+    {% endif %}
+    <h2>Comments</h2>
+    {% if user_comments %}
+    <ul>
+        {% for comment in user_comments %}
+        <li>
+            <p>+{{comment.likes}} | -{{comment.dislikes}}</p>
+            <p>{{ comment.content }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>{{user.username}} has never commented.</p>
+    {% endif %}
+    <!-- <script src="index.js"></script> -->
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Red: Home</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+
+<body>
+    <h1>Latest Posts</h1>
+    {% if latest_posts_list %}
+    <ul>
+        {% for post in latest_posts_list %}
+        <li>
+            <p>+{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif%}, {{ post.created}} </p>
+            <a href='{% url "post" post.id %}'>{{ post.title }}</a>
+            <p>{{ post.content }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No posts are available.</p>
+    {% endif %}
+    <!-- <script src="index.js"></script> -->
+</body>
+
+</html>

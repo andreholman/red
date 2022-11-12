@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Red: {{post.title}}</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+
+<body>
+    <a href='{% url "sub" post.sub %}'>s/{{post.sub}}</a>
+    <a href='{% url "user" post.author %}'>u/{{post.author}}</a>
+    <p>Created: {{post.created}}</p>
+    <h1>{{post.title}}</h1>
+    <p>Views: {{post.views}}</p>
+    <p>Votes: +{{post.likes}} | -{{post.dislikes}}</p>
+    <p>{{post.content}}</p>
+    <h2>Comments</h2>
+    {% if comments %}
+    <ul type="square">
+        {% for comment in comments %}
+        <li>
+            <p>+{{comment.likes}} | -{{comment.dislikes}}</p>
+            {{ comment.author }}
+            <p>{{ comment.content }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>There are no comments.</p>
+    {% endif %}
+    <!-- <script src="index.js"></script> -->
+</body>
+
+</html>

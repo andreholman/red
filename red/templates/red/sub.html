@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Red: {{sub_name}}</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+
+<body>
+    {% comment %} <h1>{{ sort type }} : in {{sub.name}}</h1> {% endcomment %}
+    <h1>Latest posts in </h1>
+    {% if sub_posts %}
+    <ul>
+        {% for post in sub_posts %}
+        <li>
+            <p>+{{post.likes}} | -{{post.dislikes}}</p>
+            <a href='{% url "post" post.id %}'>{{ post.title }}</a>
+            <p>{{ post.content }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No posts are available.</p>
+    {% endif %}
+    <!-- <script src="index.js"></script> -->
+</body>
+
+</html>
