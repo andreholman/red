@@ -10,21 +10,29 @@
 </head>
 
 <body>
-    <a href='{% url "sub" post.sub %}'>s/{{post.sub}}</a>
+    <p>
+    {{post.created}}
+    <a href='{% url "sub" post.sub %}'>s/{{post.sub}}</a> | 
     <a href='{% url "user" post.author %}'>u/{{post.author}}</a>
-    <p>Created: {{post.created}}</p>
+    </p>
+
     <h1>{{post.title}}</h1>
     <p>Views: {{post.views}}</p>
     <p>Votes: +{{post.likes}} | -{{post.dislikes}}</p>
+
     <p>{{post.content}}</p>
+    {% if post.attached %}
+    attached content!
+    {% endif %}
+
     <h2>Comments</h2>
     {% if comments %}
     <ul type="square">
         {% for comment in comments %}
-        <li>
-            <p>+{{comment.likes}} | -{{comment.dislikes}}</p>
-            {{ comment.author }}
-            <p>{{ comment.content }}</p>
+        <li style="margin-left:{{comment.level}}em">
+            <p>+{{comment.comment.likes}} | -{{comment.comment.dislikes}}</p>
+            {{ comment.comment.author }} {% if comment.comment.author == post.author %} <span>OP</span> {% endif %}
+            <p>{{ comment.comment.content }}</p>
         </li>
         {% endfor %}
     </ul>

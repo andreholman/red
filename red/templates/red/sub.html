@@ -5,19 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Red: {{sub_name}}</title>
+    <title>Red: {{sub.name}}</title>
     <!-- <link rel="stylesheet" href="style.css"> -->
 </head>
 
 <body>
     {% comment %} <h1>{{ sort type }} : in {{sub.name}}</h1> {% endcomment %}
-    <h1>Latest posts in </h1>
+    <h1>Latest posts in s/{{sub.name}}</h1>
     {% if sub_posts %}
     <ul>
         {% for post in sub_posts %}
         <li>
             <p>+{{post.likes}} | -{{post.dislikes}}</p>
-            <a href='{% url "post" post.id %}'>{{ post.title }}</a>
+            <a href='{% url "post" sub.name post.id %}'>{{ post.title }}</a>
             <p>{{ post.content }}</p>
         </li>
         {% endfor %}
@@ -26,6 +26,11 @@
     <p>No posts are available.</p>
     {% endif %}
     <!-- <script src="index.js"></script> -->
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+        {% csrf_token %}
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        
+    </form>
 </body>
 
 </html>

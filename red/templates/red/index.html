@@ -16,7 +16,7 @@
         {% for post in latest_posts_list %}
         <li>
             <p>+{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif%}, {{ post.created}} </p>
-            <a href='{% url "post" post.id %}'>{{ post.title }}</a>
+            <a href='{% url "post" post.sub.name post.id %}'>{{ post.title }}</a>
             <p>{{ post.content }}</p>
         </li>
         {% endfor %}

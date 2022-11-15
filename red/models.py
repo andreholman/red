@@ -1,6 +1,7 @@
 from unittest.util import _MAX_LENGTH
 from django.db import models
 from django.core.validators import RegexValidator
+from django.contrib.postgres.fields import ArrayField
 import datetime
 
 # Create your models here.
@@ -33,7 +34,7 @@ class Post(models.Model):
 
     sub = models.ForeignKey(Sub, on_delete=models.CASCADE, related_name="posts")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=64)
+    title = models.CharField(max_length=128)
     content = models.TextField(max_length=32767)
     attached = models.CharField(max_length=128, null=True, blank=True)
     

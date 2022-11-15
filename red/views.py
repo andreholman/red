@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from pprint import pprint
 
 from .models import *
@@ -30,8 +30,10 @@ def sub(request, sub):
     context = {"sub": sub, "sub_posts": sub_posts}
     return render(request, "red/sub.html", context)
 
-def post(request, post_id):
+def post(request, sub, post_id):
     post = get_object_or_404(Post, id=post_id)
+    if sub != post.sub.name:
+        raise Http404("Post does not exist in this sub.")
     
     comment_depth_list = [] # used by django view to display
     comments = Comment.objects.order_by("-created")
@@ -55,11 +57,13 @@ def post(request, post_id):
         replies = comments.filter(parent__id=comment.id)
         if len(replies): # comment has children
             check_children(comment, 1)
-            
-    pprint(comment_depth_list, indent=0)
 
     context = {"post": post, "comments": comment_depth_list}
     return render(request, "red/post.html", context)
+
+def add_post(request, sub):
+    
+    return(render)
 
 def login(request):
     return HttpResponse("login")

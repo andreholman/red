@@ -22,7 +22,7 @@
         {% for post in user_posts %}
         <li>
             <p>+{{post.likes}} | -{{post.dislikes}}, {{ post.created}} </p> 
-            <a href='{% url "post" post.id %}'>{{ post.title }}</a>
+            <a href='{% url "post" post.sub post.id %}'>{{ post.title }}</a>
             <p>{{ post.content }}</p>
         </li>
         {% endfor %}
@@ -35,6 +35,11 @@
     <ul>
         {% for comment in user_comments %}
         <li>
+            {% if comment.parent %}
+            <p>Replying to {{comment.parent}}:</p>
+            {% else %}
+            <p>On {{ comment.post }}</p>
+            {% endif %}
             <p>+{{comment.likes}} | -{{comment.dislikes}}</p>
             <p>{{ comment.content }}</p>
         </li>
