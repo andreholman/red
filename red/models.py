@@ -8,7 +8,8 @@ from django.db import models
 
 class Sub(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-
+    deleted = models.DateTimeField(auto_now=True, editable=False, null=True, blank=True)
+    
     name = models.CharField(max_length=16, validators=[RegexValidator(regex=r"^[0-9a-zA-Z]*$", message="Sub name must be alphanumeric.", code="nomatch")], unique=True)
     followers = models.IntegerField(default=0)
 
@@ -17,6 +18,7 @@ class Sub(models.Model):
 
 class PostFlair(models.Model): # Can be applied to posts and users.
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
+    deleted = models.DateTimeField(auto_now=True, editable=False, null=True, blank=True)
 
     text = models.CharField(max_length=64)
     color = models.CharField(max_length=6, validators=[RegexValidator(regex=r"^[a-fA-F0-9]{6}", message='Invalid hex color', code="nomatch")], null=True, blank=True)
@@ -27,6 +29,7 @@ class PostFlair(models.Model): # Can be applied to posts and users.
 
 class UserFlair(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
+    deleted = models.DateTimeField(auto_now=True, editable=False, null=True, blank=True)
 
     text = models.CharField(max_length=64)
     color = models.CharField(max_length=6, validators=[RegexValidator(regex=r"^[a-fA-F0-9]{6}", message='Invalid hex color', code="nomatch")], null=True, blank=True)
@@ -37,6 +40,7 @@ class UserFlair(models.Model):
 
 class User(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
+    deleted = models.DateTimeField(auto_now=True, editable=False, null=True, blank=True)
 
     username = models.CharField(max_length=16, unique=True)
     email = models.EmailField()
@@ -52,6 +56,7 @@ class User(models.Model):
 
 class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
+    deleted = models.DateTimeField(auto_now=True, editable=False, null=True, blank=True)
 
     sub = models.ForeignKey(Sub, on_delete=models.CASCADE, related_name="posts")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -70,6 +75,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
+    deleted = models.DateTimeField(auto_now=True, editable=False, null=True, blank=True)
 
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
