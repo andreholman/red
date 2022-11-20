@@ -18,8 +18,6 @@ class Sub(models.Model):
 
 class PostFlair(models.Model): # Can be applied to posts and users.
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-    edited = models.DateTimeField(null=True, blank=True, default=None)
-    deleted = models.DateTimeField(null=True, blank=True, default=None)
 
     text = models.CharField(max_length=64)
     color = models.CharField(max_length=6, validators=[RegexValidator(regex=r"^[a-fA-F0-9]{6}", message='Invalid hex color', code="nomatch")], null=True, blank=True)
@@ -28,16 +26,8 @@ class PostFlair(models.Model): # Can be applied to posts and users.
     def __str__(self):
         return f"{self.text} in {self.sub}"
 
-    def delete(self):
-        self.deleted = timezone.now()
-
-    def edit(self):
-        self.edited = timezone.now()
-
 class UserFlair(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-    edited = models.DateTimeField(null=True, blank=True, default=None)
-    deleted = models.DateTimeField(null=True, blank=True, default=None)
 
     text = models.CharField(max_length=64)
     color = models.CharField(max_length=6, validators=[RegexValidator(regex=r"^[a-fA-F0-9]{6}", message='Invalid hex color', code="nomatch")], null=True, blank=True)
@@ -45,12 +35,6 @@ class UserFlair(models.Model):
 
     def __str__(self):
         return f"{self.text} in {self.sub}"
-
-    def delete(self):
-        self.deleted = timezone.now()
-
-    def edit(self):
-        self.edited = timezone.now()
 
 class User(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
