@@ -7,7 +7,7 @@ from .models import *
 # view = category of web page that holds a specific template
 # and serves a specific purpose
 
-def home(request): # negative sign ahead makes it newest first
+def index(request): # negative sign ahead makes it newest first
     all_posts = Post.objects.order_by("-created")
     context = {"latest_posts_list": all_posts}
     return render(request, "red/index.html", context)
@@ -44,15 +44,12 @@ def post(request, sub, post_id):
 
     def check_children(comment, level):
         responses = comments.filter(parent__id=comment.id)
-        print("= checking children for " + str(comment))
         for response in responses:
-            print(f"+ appended level {level} comment: {str(response)}")
             add_comment(response, level)
             if len(responses): # comment has children
                 check_children(response, level + 1)
         
     for comment in top_level_comments:
-        print(f"+ appended level {0} comment: {str(comment)}")
         add_comment(comment, 0)
         replies = comments.filter(parent__id=comment.id)
         if len(replies): # comment has children
@@ -61,9 +58,39 @@ def post(request, sub, post_id):
     context = {"post": post, "comments": comment_depth_list}
     return render(request, "red/post.html", context)
 
-def add_post(request, sub):
+def post_editor(request, sub):
+    sub_object = get_object_or_404(Sub, name__iexact=sub)
+    post_flairs = PostFlair.objects.filter(sub__id=sub_object.id)
+
+    context = {"sub": sub_object, "post_flairs": post_flairs}
+    return render(request, "red/post_editor.html", context=context)
     
-    return(render)
+def create_post(request, sub):
+    pprint(dict(request.POST))
+    sub_object = get_object_or_404(Sub, name__iexact=sub)
+    post_flair = request.POST.get("flair")
+    
+    new_post = Post(
+        sub=sub_object,
+        author=get_object_or_404(User, id=3),
+        title=request.POST["title"],
+        content=request.POST["content"],
+        flair=post_flair,
+        views=0,
+        likes=0,
+        dislikes=0,
+        points=0
+    )
+
+    new_post.save()
+
+    return HttpResponse(status=204)
+
+def update_post(request):
+    post_id = request.POST.get("id")
+
+def delete_post(request):
+    pass
 
 def login(request):
     return HttpResponse("login")

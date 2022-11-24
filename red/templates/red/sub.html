@@ -12,6 +12,9 @@
 <body>
     {% comment %} <h1>{{ sort type }} : in {{sub.name}}</h1> {% endcomment %}
     <h1>Latest posts in s/{{sub.name}}</h1>
+    
+    <p>Created {{sub.created}}, {{sub.followers}} {% if sub.followers == 1 %} follower {% else %} followers. {% endif%}</p>
+    <a href='{% url "post_editor" sub.name %}'></a>
     {% if sub_posts %}
     <ul>
         {% for post in sub_posts %}
@@ -26,11 +29,6 @@
     <p>No posts are available.</p>
     {% endif %}
     <!-- <script src="index.js"></script> -->
-    <form action="{% url 'polls:vote' question.id %}" method="post">
-        {% csrf_token %}
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-        
-    </form>
 </body>
 
 </html>

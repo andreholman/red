@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Red: Posting to {{ sub }}</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+
+<body>
+    <form action="{% url 'create_post' sub %}" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Submit a post to s/{{sub}}</legend>
+            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+            <input type="text" name="title" placeholder="Title" required>
+            <br>
+            <textarea name="content" placeholder="Content"></textarea>
+            {% if post_flairs %}
+            <h3>Add a flair:</h3>
+            {% for flair in post_flairs %}
+                <input type="checkbox" name="flair" id="f{{ forloop.counter }}", value="{{flair.id}}">
+                <label for="f{{ forloop.counter }}">{{flair.text}}</label>
+            {% endfor %}
+            <br>
+            {% else %}
+            <p>This sub has no flairs.</p>
+            {% endif %}
+            <input type="submit" value="Post">
+        </fieldset>
+    </form>
+</body>
