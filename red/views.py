@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404, HttpResponse
 from pprint import pprint
@@ -64,33 +65,57 @@ def post_editor(request, sub):
 
     context = {"sub": sub_object, "post_flairs": post_flairs}
     return render(request, "red/post_editor.html", context=context)
-    
+
+def post_vote(request, sub, post_id):
+    post_data = json.loads(request.body)
+    print(post_data)
+    if post_data: # checks if there's post request
+        post_object = get_object_or_404(Post, id=post_id)
+        try:
+            if post_data["v"] == 1:
+                post_object.likes += 1
+                post_object.save()
+            elif post_data["v"] == 0:
+                post_object.dislikes += 1
+                post_object.save()
+            else: 
+                return HttpResponse(status=400) # bad request
+        except:
+            return HttpResponse(status=400)
+        return HttpResponse(status=204)
+    else:
+        return HttpResponse(status=405) # bad request format
+
 def create_post(request, sub):
-    pprint(dict(request.POST))
-    sub_object = get_object_or_404(Sub, name__iexact=sub)
-    post_flair = request.POST.get("flair")
-    
-    new_post = Post(
-        sub=sub_object,
-        author=get_object_or_404(User, id=3),
-        title=request.POST["title"],
-        content=request.POST["content"],
-        flair=post_flair,
-        views=0,
-        likes=0,
-        dislikes=0,
-        points=0
-    )
+    if request.method == "POST": # checks if there's post request
+        sub_object = get_object_or_404(Sub, name__iexact=sub)
+        post_flair_id = int(request.POST.get("flair"))
+        post_flair = get_object_or_404(PostFlair, id=post_flair_id)
+        
+        new_post = Post(
+            sub=sub_object,
+            author=get_object_or_404(User, id=3),
+            title=request.POST["title"],
+            content=request.POST["content"],
+            flair=post_flair,
+            views=0,
+            likes=0,
+            dislikes=0,
+            points=0
+        )
 
-    new_post.save()
+        new_post.save()
 
+        return HttpResponse(status=204) # no response
+    else:
+        return HttpResponse(status=405) # bad request format
+
+def update_post(request, sub, post):
+    # post_id = request.POST.get("id")
     return HttpResponse(status=204)
 
-def update_post(request):
-    post_id = request.POST.get("id")
-
-def delete_post(request):
-    pass
+def delete_post(request, sub, post):
+    return
 
 def login(request):
     return HttpResponse("login")

@@ -25,6 +25,9 @@
     attached content!
     {% endif %}
 
+    <button type="button" onclick="vote(1, '{{post.sub}}', {{post.id}})">Vote Up</button>
+    <button type="button" onclick="vote(0, '{{post.sub}}', {{post.id}})">Vote Down</button>
+
     <h2>Comments</h2>
     {% if comments %}
     <ul type="square">
@@ -39,7 +42,8 @@
     {% else %}
     <p>There are no comments.</p>
     {% endif %}
-    <!-- <script src="index.js"></script> -->
+    {% load static %}
+    <script src="{% static 'red/vote.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
 </body>
 
 </html>
