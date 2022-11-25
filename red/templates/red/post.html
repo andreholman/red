@@ -25,8 +25,8 @@
     attached content!
     {% endif %}
 
-    <button type="button" onclick="vote(1, '{{post.sub}}', {{post.id}})">Vote Up</button>
-    <button type="button" onclick="vote(0, '{{post.sub}}', {{post.id}})">Vote Down</button>
+    <button type="button" onclick="postVote(1, '{{post.sub}}', {{post.id}})">Vote Up</button>
+    <button type="button" onclick="postVote(0, '{{post.sub}}', {{post.id}})">Vote Down</button>
 
     <h2>Comments</h2>
     {% if comments %}

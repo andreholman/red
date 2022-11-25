@@ -14,11 +14,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function vote(direction, sub, post) {
-    console.log(`obtaining /s/${sub}/p/${post}/vote`)
-    console.log({
-        "v": direction // 1 for up 0 for down
-    })
+function postVote(direction, sub, post) {
     fetch('vote', {
         method: "POST",
         headers: {
@@ -28,5 +24,9 @@ function vote(direction, sub, post) {
         body: JSON.stringify({
             "v": direction // 1 for up 0 for down
         })
-    }).then(output => console.log(output))
+    }).then((output) => {
+        if (output.status == 204) {
+            window.location.reload();
+        }
+    })
 }
