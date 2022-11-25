@@ -19,7 +19,7 @@
     <ul>
         {% for post in sub_posts %}
         <li>
-            <p>+{{post.likes}} | -{{post.dislikes}} <a href='{% url "post" sub.name post.id %}'> {{ post.title }}</a> [{{post.flair.text}}]</p>
+            <p>+{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif %} <a href='{% url "post" sub.name post.id %}'> {{ post.title }}</a> [{{post.flair.text}}]</p>
             
             <p>{{ post.content }}</p>
         </li>

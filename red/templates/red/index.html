@@ -15,8 +15,7 @@
     <ul>
         {% for post in latest_posts_list %}
         <li>
-            <p>+{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif%}, {{ post.created}} </p>
-            <a href='{% url "post" post.sub.name post.id %}'>{{ post.title }}</a>
+            <p>+{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif %} <a href='{% url "post" post.sub.name post.id %}'> {{ post.title }}</a> [{{post.flair.text}}]</p>
             <p>{{ post.content }}</p>
         </li>
         {% endfor %}
