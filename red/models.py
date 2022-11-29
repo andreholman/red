@@ -55,7 +55,7 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
-    def delete(self):
+    def soft_delete(self):
         self.deleted = timezone.now()
 
     def edit(self):
@@ -72,7 +72,9 @@ class Post(models.Model):
     content = models.TextField(max_length=32767)
     attached = models.CharField(max_length=128, null=True, blank=True)
     flair = models.ForeignKey(PostFlair, on_delete=models.SET_NULL, related_name="posts", null=True, blank=True)
-
+    nsfw = models.BooleanField(null=False, blank=False)
+    spoiler = models.BooleanField(null=False, blank=False)
+    
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
@@ -81,7 +83,7 @@ class Post(models.Model):
     def __str__(self):
         return self.title + " by " + self.author.username
 
-    def delete(self):
+    def soft_delete(self):
         self.deleted = timezone.now()
 
     def edit(self):
@@ -107,7 +109,7 @@ class Comment(models.Model):
         else:
             return str(self.author) + ": " + self.content
 
-    def delete(self):
+    def soft_delete(self):
         self.deleted = timezone.now()
 
     def edit(self):
