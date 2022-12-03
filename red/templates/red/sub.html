@@ -14,12 +14,16 @@
     <h1>Latest posts in s/{{sub.name}}</h1>
     
     <p>Created {{sub.created}}, {{sub.followers}} {% if sub.followers == 1 %} follower {% else %} followers. {% endif%}</p>
-    <a href='{% url "post_editor" sub.name %}'></a>
+    <a href='{% url "post_editor" sub.name %}'><h3>Create a Post</h3></a>
     {% if sub_posts %}
     <ul>
         {% for post in sub_posts %}
         <li>
-            <p>+{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif %} <a href='{% url "post" sub.name post.id %}'> {{ post.title }}</a> [{{post.flair.text}}]</p>
+            <p>
+                +{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif %}
+                <a href='{% url "post" sub.name post.id %}'> {{ post.title }}</a> 
+                {% if post.flair %} [{{post.flair.text}}] {% endif %}
+            </p>
             
             <p>{{ post.content }}</p>
         </li>

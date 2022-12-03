@@ -15,13 +15,13 @@
         <fieldset>
             <legend>Submit a post to s/{{sub}}</legend>
             {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-            <input type="text" name="title" placeholder="Title" required>
+            <input type="text" name="title" placeholder="Title" value="{{ post.title }}" required>
             <br>
-            <textarea name="content" placeholder="Content"></textarea>
+            <textarea name="content" placeholder="Content">{{ post.content }}</textarea>
             {% if post_flairs %}
             <h3>Add a flair:</h3>
             {% for flair in post_flairs %}
-                <input type="checkbox" name="flair" id="f{{ forloop.counter }}", value="{{flair.id}}">
+                <input type="checkbox" name="flair" id="f{{ forloop.counter }}" value="{{flair.id}}" {% if flair.id == post.flair.id %} checked {% endif %}>
                 <label for="f{{ forloop.counter }}">{{flair.text}}</label>
             {% endfor %}
             <br>

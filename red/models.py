@@ -1,8 +1,9 @@
-import datetime
+from dateutil.relativedelta import relativedelta
 from unittest.util import _MAX_LENGTH
 
 from django.core.validators import RegexValidator
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 # Create your models here.
@@ -12,6 +13,8 @@ class Sub(models.Model):
     
     name = models.CharField(max_length=16, validators=[RegexValidator(regex=r"^[0-9a-zA-Z]*$", message="Sub name must be alphanumeric.", code="nomatch")], unique=True)
     followers = models.IntegerField(default=0)
+    mods = models.ManyToManyField("User")
+    pinned_post = models.ForeignKey("Post", on_delete=models.CASCADE, default=None, null=True, blank=True, related_name="pinned")
 
     def __str__(self):
         return self.name
@@ -72,9 +75,9 @@ class Post(models.Model):
     content = models.TextField(max_length=32767)
     attached = models.CharField(max_length=128, null=True, blank=True)
     flair = models.ForeignKey(PostFlair, on_delete=models.SET_NULL, related_name="posts", null=True, blank=True)
-    nsfw = models.BooleanField(null=False, blank=False)
-    spoiler = models.BooleanField(null=False, blank=False)
-    
+    nsfw = models.BooleanField(null=False, blank=False, default=False)
+    spoiler = models.BooleanField(null=False, blank=False, default=False)
+
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
@@ -88,6 +91,9 @@ class Post(models.Model):
 
     def edit(self):
         self.edited = timezone.now()
+    
+    def archived(self):
+        return (self.created + relativedelta(months=6)) <= timezone.now()
 
 class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)

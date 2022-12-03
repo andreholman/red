@@ -20,13 +20,17 @@
     <p>Views: {{post.views}}</p>
     <p>Votes: +{{post.likes}} | -{{post.dislikes}}</p>
 
-    <p>{{post.content}}</p>
+    <p id="content">{{post.content}}</p><br>
+
     {% if post.attached %}
-    attached content!
+    <h3><a href={{post.attached}}>Attached content</a></h3>
     {% endif %}
 
-    <button type="button" onclick="postVote(1, '{{post.sub}}', {{post.id}})">Vote Up</button>
-    <button type="button" onclick="postVote(0, '{{post.sub}}', {{post.id}})">Vote Down</button>
+    <button type="button" class="vote" id="up">Vote Up</button>
+    <button type="button" class="vote" id="down">Vote Down</button>
+    <button type="button" id="update">Edit</button>
+    <button type="button" id="cancel" style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
+    <button type="button" id="delete">Delete</button>
 
     <h2>Comments</h2>
     {% if comments %}
@@ -34,7 +38,7 @@
         {% for comment in comments %}
         <li style="margin-left:{{comment.level}}em">
             <p>+{{comment.comment.likes}} | -{{comment.comment.dislikes}}</p>
-            {{ comment.comment.author }} {% if comment.comment.author == post.author %} <span>OP</span> {% endif %}
+            {{ comment.comment.author }} {% if comment.comment.author == post.author %} <span style="font-weight: bold">OP</span> {% endif %}
             <p>{{ comment.comment.content }}</p>
         </li>
         {% endfor %}
@@ -42,8 +46,10 @@
     {% else %}
     <p>There are no comments.</p>
     {% endif %}
+
     {% load static %}
-    <script src="{% static 'red/vote.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'red/post.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
 </body>
 
 </html>
