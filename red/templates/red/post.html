@@ -13,24 +13,32 @@
     <p>
     {{post.created}}
     <a href='{% url "sub" post.sub %}'>s/{{post.sub}}</a> | 
+    {% if post.deleted %}
+    u/deleted
+    {% else %}
     <a href='{% url "user" post.author %}'>u/{{post.author}}</a>
+    {% endif %}
     </p>
 
     <h1>{{post.title}}</h1>
     <p>Views: {{post.views}}</p>
     <p>Votes: +{{post.likes}} | -{{post.dislikes}}</p>
 
+    {% if post.deleted %}
+    <p id="content">[deleted]</p><br>
+    {% else %}
     <p id="content">{{post.content}}</p><br>
+    {% endif %}
 
     {% if post.attached %}
     <h3><a href={{post.attached}}>Attached content</a></h3>
     {% endif %}
 
-    <button type="button" class="vote" id="up">Vote Up</button>
-    <button type="button" class="vote" id="down">Vote Down</button>
-    <button type="button" id="update">Edit</button>
-    <button type="button" id="cancel" style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
-    <button type="button" id="delete">Delete</button>
+    <button type="button" class="vote" id="up" {% if post.deleted %}disabled{%endif%}>Vote Up</button>
+    <button type="button" class="vote" id="down" {% if post.deleted %}disabled{%endif%}>Vote Down</button>
+    <button type="button" id="update" {% if post.deleted %}disabled{%endif%}>Edit</button>
+    <button type="button" id="cancel" {% if post.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
+    <button type="button" id="delete" {% if post.deleted %}disabled{%endif%}>Delete</button>
 
     <h2>Comments</h2>
     {% if comments %}

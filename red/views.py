@@ -39,10 +39,6 @@ def post(request, sub, post_id):
     post = get_object_or_404(Post, id=post_id)
     if sub != post.sub.name:
         raise Http404("Post does not exist in this sub.")
-
-    if post.deleted:
-        post.author = None
-        post.content = "[deleted]"
     
     comment_depth_list = [] # used by django view to display
     comments = Comment.objects.order_by("-created")
@@ -130,6 +126,8 @@ def update_post(request, sub, post_id):
         
         if request_data["content"]:
             post_object = get_object_or_404(Post, id=post_id)
+            if post_object.deleted:
+                return HttpResponse(status=410) 
             post_object.content = request_data["content"]
             post_object.save()
             return HttpResponse(status=204)
