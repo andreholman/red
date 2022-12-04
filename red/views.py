@@ -59,7 +59,6 @@ def post(request, sub, post_id):
         replies = comments.filter(parent__id=comment.id)
         if len(replies): # comment has children
             check_children(comment, 1)
-
     context = {"post": post, "comments": comment_depth_list}
     return render(request, "red/post.html", context)
 
@@ -100,17 +99,19 @@ def create_post(request, sub):
             post_flair = get_object_or_404(PostFlair, id=post_flair_id)
         except KeyError:
             post_flair = None
-        
+
         new_post = Post(
             sub=sub_object,
             author=get_object_or_404(User, id=3),
             title=request.POST["title"],
             content=request.POST["content"],
             flair=post_flair,
+            nsfw=bool(request.POST.get("nsfw")),
+            spoiler=bool(request.POST.get("spoiler")),
             views=0,
-            likes=0,
+            likes=1,
             dislikes=0,
-            points=0
+            points=1,
         )
 
         new_post.save()
@@ -121,13 +122,12 @@ def create_post(request, sub):
 
 def update_post(request, sub, post_id):
     if request.method == "PUT":
-        print(request.body)
         request_data = json.loads(request.body)
         
         if request_data["content"]:
             post_object = get_object_or_404(Post, id=post_id)
             if post_object.deleted:
-                return HttpResponse(status=410) 
+                return HttpResponse(status=410)
             post_object.content = request_data["content"]
             post_object.save()
             return HttpResponse(status=204)

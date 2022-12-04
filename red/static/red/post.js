@@ -13,36 +13,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// $(function() {
-$(".vote").click((event) => {
-    if (event.target.id == "down") {
-        direction = 0
-    } else {
-        direction = 1
-    }
-    fetch('vote/', {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        body: JSON.stringify({
-            "v": direction // 1 for up 0 for down
-        })
-    }).then((output) => {
-        switch (output.status) {
-            case 204: // success
-                window.location.reload()
-                break;
-            case 410:
-                alert("You have aleady voted on this post.")
-            default:
-                alert("Something went wrong!")
-                break;
-        }
-    })
-})
-
 $.fn.changeElementType = function(type) {
     const attributes = {};
 
@@ -55,18 +25,22 @@ $.fn.changeElementType = function(type) {
     });
 }
 
-formOpen = false;
-
-$("#update").click(() => {
-    if (formOpen) {
-        fetch('update/', {
-            method: "PUT",
+$(function() {
+    console.info($("#content").val())
+    $(".vote").click((event) => {
+        if (event.target.id == "down") {
+            direction = 0
+        } else {
+            direction = 1
+        }
+        fetch('vote/', {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": getCookie("csrftoken")
             },
             body: JSON.stringify({
-                content: $("#content").val()
+                "v": direction // 1 for up 0 for down
             })
         }).then((output) => {
             switch (output.status) {
@@ -74,30 +48,63 @@ $("#update").click(() => {
                     window.location.reload()
                     break;
                 case 410:
-                    alert("Post has already been deleted!")
-                    window.location.reload()
-                    break;
+                    alert("You have aleady voted on this post.")
                 default:
                     alert("Something went wrong!")
                     break;
             }
         })
-    } else {
-        formOpen = true;
-        $("#content").changeElementType("textarea")
-        $("#update").text("Save")
-        $("#cancel").attr("style", "display:default")
-    }
-})
+    })
 
-$("#cancel").click(() => {
     formOpen = false;
-    $("#content").changeElementType("p")
-    $("#update").text("Edit")
-    $("#cancel").attr("style", "display:none")
-})
 
-$("#delete").click(() => {
+    $("#update").click(() => {
+        if (formOpen) {
+            fetch('update/', {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({
+                    content: $("#content").val()
+                })
+            }).then((output) => {
+                switch (output.status) {
+                    case 204: // success
+                        window.location.reload()
+                        break;
+                    case 410:
+                        alert("Post has already been deleted!")
+                        window.location.reload()
+                        break;
+                    default:
+                        alert("Something went wrong!")
+                        break;
+                }
+            })
+        } else { // if form is closed
+            formOpen = true;
+            content = $("#content").html().replaceAll("<br>", "\n")
+            $("#content").changeElementType("textarea")
+            $("#content").val(content)
+            $("#update").text("Save")
+            $("#cancel").attr("style", "display:default")
+        }
+    })
+
+    $("#cancel").click(() => {
+        formOpen = false;
+
+        // content = $("#content").html().replace("\n", "<br>")
+
+        $("#content").changeElementType("p")
+            // $("#content").html(content)
+        $("#update").text("Edit")
+        $("#cancel").attr("style", "display:none")
+    })
+
+    $("#delete").click(() => {
         fetch('delete/', {
             method: "POST",
             headers: {
@@ -119,4 +126,4 @@ $("#delete").click(() => {
             }
         })
     })
-    // })
+})

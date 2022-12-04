@@ -15,7 +15,12 @@
     <ul>
         {% for post in latest_posts_list %}
         <li>
-            <p>+{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif %} <a href='{% url "post" post.sub.name post.id %}'> {{ post.title }}</a> [{{post.flair.text}}]</p>
+            <p>
+                +{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif %}
+                <a href='{% url "sub" post.sub.name %}'>s/{{post.sub.name}}</a> <a href='{% url "post" post.sub.name post.id %}'> {{ post.title }}</a> 
+                {% if post.flair %} [{{post.flair.text}}] {% endif %}
+                <b>{% if post.nsfw %}(NSFW){% endif %} {% if post.spoiler %}(Spoiler){% endif %}</b>
+            </p>
             <p>{{ post.content }}</p>
         </li>
         {% endfor %}

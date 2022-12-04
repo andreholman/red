@@ -18,6 +18,12 @@
             <input type="text" name="title" placeholder="Title" value="{{ post.title }}" required>
             <br>
             <textarea name="content" placeholder="Content">{{ post.content }}</textarea>
+            
+            <input type="checkbox" name="nsfw" id="nsfw" value="true">
+            <label for="nsfw">NSFW</label>
+            <input type="checkbox" name="spoiler" id="spoiler" value="true">
+            <label for="spoiler">Spoiler</label>
+
             {% if post_flairs %}
             <h3>Add a flair:</h3>
             {% for flair in post_flairs %}

@@ -23,6 +23,7 @@
                 +{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif %}
                 <a href='{% url "post" sub.name post.id %}'> {{ post.title }}</a> 
                 {% if post.flair %} [{{post.flair.text}}] {% endif %}
+                <b>{% if post.nsfw %}(NSFW){% endif %} {% if post.spoiler %}(Spoiler){% endif %}</b>
             </p>
             
             <p>{{ post.content }}</p>

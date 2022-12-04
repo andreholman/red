@@ -11,7 +11,10 @@
 
 <body>
     <p>
-    {{post.created}}
+    {{ post.created }}
+    {% if post.edited %}
+    {{ post.edited }}
+    {% endif %}
     <a href='{% url "sub" post.sub %}'>s/{{post.sub}}</a> | 
     {% if post.deleted %}
     u/deleted
@@ -21,13 +24,16 @@
     </p>
 
     <h1>{{post.title}}</h1>
+    {% if post.nsfw or post.spoiler %}
+    <b>{% if post.nsfw %}(NSFW){% endif %} {% if post.spoiler %}(Spoiler){% endif %}</b>
+    {% endif %}
     <p>Views: {{post.views}}</p>
     <p>Votes: +{{post.likes}} | -{{post.dislikes}}</p>
 
     {% if post.deleted %}
     <p id="content">[deleted]</p><br>
     {% else %}
-    <p id="content">{{post.content}}</p><br>
+    <p id="content">{{post.content|linebreaksbr}}</p><br>
     {% endif %}
 
     {% if post.attached %}
