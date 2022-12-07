@@ -16,8 +16,8 @@
     {{ post.edited }}
     {% endif %}
     <a href='{% url "sub" post.sub %}'>s/{{post.sub}}</a> | 
-    {% if post.deleted %}
-    u/deleted
+    {% if post.deleted or post.author.deleted %}
+    u/[deleted]
     {% else %}
     <a href='{% url "user" post.author %}'>u/{{post.author}}</a>
     {% endif %}
@@ -40,20 +40,61 @@
     <h3><a href={{post.attached}}>Attached content</a></h3>
     {% endif %}
 
-    <button type="button" class="vote" id="up" {% if post.deleted %}disabled{%endif%}>Vote Up</button>
-    <button type="button" class="vote" id="down" {% if post.deleted %}disabled{%endif%}>Vote Down</button>
-    <button type="button" id="update" {% if post.deleted %}disabled{%endif%}>Edit</button>
-    <button type="button" id="cancel" {% if post.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
-    <button type="button" id="delete" {% if post.deleted %}disabled{%endif%}>Delete</button>
+    <button type="button" class="post-vote up" {% if post.deleted %}disabled{%endif%}>Vote Up</button>
+    <button type="button" class="post-vote down" {% if post.deleted %}disabled{%endif%}>Vote Down</button>
+    <button type="button" id="update-post" {% if post.deleted %}disabled{%endif%}>Edit</button>
+    <button type="button" id="cancel-post" {% if post.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
+    <button type="button" id="delete-post" {% if post.deleted %}disabled{%endif%}>Delete</button>
 
     <h2>Comments</h2>
+
+    {% if not post.deleted%}
+    <fieldset>
+        <legend>Submit a comment</legend>
+
+        {% if comments %}
+        <b>Reply To: </b>
+        <select id="comment-parent">
+            <option value="0">None</option>
+            {% for comment in comments %}
+                <option value="{{comment.comment.id}}">{{ comment.comment }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        {% endif %}
+
+        <textarea name="content" placeholder="Content" id="comment-content"></textarea>
+        <br>
+        <button type="button" id="comment">Post comment</button>
+    </fieldset>
+    {% endif %}
+
     {% if comments %}
     <ul type="square">
         {% for comment in comments %}
         <li style="margin-left:{{comment.level}}em">
-            <p>+{{comment.comment.likes}} | -{{comment.comment.dislikes}}</p>
-            {{ comment.comment.author }} {% if comment.comment.author == post.author %} <span style="font-weight: bold">OP</span> {% endif %}
-            <p>{{ comment.comment.content }}</p>
+            +{{comment.comment.likes}} | -{{comment.comment.dislikes}}
+
+            {% if comment.comment.deleted or comment.comment.author.deleted %}
+            u/[deleted]
+            {% else %}
+            <a href='{% url "user" comment.comment.author.username %}'>{{ comment.comment.author }}</a>
+            {% endif %}
+            {% if comment.comment.author == post.author %} <span style="font-weight: bold">OP</span> {% endif %}
+
+            <button type="button" class="comment-vote up" {% if comment.comment.deleted %}disabled{%endif%}>Vote Up</button>
+            <button type="button" class="comment-vote down" {% if comment.comment.deleted %}disabled{%endif%}>Vote Down</button>
+            <button type="button" class="{{comment.comment.id}} update" {% if comment.comment.deleted %}disabled{%endif%}>Edit</button>
+            <button type="button" class="{{comment.comment.id}} cancel" {% if comment.comment.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
+            <button type="button" class="{{comment.comment.id}} delete" {% if comment.comment.deleted %}disabled{%endif%}>Delete</button>
+            
+            <p class="{{comment.comment.id}}">
+                {% if comment.comment.deleted %}
+                [deleted]
+                {% else %}
+                {{ comment.comment.content }}
+                {% endif %}
+            </p>
         </li>
         {% endfor %}
     </ul>

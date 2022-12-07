@@ -110,10 +110,15 @@ class Comment(models.Model):
     points = models.IntegerField(default=0)
 
     def __str__(self):
-        if self.parent:
-            return str(self.author) + " replies to " + str(self.parent.author) + ": " + self.content
+        if len(self.content) > 64:
+            comment_content = self.content[:64] + "..."
         else:
-            return str(self.author) + ": " + self.content
+            comment_content = self.content
+        
+        if self.parent:
+            return str(self.author) + " replies to " + str(self.parent.author) + ": " + comment_content
+        else:
+            return str(self.author) + ": " + comment_content
 
     def soft_delete(self):
         self.deleted = timezone.now()

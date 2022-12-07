@@ -25,20 +25,23 @@ $.fn.changeElementType = function(type) {
     });
 }
 
+const apiHeaders = {
+    "Content-Type": "application/json",
+    "X-CSRFToken": getCookie("csrftoken")
+}
+
 $(function() {
     console.info($("#content").val())
-    $(".vote").click((event) => {
-        if (event.target.id == "down") {
+    $(".post-vote").click((event) => {
+        console.log($(event.target))
+        if ($(event.target).hasClass() == "down") {
             direction = 0
         } else {
             direction = 1
         }
         fetch('vote/', {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
+            headers: apiHeaders,
             body: JSON.stringify({
                 "v": direction // 1 for up 0 for down
             })
@@ -56,16 +59,13 @@ $(function() {
         })
     })
 
-    formOpen = false;
+    editOpen = false;
 
-    $("#update").click(() => {
-        if (formOpen) {
+    $("#update-post").click(() => {
+        if (editOpen) {
             fetch('update/', {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": getCookie("csrftoken")
-                },
+                headers: apiHeaders,
                 body: JSON.stringify({
                     content: $("#content").val()
                 })
@@ -84,27 +84,24 @@ $(function() {
                 }
             })
         } else { // if form is closed
-            formOpen = true;
-            content = $("#content").html().replaceAll("<br>", "\n")
+            editOpen = true;
+            const content = $("#content").html().replaceAll("<br>", "\n")
             $("#content").changeElementType("textarea")
             $("#content").val(content)
-            $("#update").text("Save")
-            $("#cancel").attr("style", "display:default")
+            $("#update-post").text("Save")
+            $("#cancel-post").attr("style", "display:default")
         }
     })
 
-    $("#cancel").click(() => {
-        formOpen = false;
-
-        // content = $("#content").html().replace("\n", "<br>")
+    $("#cancel-post").click(() => {
+        editOpen = false;
 
         $("#content").changeElementType("p")
-            // $("#content").html(content)
-        $("#update").text("Edit")
-        $("#cancel").attr("style", "display:none")
+        $("#update-post").text("Edit")
+        $("#cancel-post").attr("style", "display:none")
     })
 
-    $("#delete").click(() => {
+    $("#delete-post").click(() => {
         fetch('delete/', {
             method: "POST",
             headers: {
@@ -126,4 +123,68 @@ $(function() {
             }
         })
     })
+
+    $("#comment").click(() => {
+        fetch('comment/', {
+            method: "POST",
+            headers: apiHeaders,
+            body: JSON.stringify({
+                content: $("#comment-content").val(),
+                parent: $("#comment-parent").val()
+            })
+        }).then((output) => {
+            switch (output.status) {
+                case 204: // success
+                    window.location.reload()
+                    break;
+                case 400:
+                    alert("Bad request!")
+                    break;
+                case 410:
+                    alert("Post has been deleted!")
+                    window.location.reload()
+                    break;
+                default:
+                    alert("Something went wrong!")
+                    break;
+            }
+        })
+    })
+
+    $(".comment")
+
+    // commentOpen = false;
+
+    // $("#reply").click(() => {
+    //     if (commentOpen) {
+    //         fetch('', {
+    //             method: "PUT",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "X-CSRFToken": getCookie("csrftoken")
+    //             },
+    //             body: JSON.stringify({
+    //                 content: $("#content").val()
+    //             })
+    //         }).then((output) => {
+    //             switch (output.status) {
+    //                 case 204: // success
+    //                     window.location.reload()
+    //                     break;
+    //                 case 410:
+    //                     alert("Post/comment has been deleted!")
+    //                     window.location.reload()
+    //                     break;
+    //                 default:
+    //                     alert("Something went wrong!")
+    //                     break;
+    //             }
+    //         })
+    //     } else { // if form is closed
+    //         commentOpen = true;
+
+    //         $("#reply").text("Submit")
+    //         $("#cancel-post").attr("style", "display:default")
+    //     }
+    // })
 })
