@@ -72,7 +72,7 @@
     {% if comments %}
     <ul type="square">
         {% for comment in comments %}
-        <li style="margin-left:{{comment.level}}em">
+        <li style="margin-left:{{comment.level}}em" id="{{comment.comment.id}}">
             +{{comment.comment.likes}} | -{{comment.comment.dislikes}}
 
             {% if comment.comment.deleted or comment.comment.author.deleted %}
@@ -84,11 +84,11 @@
 
             <button type="button" class="comment-vote up" {% if comment.comment.deleted %}disabled{%endif%}>Vote Up</button>
             <button type="button" class="comment-vote down" {% if comment.comment.deleted %}disabled{%endif%}>Vote Down</button>
-            <button type="button" class="{{comment.comment.id}} update" {% if comment.comment.deleted %}disabled{%endif%}>Edit</button>
-            <button type="button" class="{{comment.comment.id}} cancel" {% if comment.comment.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
-            <button type="button" class="{{comment.comment.id}} delete" {% if comment.comment.deleted %}disabled{%endif%}>Delete</button>
+            <button type="button" class="comment-update c-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%}>Edit</button>
+            <button type="button" class="comment-cancel c-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
+            <button type="button" class="comment-delete c-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%}>Delete</button>
             
-            <p class="{{comment.comment.id}}">
+            <p id="content-{{comment.comment.id}}">
                 {% if comment.comment.deleted %}
                 [deleted]
                 {% else %}

@@ -198,11 +198,28 @@ def create_comment(request, sub, post_id):
         return request_validated
 
 def comment_vote(request, sub, post_id):
-    request_status = validate_endpoint_request(request, "POST")
-    if not request_status:
-        pass
+    request_validated = validate_endpoint_request(request, "POST", post_id)
+    if type(request_validated) != HttpResponse:
+        try:
+            request_data = json.loads(request.body)
+            comment_object = get_object_or_404(Comment, id=request_data["c"])
+            if comment_object.post.id != request_validated.id:
+                print('wrong post')
+                return HttpResponse(status=404)
+
+            if request_data["v"] == 1:
+                comment_object.likes += 1
+                comment_object.save()
+            elif request_data["v"] == 0:
+                comment_object.dislikes += 1
+                comment_object.save()
+            else:
+                return HttpResponse(status=400) # bad request
+            return HttpResponse(status=204)
+        except:
+            return HttpResponse(status=400) # improper format 
     else:
-        return HttpResponse(status=request_status)
+        return request_validated
 
 def update_comment(request, sub, post_id):
     request_status = validate_endpoint_request(request, "PUT")

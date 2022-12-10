@@ -31,10 +31,9 @@ const apiHeaders = {
 }
 
 $(function() {
-    console.info($("#content").val())
     $(".post-vote").click((event) => {
         console.log($(event.target))
-        if ($(event.target).hasClass() == "down") {
+        if ($(event.target).hasClass("down")) {
             direction = 0
         } else {
             direction = 1
@@ -51,7 +50,7 @@ $(function() {
                     window.location.reload()
                     break;
                 case 410:
-                    alert("You have aleady voted on this post.")
+                    alert("You have already voted on this post.")
                 default:
                     alert("Something went wrong!")
                     break;
@@ -101,6 +100,7 @@ $(function() {
         $("#cancel-post").attr("style", "display:none")
     })
 
+    // delete post
     $("#delete-post").click(() => {
         fetch('delete/', {
             method: "POST",
@@ -124,6 +124,7 @@ $(function() {
         })
     })
 
+    // add comment
     $("#comment").click(() => {
         fetch('comment/', {
             method: "POST",
@@ -135,6 +136,8 @@ $(function() {
         }).then((output) => {
             switch (output.status) {
                 case 204: // success
+                    $("#comment-parent option:first").attr("selected", true);
+                    $("#comment-content").val("")
                     window.location.reload()
                     break;
                 case 400:
@@ -151,7 +154,75 @@ $(function() {
         })
     })
 
-    $(".comment")
+    // vote on comment
+    $(".comment-vote").click((event) => {
+        if ($(event.target).hasClass("down")) {
+            direction = 0
+        } else {
+            direction = 1
+        }
+        fetch('commentvote/', {
+            method: "POST",
+            headers: apiHeaders,
+            body: JSON.stringify({
+                "v": direction, // 1 for up 0 for down
+                "c": parseInt($(event.target).parent().attr("id"))
+            })
+        }).then((output) => {
+            switch (output.status) {
+                case 204: // success
+                    window.location.reload()
+                    break;
+                case 410:
+                    alert("You have already voted on this comment.")
+                default:
+                    alert("Something went wrong!")
+                    break;
+            }
+        })
+    })
+
+    // edit comment
+    commentOpen = false;
+    $(".update-comment").click(() => {
+        if (editOpen) {
+            fetch('update/', {
+                method: "PUT",
+                headers: apiHeaders,
+                body: JSON.stringify({
+                    content: $("#content").val()
+                })
+            }).then((output) => {
+                switch (output.status) {
+                    case 204: // success
+                        window.location.reload()
+                        break;
+                    case 410:
+                        alert("Post has already been deleted!")
+                        window.location.reload()
+                        break;
+                    default:
+                        alert("Something went wrong!")
+                        break;
+                }
+            })
+        } else { // if form is closed
+            commentOpen = true;
+            const content = $("#content").html().replaceAll("<br>", "\n")
+            $("#content").changeElementType("textarea")
+            $("#content").val(content)
+            $("#update-post").text("Save")
+            $("#cancel-post").attr("style", "display:default")
+        }
+    })
+
+    $(".cancel-comment").click(() => {
+        commentOpen = false;
+
+        $("#content-").changeElementType("p")
+        $("#update-post").text("Edit")
+        $("#cancel-post").attr("style", "display:none")
+    })
 
     // commentOpen = false;
 
