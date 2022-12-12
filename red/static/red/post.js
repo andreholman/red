@@ -42,7 +42,7 @@ $(function() {
             method: "POST",
             headers: apiHeaders,
             body: JSON.stringify({
-                "v": direction // 1 for up 0 for down
+                v: direction // 1 for up 0 for down
             })
         }).then((output) => {
             switch (output.status) {
@@ -84,7 +84,7 @@ $(function() {
             })
         } else { // if form is closed
             editOpen = true;
-            const content = $("#content").html().replaceAll("<br>", "\n")
+            const content = $("#content").text().replaceAll("<br>", "\n")
             $("#content").changeElementType("textarea")
             $("#content").val(content)
             $("#update-post").text("Save")
@@ -130,7 +130,7 @@ $(function() {
             method: "POST",
             headers: apiHeaders,
             body: JSON.stringify({
-                content: $("#comment-content").val(),
+                content: $("#comment-content").val().trim(),
                 parent: $("#comment-parent").val()
             })
         }).then((output) => {
@@ -154,6 +154,10 @@ $(function() {
         })
     })
 
+    function parent_comment_id(node) {
+        return parseInt($(node).parent().attr("id"))
+    }
+
     // vote on comment
     $(".comment-vote").click((event) => {
         if ($(event.target).hasClass("down")) {
@@ -165,8 +169,8 @@ $(function() {
             method: "POST",
             headers: apiHeaders,
             body: JSON.stringify({
-                "v": direction, // 1 for up 0 for down
-                "c": parseInt($(event.target).parent().attr("id"))
+                v: direction, // 1 for up 0 for down
+                c: parent_comment_id(event.target)
             })
         }).then((output) => {
             switch (output.status) {
@@ -184,19 +188,23 @@ $(function() {
 
     // edit comment
     commentOpen = false;
-    $(".update-comment").click(() => {
-        if (editOpen) {
-            fetch('update/', {
+    $(".comment-update").click((event) => {
+        parent_id = parent_comment_id(event.target)
+        if (parent_id == commentOpen) {
+            fetch('commentupdate/', {
                 method: "PUT",
                 headers: apiHeaders,
                 body: JSON.stringify({
-                    content: $("#content").val()
+                    c: parent_comment_id(event.target),
+                    content: $("#content-" + parent_id).val().trim()
                 })
             }).then((output) => {
                 switch (output.status) {
                     case 204: // success
                         window.location.reload()
                         break;
+                    case 400:
+                        alert("Invalid data!")
                     case 410:
                         alert("Post has already been deleted!")
                         window.location.reload()
@@ -207,21 +215,52 @@ $(function() {
                 }
             })
         } else { // if form is closed
-            commentOpen = true;
-            const content = $("#content").html().replaceAll("<br>", "\n")
-            $("#content").changeElementType("textarea")
-            $("#content").val(content)
-            $("#update-post").text("Save")
-            $("#cancel-post").attr("style", "display:default")
+            const content = $("#content-" + parent_id).text().replaceAll("<br>", "\n").trim()
+
+            commentOpen = parent_id
+
+            $("#content-" + parent_id).changeElementType("textarea")
+            $("#content-" + parent_id).val(content)
+            $("#update-" + parent_id).text("Save")
+            $("#cancel-" + parent_id).attr("style", "display:default")
         }
     })
 
-    $(".cancel-comment").click(() => {
+    $(".comment-cancel").click((event) => {
+        parent_id = parent_comment_id(event.target)
+        const comment_id = "#content-" + parent_id
+        const content = $(comment_id).text().replaceAll("<br>", "\n").trim()
         commentOpen = false;
 
-        $("#content-").changeElementType("p")
-        $("#update-post").text("Edit")
-        $("#cancel-post").attr("style", "display:none")
+        $("#content-" + parent_id).changeElementType("p")
+        $("#update-" + parent_id).text("Edit")
+        $("#cancel-" + parent_id).attr("style", "display:none")
+    })
+
+    $(".comment-delete").click((event) => {
+        fetch('commentdelete/', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({
+                c: parent_comment_id(event.target)
+            })
+        }).then((output) => {
+            switch (output.status) {
+                case 204: // success
+                    window.location.reload()
+                    break;
+                case 410:
+                    alert("Comment has already been deleted!")
+                    window.location.reload()
+                    break;
+                default:
+                    alert("Something went wrong!")
+                    break;
+            }
+        })
     })
 
     // commentOpen = false;

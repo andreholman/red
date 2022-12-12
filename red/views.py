@@ -93,7 +93,7 @@ def post_vote(request, sub, post_id):
             elif request_data["v"] == 0:
                 post_object.dislikes += 1
                 post_object.save()
-            else: 
+            else:
                 return HttpResponse(status=400) # bad request
         except:
             return HttpResponse(status=400)
@@ -134,8 +134,10 @@ def update_post(request, sub, post_id):
         
         if request_data.get("content"):
             post_object = get_object_or_404(Post, id=post_id)
-            if post_object.deleted:
-                return HttpResponse(status=410)
+            
+            if post_object.deleted or str(post_object.sub) == sub:
+                return HttpResponse(status=404)
+
             post_object.content = request_data["content"]
             post_object.edit()
             post_object.save()
@@ -203,8 +205,7 @@ def comment_vote(request, sub, post_id):
         try:
             request_data = json.loads(request.body)
             comment_object = get_object_or_404(Comment, id=request_data["c"])
-            if comment_object.post.id != request_validated.id:
-                print('wrong post')
+            if comment_object.post.id != request_validated.id or comment_object.deleted:
                 return HttpResponse(status=404)
 
             if request_data["v"] == 1:
@@ -222,18 +223,36 @@ def comment_vote(request, sub, post_id):
         return request_validated
 
 def update_comment(request, sub, post_id):
-    request_status = validate_endpoint_request(request, "PUT")
-    if not request_status:
-        pass
+    request_validated = validate_endpoint_request(request, "PUT", post_id)
+    if type(request_validated) != HttpResponse:
+        request_data = json.loads(request.body)
+        print("Update request", request_data)
+        if len(request_data.get("content")) >= 1 and request_data.get("c"):
+            try:
+                comment_object = get_object_or_404(Comment, id=request_data["c"])
+            except ValueError: # invalid comment
+                return HttpResponse(status=400)
+
+            if comment_object.deleted or str(request_validated) != str(comment_object.post):
+                return HttpResponse(status=404)
+            
+            comment_object.content = request_data["content"]
+            comment_object.edit()
+            comment_object.save()
+            return HttpResponse(status=204)
+        else:
+            print("lacking the request_data:", request_data)
+            return HttpResponse(status=400)
     else:
-        return HttpResponse(status=request_status)
+        print("invalidated")
+        return request_validated
 
 def delete_comment(request, sub, post_id):
-    request_status = validate_endpoint_request(request, "POST")
-    if not request_status:
+    request_validated = validate_endpoint_request(request, "POST", post_id)
+    if type(request_validated) != HttpResponse:
         pass
     else:
-        return HttpResponse(status=request_status)
+        return request_validated
 
 
 def login(request):
