@@ -20,11 +20,13 @@
     {% if user_posts %}
     <ul>
         {% for post in user_posts %}
+        {% if not post.deleted %}
         <li>
             <p>+{{post.likes}} | -{{post.dislikes}}, {{ post.created}} </p> 
             <a href='{% url "post" post.sub post.id %}'>{{ post.title }}</a>
             <p>{{ post.content }}</p>
         </li>
+        {% endif %}
         {% endfor %}
     </ul>
     {% else %}
@@ -34,6 +36,7 @@
     {% if user_comments %}
     <ul>
         {% for comment in user_comments %}
+        {% if not comment.deleted %}
         <li>
             {% if comment.parent %}
             <p>Replying to {{comment.parent}}:</p>
@@ -43,6 +46,7 @@
             <p>+{{comment.likes}} | -{{comment.dislikes}}</p>
             <p>{{ comment.content }}</p>
         </li>
+        {% endif %}
         {% endfor %}
     </ul>
     {% else %}

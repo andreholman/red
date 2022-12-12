@@ -57,7 +57,9 @@
         <select id="comment-parent">
             <option value="0">None</option>
             {% for comment in comments %}
+                {% if not comment.comment.deleted %}
                 <option value="{{comment.comment.id}}">{{ comment.comment }}</option>
+                {% endif %}
             {% endfor %}
         </select>
         <br>

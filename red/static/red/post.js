@@ -143,7 +143,7 @@ $(function() {
                 case 400:
                     alert("Bad request!")
                     break;
-                case 410:
+                case 404:
                     alert("Post has been deleted!")
                     window.location.reload()
                     break;
@@ -177,7 +177,7 @@ $(function() {
                 case 204: // success
                     window.location.reload()
                     break;
-                case 410:
+                case 400:
                     alert("You have already voted on this comment.")
                 default:
                     alert("Something went wrong!")

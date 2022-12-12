@@ -76,14 +76,18 @@ def validate_endpoint_request(request, method, post_id):
     if request.method == method.upper():
         post_object = get_object_or_404(Post, id=post_id)
         if post_object.deleted:
-            return 410 # already deleted
+            return 404 # already deleted
         else:
             return post_object
     else:
         return HttpResponse(status=405) # bad request format
 
 def post_vote(request, sub, post_id):
-    request_data = json.loads(request.body)
+    try:
+        request_data = json.loads(request.body)
+    except:
+        return HttpResponse(status=400)
+
     if request_data and request.method == "POST": # checks if there's post request
         post_object = get_object_or_404(Post, id=post_id)
         try:
@@ -177,14 +181,16 @@ def create_comment(request, sub, post_id):
                 else:
                     comment_parent = get_object_or_404(Comment, id=comment_parent_id)
                     
-                    if comment_parent.post != request_validated:
-                        return HttpResponse(status=400) # wrong post
+                    if comment_parent.deleted:
+                        return HttpResponse(status=404)
+                    elif comment_parent.post != request_validated:
+                        return HttpResponse(status=400) # wrong post or deleted parent
             else:
                 comment_parent = None
             
             comment_content = request_data["content"]
             comment_content[1]
-        except (KeyError, IndexError): # index error means no content
+        except (KeyError, IndexError, json.decoder.JSONDecodeError): # index error means no content
             return HttpResponse(status=400) # bad request
         
         new_comment = Comment(
@@ -244,16 +250,28 @@ def update_comment(request, sub, post_id):
             print("lacking the request_data:", request_data)
             return HttpResponse(status=400)
     else:
-        print("invalidated")
         return request_validated
 
 def delete_comment(request, sub, post_id):
     request_validated = validate_endpoint_request(request, "POST", post_id)
     if type(request_validated) != HttpResponse:
-        pass
+        try:
+            request_data = json.loads(request.body)
+            
+            comment_object = get_object_or_404(Comment, id=request_data.get("c"))
+        except (ValueError, json.decoder.JSONDecodeError): # invalid comment
+            return HttpResponse(400)
+        
+        if request_validated != comment_object.post:
+            return HttpResponse(404)
+        elif comment_object.deleted:
+            return HttpResponse(status=410) # already deleted
+        else:
+            comment_object.soft_delete()
+            comment_object.save()
+            return HttpResponse(status=204) # no response
     else:
         return request_validated
-
 
 def login(request):
     return HttpResponse("login")
