@@ -39,7 +39,7 @@ $(function() {
             direction = 1
         }
         fetch('vote/', {
-            method: "POST",
+            method: "PATCH",
             headers: apiHeaders,
             body: JSON.stringify({
                 v: direction // 1 for up 0 for down
@@ -103,7 +103,7 @@ $(function() {
     // delete post
     $("#delete-post").click(() => {
         fetch('delete/', {
-            method: "POST",
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": getCookie("csrftoken")
@@ -166,7 +166,7 @@ $(function() {
             direction = 1
         }
         fetch('commentvote/', {
-            method: "POST",
+            method: "PATCH",
             headers: apiHeaders,
             body: JSON.stringify({
                 v: direction, // 1 for up 0 for down
@@ -239,7 +239,7 @@ $(function() {
 
     $(".comment-delete").click((event) => {
         fetch('commentdelete/', {
-            method: "POST",
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": getCookie("csrftoken")

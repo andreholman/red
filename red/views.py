@@ -76,32 +76,9 @@ def validate_endpoint_request(request, method, post_id):
     if request.method == method.upper():
         post_object = get_object_or_404(Post, id=post_id)
         if post_object.deleted:
-            return 404 # already deleted
+            return HttpResponse(status=404) # already deleted
         else:
             return post_object
-    else:
-        return HttpResponse(status=405) # bad request format
-
-def post_vote(request, sub, post_id):
-    try:
-        request_data = json.loads(request.body)
-    except:
-        return HttpResponse(status=400)
-
-    if request_data and request.method == "POST": # checks if there's post request
-        post_object = get_object_or_404(Post, id=post_id)
-        try:
-            if request_data["v"] == 1:
-                post_object.likes += 1
-                post_object.save()
-            elif request_data["v"] == 0:
-                post_object.dislikes += 1
-                post_object.save()
-            else:
-                return HttpResponse(status=400) # bad request
-        except:
-            return HttpResponse(status=400)
-        return HttpResponse(status=204)
     else:
         return HttpResponse(status=405) # bad request format
 
@@ -113,6 +90,9 @@ def create_post(request, sub):
             post_flair = get_object_or_404(PostFlair, id=post_flair_id)
         except KeyError:
             post_flair = None
+        
+        if not request.POST["title"] or not request.POST["content"]:
+            return HttpResponse(status=400)
 
         new_post = Post(
             sub=sub_object,
@@ -132,41 +112,63 @@ def create_post(request, sub):
     else:
         return HttpResponse(status=405) # bad request format
 
+def post_vote(request, sub, post_id):
+    request_validated = validate_endpoint_request(request, "PATCH", post_id)
+    if type(request_validated) != HttpResponse:
+        try:
+            request_data = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return HttpResponse(status=400)
+
+        if str(request_validated.sub) != sub:
+            return HttpResponse(status=404)
+
+        if request_data["v"] == 1:
+            request_validated.likes += 1
+            request_validated.save()
+        elif request_data["v"] == 0:
+            request_validated.dislikes += 1
+            request_validated.save()
+        else:
+            return HttpResponse(status=400) # bad request
+            
+        return HttpResponse(status=204)
+    else:
+        return request_validated
+
 def update_post(request, sub, post_id):
-    if request.method == "PUT":
-        request_data = json.loads(request.body)
+    request_validated = validate_endpoint_request(request, "PUT", post_id)
+    if type(request_validated) != HttpResponse:
+        try:
+            request_data = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return HttpResponse(status=400)
         
         if request_data.get("content"):
-            post_object = get_object_or_404(Post, id=post_id)
-            
-            if post_object.deleted or str(post_object.sub) == sub:
+            if str(request_validated.sub) != sub:
                 return HttpResponse(status=404)
 
-            post_object.content = request_data["content"]
-            post_object.edit()
-            post_object.save()
+            request_validated.content = request_data["content"]
+            request_validated.edit()
+            request_validated.save()
             return HttpResponse(status=204)
         else:
             return HttpResponse(status=400)
     else:
-        return HttpResponse(status=405) # bad request format
-    # post_id = request.POST.get("id")
+        return request_validated
 
 def delete_post(request, sub, post_id):
-    if request.method == "POST":
-        post_object = get_object_or_404(Post, id=post_id)
-        if post_object.deleted:
-            return HttpResponse(status=410) # already deleted
-        else:
-            post_object.soft_delete()
-            post_object.save()
-            return HttpResponse(status=204) # no response
+    request_validated = validate_endpoint_request(request, "DELETE", post_id)
+    if type(request_validated) != HttpResponse:
+        request_validated.soft_delete()
+        request_validated.save()
+        return HttpResponse(status=204) # no response
     else:
-        return HttpResponse(status=405) # bad request format
+        return request_validated # bad request format
 
 def create_comment(request, sub, post_id):
     request_validated = validate_endpoint_request(request, "POST", post_id)
-    if type(request_validated) != HttpResponse: # post is returned back
+    if type(request_validated) != HttpResponse:
         try:
             request_data = json.loads(request.body)
 
@@ -206,12 +208,12 @@ def create_comment(request, sub, post_id):
         return request_validated
 
 def comment_vote(request, sub, post_id):
-    request_validated = validate_endpoint_request(request, "POST", post_id)
+    request_validated = validate_endpoint_request(request, "PATCH", post_id)
     if type(request_validated) != HttpResponse:
         try:
             request_data = json.loads(request.body)
             comment_object = get_object_or_404(Comment, id=request_data["c"])
-            if comment_object.post.id != request_validated.id or comment_object.deleted:
+            if comment_object.post.id != request_validated.id:
                 return HttpResponse(status=404)
 
             if request_data["v"] == 1:
@@ -223,7 +225,7 @@ def comment_vote(request, sub, post_id):
             else:
                 return HttpResponse(status=400) # bad request
             return HttpResponse(status=204)
-        except:
+        except (KeyError, IndexError, json.decoder.JSONDecodeError):
             return HttpResponse(status=400) # improper format 
     else:
         return request_validated
@@ -232,14 +234,13 @@ def update_comment(request, sub, post_id):
     request_validated = validate_endpoint_request(request, "PUT", post_id)
     if type(request_validated) != HttpResponse:
         request_data = json.loads(request.body)
-        print("Update request", request_data)
         if len(request_data.get("content")) >= 1 and request_data.get("c"):
             try:
                 comment_object = get_object_or_404(Comment, id=request_data["c"])
             except ValueError: # invalid comment
                 return HttpResponse(status=400)
 
-            if comment_object.deleted or str(request_validated) != str(comment_object.post):
+            if str(request_validated) != str(comment_object.post):
                 return HttpResponse(status=404)
             
             comment_object.content = request_data["content"]
@@ -247,25 +248,21 @@ def update_comment(request, sub, post_id):
             comment_object.save()
             return HttpResponse(status=204)
         else:
-            print("lacking the request_data:", request_data)
             return HttpResponse(status=400)
     else:
         return request_validated
 
 def delete_comment(request, sub, post_id):
-    request_validated = validate_endpoint_request(request, "POST", post_id)
+    request_validated = validate_endpoint_request(request, "DELETE", post_id)
     if type(request_validated) != HttpResponse:
         try:
             request_data = json.loads(request.body)
-            
             comment_object = get_object_or_404(Comment, id=request_data.get("c"))
         except (ValueError, json.decoder.JSONDecodeError): # invalid comment
             return HttpResponse(400)
         
         if request_validated != comment_object.post:
             return HttpResponse(404)
-        elif comment_object.deleted:
-            return HttpResponse(status=410) # already deleted
         else:
             comment_object.soft_delete()
             comment_object.save()
