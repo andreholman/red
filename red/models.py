@@ -1,12 +1,76 @@
 from dateutil.relativedelta import relativedelta
 from unittest.util import _MAX_LENGTH
 
-from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.core.validators import RegexValidator
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
-# Create your models here.
+# User/Auth schema
+
+class RedUserManager(BaseUserManager):
+    def create_user(self, username, email, password):
+        if not email or not username:
+            raise ValueError('Users must have an email and username.')
+
+        user = self.model(
+            username=username,
+            email=self.normalize_email(email),
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password):
+        user = self.model(
+            username=username,
+            email=self.normalize_email(email),
+        )
+
+        user.is_staff = True
+        user.is_admin = True
+        user.is_superuser = True
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+class User(AbstractBaseUser, PermissionsMixin):
+    created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
+    edited = models.DateTimeField(null=True, blank=True, default=None)
+    deleted = models.DateTimeField(null=True, blank=True, default=None)
+
+    username = models.CharField(max_length=16, unique=True)
+    email = models.EmailField(max_length=255, unique=True, verbose_name="Email Address")
+    avatar = models.CharField(max_length=128, null=True, blank=True)
+    description = models.CharField(max_length=256, null=True, blank=True)
+    points = models.IntegerField(default=0)
+    followers = models.IntegerField(default=0)
+    is_admin = models.BooleanField(default=False)
+
+    flairs = models.ManyToManyField("UserFlair")
+
+    def __str__(self):
+        return self.username
+
+    def soft_delete(self):
+        self.deleted = timezone.now()
+
+    def edit(self):
+        self.edited = timezone.now()
+    
+    @property
+    def is_staff(self):
+        return self.is_admin
+
+    objects = RedUserManager()
+
+    USERNAME_FIELD = "username"
+    EMAIL_FIELD = "email"
+    REQUIRED_FIELDS = ["email"]
+
+# Content Data
 
 class Sub(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
@@ -38,31 +102,6 @@ class UserFlair(models.Model):
 
     def __str__(self):
         return f"{self.text} in {self.sub}"
-
-class User(models.Model):
-    created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-    edited = models.DateTimeField(null=True, blank=True, default=None)
-    deleted = models.DateTimeField(null=True, blank=True, default=None)
-
-    username = models.CharField(max_length=16, unique=True)
-    email = models.EmailField()
-    password = models.CharField(max_length=64, validators=[RegexValidator(regex='^.{64}$', message="256-bit expected", code="nomatch")])
-    avatar = models.CharField(max_length=128, null=True, blank=True)
-    description = models.CharField(max_length=256, null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-    points = models.IntegerField(default=0)
-    followers = models.IntegerField(default=0)
-    
-    flairs = models.ManyToManyField(UserFlair)
-
-    def __str__(self):
-        return self.username
-
-    def soft_delete(self):
-        self.deleted = timezone.now()
-
-    def edit(self):
-        self.edited = timezone.now()
 
 class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)

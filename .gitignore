@@ -7,7 +7,7 @@ db.sqlite3
 media
 
 # Backup files # 
-db*.json
+**/db*
 *.bak 
 
 # If you are using PyCharm # 
