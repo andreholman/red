@@ -1,0 +1,272 @@
+$box-height: 23%;
+$border: 2px;
+$checkbox-size: 25px;
+
+/* color palette */
+
+$dark: #000;
+$gunmetal: #718a97;
+$blue: #5aade8;
+$input-margin: 20px;
+$offwhite: #f7f5e4;
+$body: "Inter Tight";
+$sub: "Inter";
+$title: "Overpass";
+* {
+    transition: 0.2s;
+}
+
+#formbox {
+    display: none;
+}
+
+#bg {
+    width: 105vw;
+    height: 105vw;
+    position: relative;
+    display: fixed;
+    z-index: -1;
+    background: inherit;
+    overflow: hidden;
+}
+
+#bg:before {
+    content: "";
+    position: fixed;
+    background: url(/static/red/assets/bg.png) no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    z-index: -2;
+    top: -40px;
+    left: -40px;
+    right: -40px;
+    bottom: -40px;
+    filter: blur(40px);
+    margin: -20px;
+}
+
+body,
+html {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    z-index: 0;
+    background: black;
+}
+
+section {
+    height: 100vh;
+    margin: 0;
+    padding: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.scrolled {
+    position: relative;
+    top: 100vh;
+    background: $blue;
+    display: none; ///////////////////////////////////////
+}
+
+#center {
+    width: 33vw;
+    min-width: 400px;
+    vertical-align: middle;
+    position: fixed;
+    margin: auto;
+}
+
+a {
+    color: $blue;
+    text-decoration: none;
+    border-bottom: 2px dotted $gunmetal;
+    transition: 0.2s;
+    padding: 0;
+    margin: 0;
+}
+
+a:hover {
+    border-bottom: 2px solid $blue;
+}
+
+div.stack {
+    box-shadow: 0 0 30px rgba(10, 15, 16, 0.67);
+    background: rgba(10, 15, 16, 0.67);
+    padding: $input-margin * 3;
+    padding-top: $input-margin * 2;
+    padding-bottom: $input-margin;
+    color: #f1f1f1;
+    vertical-align: middle;
+    margin: 0;
+    border-radius: 20px;
+    h1 {
+        font-family: $title;
+        font-weight: 200;
+        font-size: 54px;
+        line-height: 54px;
+        margin: 0;
+        padding: 0;
+        text-shadow: 0 0 4px black;
+    }
+    h3 {
+        margin-top: 12px;
+        margin-bottom: 20px;
+        font-family: $sub;
+        font-weight: 600;
+        font-size: 20px;
+        text-shadow: 0 0 4px black;
+    }
+}
+
+.inputfield {
+    padding-bottom: $input-margin;
+    .icon {
+        color: white;
+        width: 40px;
+        height: 40px;
+        background-color: transparent;
+        line-height: 40px;
+        font-size: 20px;
+        position: absolute;
+        text-align: center;
+        vertical-align: middle;
+        left: $input-margin * 4 + 10px;
+    }
+    label {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        left: 10px + $checkbox-size + calc($input-margin/2) + 2px;
+        font-family: $body;
+        font-weight: 400;
+        user-select: none;
+        height: $checkbox-size;
+        line-height: $checkbox-size;
+        width: auto;
+        vertical-align: middle;
+    }
+    input,
+    #checkbox {
+        width: 100%;
+        height: 40px;
+        border: 0;
+        border-radius: 5px;
+        outline: 2px solid $gunmetal;
+        transition: 0.2s;
+        background: transparent;
+        vertical-align: middle;
+    }
+    #checkbox {
+        display: inline;
+        align-items: center;
+        text-align: center;
+        width: $checkbox-size;
+        height: $checkbox-size;
+        font-size: $checkbox-size - 3px;
+        line-height: $checkbox-size + $border;
+        left: -2 * $border - $checkbox-size - 10px;
+        top: -$border;
+        outline: 0;
+        border: 2px solid $gunmetal;
+        color: transparent;
+    }
+    input[type="checkbox"] {
+        display: none;
+        width: 1rem;
+        position: relative;
+        z-index: 3;
+    }
+    input[type="text"],
+    [type="password"],
+    [type="email"] {
+        height: 40px;
+        padding: 0;
+        padding-left: 40px;
+        color: #ededed;
+        position: relative;
+        box-sizing: border-box;
+        font-family: $body;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 40px;
+        vertical-align: top;
+    }
+    input[type="email"] {
+        text-transform: lowercase;
+    }
+    input[type="submit"],
+    [type="button"] {
+        color: $offwhite;
+        font-family: $sub;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: 600;
+        transition-property: background-color, outline;
+    }
+    input[type="submit"]:hover,
+    input[type="button"]:hover,
+    input[type="submit"]:focus,
+    input[type="button"]:focus {
+        outline: 2px solid $blue;
+    }
+    .accentshould {
+        background-color: $gunmetal;
+        outline: 2px solid $gunmetal;
+    }
+    .accentshould:hover,
+    .accentshould:focus {
+        background-color: $blue;
+        color: black;
+    }
+     ::placeholder {
+        color: $gunmetal;
+        transition: 0.3s ease-out;
+        user-select: none;
+    }
+    input:active,
+    input:focus {
+        outline-color: $blue;
+        border: 0;
+    }
+    input:focus::placeholder {
+        opacity: 0;
+    }
+    input:not([type="button"]):not([type="submit"]):focus+i {
+        color: $blue;
+    }
+    .selected {
+        color: $dark !important;
+        background-color: $blue !important;
+        border: 2px solid $blue !important;
+    }
+    #wrongdoing {
+        font-family: $body;
+        font-weight: 400;
+        color: $offwhite;
+        display: inline-block;
+        font-size: 16px;
+        position: relative;
+        left: calc($input-margin/2);
+    }
+    #agreefield {
+        padding-bottom: 16px;
+    }
+}
+
+.hidden {
+    height: 0;
+    opacity: 0;
+    padding: 0;
+    margin: 0;
+    display: none;
+    transition: none;
+    transition: height 2.8s, opacity 2.4s, padding 2.8s, margin 2.8s;
+}

@@ -2,14 +2,16 @@ import json
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.http import Http404, HttpResponse
+from django.db import IntegrityError
 from pprint import pprint
 
 from .models import *
 
-# view = category of web page that holds a specific template
-# and serves a specific purpose
+################################
+#           INTERFACE          #
+################################
 
-def index(request): # negative sign ahead makes it newest first
+def index(request):
     all_posts = Post.objects.order_by("-created").filter(deleted__isnull=True)
     context = {"latest_posts_list": all_posts}
     return render(request, "red/index.html", context)
@@ -72,15 +74,46 @@ def post_editor(request, sub):
     }
     return render(request, "red/post_editor.html", context=context)
 
-def validate_endpoint_request(request, method, post_id):
-    if request.method == method.upper():
-        post_object = get_object_or_404(Post, id=post_id)
-        if post_object.deleted:
-            return HttpResponse(status=404) # already deleted
-        else:
-            return post_object
+################################
+#             AUTH             #
+################################
+
+def login(request):
+    match request.method:
+        case "POST":
+            try:
+                request_data = json.loads(request.body)
+
+            except (json.decoder.JSONDecodeError, IndexError):
+                return HttpResponse(status=400)
+            print(request_data)
+            return HttpResponse(status=204)
+        case "GET":
+            return render(request, "red/login.html")
+        case _:
+            return HttpResponse(status=405)
+
+def create_account(request):
+    if request.method == "POST":
+        try:
+            request_data = json.loads(request.body)
+            new_user = User.objects.create_user(
+                request_data["username"],
+                request_data["email"],
+                request_data["password"]
+            )
+        except (json.decoder.JSONDecodeError):
+            return HttpResponse(status=400)
+        except IntegrityError:
+            return HttpResponse(status=403)
+        print(request_data)
+        return HttpResponse(status=204)
     else:
-        return HttpResponse(status=405) # bad request format
+        return HttpResponse(status=405)
+
+################################
+#             API              #
+################################
 
 def create_post(request, sub):
     if request.method == "POST": # checks if there's post request
@@ -109,6 +142,16 @@ def create_post(request, sub):
         new_post.save()
 
         return redirect(f"/s/{sub}/posts/{new_post.id}") # redirect to new post
+    else:
+        return HttpResponse(status=405) # bad request format
+
+def validate_endpoint_request(request, method, post_id): # helper function
+    if request.method == method.upper():
+        post_object = get_object_or_404(Post, id=post_id)
+        if post_object.deleted:
+            return HttpResponse(status=404) # already deleted
+        else:
+            return post_object
     else:
         return HttpResponse(status=405) # bad request format
 
@@ -269,6 +312,3 @@ def delete_comment(request, sub, post_id):
             return HttpResponse(status=204) # no response
     else:
         return request_validated
-
-def login(request):
-    return HttpResponse("login")
