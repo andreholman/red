@@ -43,7 +43,7 @@
 
     <button type="button" class="post-vote up" {% if post.deleted %}disabled{%endif%}>Vote Up</button>
     <button type="button" class="post-vote down" {% if post.deleted %}disabled{%endif%}>Vote Down</button>
-    {% if user == comment.comment.author %}
+    {% if user == post.author %}
     <button type="button" id="update-post" {% if post.deleted %}disabled{%endif%}>Edit</button>
     <button type="button" id="cancel-post" {% if post.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
     <button type="button" id="delete-post" {% if post.deleted %}disabled{%endif%}>Delete</button>
