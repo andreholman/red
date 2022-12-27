@@ -50,6 +50,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_admin = models.BooleanField(default=False)
 
     flairs = models.ManyToManyField("UserFlair")
+    liked_posts = models.ManyToManyField("Post", related_name="liked_posts")
+    disliked_posts = models.ManyToManyField("Post", related_name="disliked_posts")
+    liked_comments = models.ManyToManyField("Comment", related_name="liked_comments")
+    disliked_comments = models.ManyToManyField("Comment", related_name="disliked_comments")
 
     def __str__(self):
         return self.username

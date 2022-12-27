@@ -5,7 +5,6 @@ const apiHeaders = {
 
 $(function() {
     $(".post-vote").click((event) => {
-        console.log($(event.target))
         if ($(event.target).hasClass("down")) {
             direction = 0
         } else {
@@ -168,7 +167,7 @@ $(function() {
                 method: "PUT",
                 headers: apiHeaders,
                 body: JSON.stringify({
-                    c: parent_comment_id(event.target),
+                    c: parent_id,
                     content: $("#content-" + parent_id).val().trim()
                 })
             }).then((output) => {

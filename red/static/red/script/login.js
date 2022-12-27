@@ -582,7 +582,10 @@ $(document).ready(function() {
             }).then((output) => {
                 switch (output.status) {
                     case 204: // success
-                        alert("Success!")
+                        const params = new URLSearchParams(location.search)
+                        window.location.replace(
+                            params.get("next") ? params.get("next") : "/"
+                        );
                         break;
                     case 400:
                         alert("Bad request!")

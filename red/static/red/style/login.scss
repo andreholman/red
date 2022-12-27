@@ -221,7 +221,6 @@ div.stack {
     .accentshould {
         background-color: $lightblue;
         outline: 2px solid $lightblue;
-        color: $dark;
     }
     .accentshould:hover,
     .accentshould:focus {
@@ -234,14 +233,14 @@ div.stack {
     }
     input:active,
     input:focus {
-        outline-color: $blue;
+        outline-color: $lightblue;
         border: 0;
     }
     input:focus::placeholder {
         opacity: 0;
     }
     input:not([type="button"]):not([type="submit"]):focus+i {
-        color: $blue;
+        color: $lightblue;
     }
     .selected {
         color: $dark !important;
