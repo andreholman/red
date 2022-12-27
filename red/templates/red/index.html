@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    {% include "red/includes/account.html" %}
     <h1>Latest Posts</h1>
     {% if latest_posts_list %}
     <ul>
@@ -28,7 +29,11 @@
     {% else %}
     <p>No posts are available.</p>
     {% endif %}
-    <!-- <script src="index.js"></script> -->
+
+    {% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'red/script/lib.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
+    <script src="{% static 'red/script/account.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
 </body>
 
 </html>

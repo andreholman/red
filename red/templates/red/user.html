@@ -5,21 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Red: {{user.username}}</title>
+    <title>Red: {{account.username}}</title>
     <!-- <link rel="stylesheet" href="style.css"> -->
 </head>
 
 <body>
-    <h1>{{user.username}}</h1>
+    {% include "red/includes/account.html" %}
+    <h1>{{account.username}}
+        {% if user == account %}
+        (Me)
+        {% endif %}
+    </h1>
     <ul>
-        <li>Created: {{user.created}}</li>
-        <li>Points: {{user.points}}</li>
-        <li>Followers: {{user.followers}}</li>
+        <li>Created: {{account.created}}</li>
+        <li>Points: {{account.points}}</li>
+        <li>Followers: {{account.followers}}</li>
     </ul>
     <h2>Posts</h2>
-    {% if user_posts %}
+    {% if account_posts %}
     <ul>
-        {% for post in user_posts %}
+        {% for post in account_posts %}
         {% if not post.deleted %}
         <li>
             <p>+{{post.likes}} | -{{post.dislikes}}, {{ post.created}} </p> 
@@ -30,12 +35,12 @@
         {% endfor %}
     </ul>
     {% else %}
-    <p>{{user.username}} has never posted.</p>
+    <p>{{account.username}} has never posted.</p>
     {% endif %}
     <h2>Comments</h2>
-    {% if user_comments %}
+    {% if account_comments %}
     <ul>
-        {% for comment in user_comments %}
+        {% for comment in account_comments %}
         {% if not comment.deleted %}
         <li>
             {% if comment.parent %}
@@ -50,9 +55,13 @@
         {% endfor %}
     </ul>
     {% else %}
-    <p>{{user.username}} has never commented.</p>
+    <p>{{account.username}} has never commented.</p>
     {% endif %}
-    <!-- <script src="index.js"></script> -->
+
+    {% load static %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'red/script/lib.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
+    <script src="{% static 'red/script/account.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
 </body>
 
 </html>

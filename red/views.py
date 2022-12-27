@@ -1,9 +1,10 @@
 import json
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control
 from django.http import Http404, HttpResponse
 from django.db import IntegrityError
-from pprint import pprint
 
 from .models import *
 
@@ -11,20 +12,23 @@ from .models import *
 #           INTERFACE          #
 ################################
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):
     all_posts = Post.objects.order_by("-created").filter(deleted__isnull=True)
     context = {"latest_posts_list": all_posts}
     return render(request, "red/index.html", context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def user(request, username):
     user = get_object_or_404(User, username__iexact=username)
 
     user_posts = Post.objects.filter(author__id=user.id).order_by("-created")
     user_comments = Comment.objects.filter(author__id=user.id).order_by("-created")
 
-    context = {'user': user, "user_posts": user_posts, "user_comments": user_comments}
+    context = {'account': user, "account_posts": user_posts, "account_comments": user_comments}
     return render(request, 'red/user.html', context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def sub(request, sub):
     sub_object = get_object_or_404(Sub, name__iexact=sub)
     
@@ -34,9 +38,11 @@ def sub(request, sub):
     context = {"sub": sub_object, "sub_posts": sub_posts}
     return render(request, "red/sub.html", context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def sub_posts(request, sub): # For redirecting s/sub/posts 
     return redirect("sub", sub=sub)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def post(request, sub, post_id):
     post = get_object_or_404(Post, id=post_id)
     if sub != post.sub.name:
@@ -64,6 +70,8 @@ def post(request, sub, post_id):
     context = {"post": post, "comments": comment_depth_list}
     return render(request, "red/post.html", context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@login_required
 def post_editor(request, sub):
     sub_object = get_object_or_404(Sub, name__iexact=sub)
     sub_flairs = PostFlair.objects.filter(sub__id=sub_object.id)
@@ -83,11 +91,20 @@ def login(request):
         case "POST":
             try:
                 request_data = json.loads(request.body)
+                user = authenticate(
+                    request,
+                    username=request_data["username"],
+                    password=request_data["password"]
+                )
 
+                if user is not None:
+                    auth_login(request, user)
+                    # Redirect to a success page.
+                    return HttpResponse(status=204)
+                else: # invalid login
+                    return HttpResponse(status=403)
             except (json.decoder.JSONDecodeError, IndexError):
                 return HttpResponse(status=400)
-            print(request_data)
-            return HttpResponse(status=204)
         case "GET":
             return render(request, "red/login.html")
         case _:
@@ -102,6 +119,7 @@ def create_account(request):
                 request_data["email"],
                 request_data["password"]
             )
+            login(request)
         except (json.decoder.JSONDecodeError):
             return HttpResponse(status=400)
         except IntegrityError:
@@ -111,10 +129,16 @@ def create_account(request):
     else:
         return HttpResponse(status=405)
 
+def logout(request):
+    if request.method == "POST":
+        auth_logout(request)
+        return HttpResponse(status=204)
+
 ################################
 #             API              #
 ################################
 
+@login_required
 def create_post(request, sub):
     if request.method == "POST": # checks if there's post request
         sub_object = get_object_or_404(Sub, name__iexact=sub)
@@ -276,7 +300,11 @@ def comment_vote(request, sub, post_id):
 def update_comment(request, sub, post_id):
     request_validated = validate_endpoint_request(request, "PUT", post_id)
     if type(request_validated) != HttpResponse:
-        request_data = json.loads(request.body)
+        try:
+            request_data = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return HttpResponse(status=400)
+        
         if len(request_data.get("content")) >= 1 and request_data.get("c"):
             try:
                 comment_object = get_object_or_404(Comment, id=request_data["c"])

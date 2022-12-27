@@ -20,5 +20,6 @@ urlpatterns = [
     path("s/<str:sub>/post/", views.post_editor, name="post_editor"), # GET
     path("s/<str:sub>/create_post/", views.create_post, name="create_post"), # POST
     path("login/", views.login, name="login"), # GET, POST
-    path("createaccount/", views.create_account, name="signup") # POST
+    path("createaccount/", views.create_account, name="signup"), # POST
+    path("logout/", views.logout, name="logout"), # POST
 ] + staticfiles_urlpatterns() # serve statics

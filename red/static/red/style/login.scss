@@ -6,7 +6,8 @@ $checkbox-size: 25px;
 
 $dark: #000;
 $gunmetal: #718a97;
-$blue: #5aade8;
+$lightblue: #5572B4;
+$blue: #3E4E8E;
 $input-margin: 20px;
 $offwhite: #f7f5e4;
 $body: "Inter Tight";
@@ -218,13 +219,13 @@ div.stack {
         outline: 2px solid $blue;
     }
     .accentshould {
-        background-color: $gunmetal;
-        outline: 2px solid $gunmetal;
+        background-color: $lightblue;
+        outline: 2px solid $lightblue;
+        color: $dark;
     }
     .accentshould:hover,
     .accentshould:focus {
         background-color: $blue;
-        color: black;
     }
      ::placeholder {
         color: $gunmetal;

@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    {% include "red/includes/account.html" %}
     <p>
     {{ post.created }}
     {% if post.edited %}
@@ -106,6 +107,8 @@
 
     {% load static %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static 'red/script/lib.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
+    <script src="{% static 'red/script/account.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
     <script src="{% static 'red/script/post.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>
 </body>
 

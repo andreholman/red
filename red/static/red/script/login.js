@@ -501,21 +501,6 @@ let agreed = false;
 const blue = "#5aade8";
 const gunmetal = "#5b6d77";
 
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
 $(document).ready(function() {
     let attempts = 0;
 
@@ -556,12 +541,15 @@ $(document).ready(function() {
         }).then((output) => {
             switch (output.status) {
                 case 204: // success
-                    alert("Success!")
+                    const params = new URLSearchParams(location.search)
+                    window.location.replace(
+                        params.get("next") ? params.get("next") : "/"
+                    );
                     break;
                 case 400:
                     alert("Bad request!")
                     break;
-                case 401:
+                case 403:
                     alert("Invalid Credentials!")
                 default:
                     alert("Something went wrong!")
@@ -607,11 +595,9 @@ $(document).ready(function() {
                 }
             })
         } else if (!agreed && attempts >= 1) {
-            console.info("not agreed");
             $("#wrongdoing").text("You must agree to create your account.");
             $("#wrongdiv").removeClass("hidden");
         } else if ($("#confirm").val() != $("#password").val() && attempts >= 1) {
-            console.info("wrong pw");
             $("#wrongdoing").text("Password does not match.");
             $("#wrongdiv").removeClass("hidden");
         }
