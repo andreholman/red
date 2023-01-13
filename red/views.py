@@ -48,30 +48,55 @@ def post(request, sub, post_id):
     if sub != post.sub.name:
         raise Http404("Post does not exist in this sub.")
     
-    comment_depth_list = [] # used by django view to display
-    comments = Comment.objects.order_by("-created")
-    top_level_comments = comments.filter(post__id=int(post.id), parent__id=None)
+    comment_depth_list = [] # used by view to display in order
+    comments = list(Comment.objects.all())
+
+    sort = request.GET.get("sort", "hot").lower() # default = hot
+    print("sorting="+sort)
+    match sort:
+        case "new":
+            comments = sorted(
+                comments,
+                key=lambda i: i.created,
+                reverse=True
+            )
+        case "top":
+            comments = sorted(
+                comments,
+                key=lambda i: i.likes-i.dislikes,
+                reverse=True
+            )
+        case _: # hot
+            comments = sorted(
+                comments,
+                key=lambda i: i.score(),
+                reverse=True
+            )
+    unchecked_comments = comments # items will be popped! do not return
 
     def add_comment(comment, level):
         comment_depth_list.append({"comment": comment, "level": level})
-
+    
     def check_children(comment, level):
-        responses = comments.filter(parent__id=comment.id)
-        for response in responses:
-            add_comment(response, level)
-            if len(responses): # comment has children
-                check_children(response, level + 1)
-        
-    for comment in top_level_comments:
-        add_comment(comment, 0)
-        replies = comments.filter(parent__id=comment.id)
+        for c in unchecked_comments:
+            if c.parent == comment:
+                add_comment(c, level)
+                check_children(c, level + 1)
+                unchecked_comments.remove(c)
+    
+    top_level_comments = [c for c in comments if not c.parent and c.post == post]
+
+    for c in top_level_comments:
+        add_comment(c, 0)
+        replies = [reply for reply in comments if reply.parent == c]
         if len(replies): # comment has children
-            check_children(comment, 1)
-    context = {"post": post, "comments": comment_depth_list}
+            check_children(c, 1)
+    
+    context = {"post": post, "comments": comment_depth_list, "sorting": sort}
     return render(request, "red/post.html", context)
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-@login_required
+@login_required 
 def post_editor(request, sub):
     sub_object = get_object_or_404(Sub, name__iexact=sub)
     sub_flairs = PostFlair.objects.filter(sub__id=sub_object.id)
@@ -161,7 +186,7 @@ def execute_vote(direction, liked_already, disliked_already, add_like, remove_li
             add_like()
         elif liked_already:
             remove_like()
-        else: # not liked yet
+        else: # not liked yet or not voted
             add_like()
     elif direction == 0:
         if liked_already:
@@ -169,7 +194,7 @@ def execute_vote(direction, liked_already, disliked_already, add_like, remove_li
             add_dislike()
         elif disliked_already:
             remove_dislike()
-        else: # not disliked yet
+        else: # not disliked yet or not voted
             add_dislike()
     else: # no vote direction specified
         return HttpResponse(status=400)
@@ -199,7 +224,6 @@ def create_post(request, sub):
             nsfw=bool(request.POST.get("nsfw")),
             spoiler=bool(request.POST.get("spoiler")),
             likes=1, # auto like own posts
-            points=1,
         )
         new_post.save()
 
@@ -312,6 +336,8 @@ def create_comment(request, sub, post_id):
             likes=1
         )
         new_comment.save()
+
+        request.user.liked_comments.add(new_comment)
         return HttpResponse(status=204) # no response
     else:
         return request_validated

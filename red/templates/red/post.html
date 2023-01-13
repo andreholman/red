@@ -34,7 +34,7 @@
     {% if post.deleted %}
     <p id="content">[deleted]</p><br>
     {% else %}
-    <p id="content">{{post.content|linebreaksbr}}</p><br>
+    <p id="content">{{post.content|linebreaksbr}}</p>
     {% endif %}
 
     {% if post.attached %}
@@ -73,8 +73,15 @@
         <button type="button" id="comment">Post comment</button>
     </fieldset>
     {% endif %}
-
+    <br>
     {% if comments %}
+    Sort By:
+    <select id="comment-sort">
+        <option value="hot" {% if sorting == "hot" %} selected {% endif %}>Hot</option>
+        <option value="top" {% if sorting == "top" %} selected {% endif %}>Top</option>
+        <option value="new" {% if sorting == "new" %} selected {% endif %}>New</option>
+    </select>
+    
     <ul type="square">
         {% for comment in comments %}
         <li style="margin-left:{{comment.level}}em" id="{{comment.comment.id}}">
@@ -83,10 +90,9 @@
             {% if comment.comment.deleted or comment.comment.author.deleted %}
             u/[deleted]
             {% else %}
-            <a href='{% url "user" comment.comment.author.username %}'>{{ comment.comment.author }}</a>
+            <a href='{% url "user" comment.comment.author.username %}'>u/{{ comment.comment.author }}</a>
             {% if comment.comment.author == post.author %} <span style="font-weight: bold">OP</span> {% endif %}
             {% endif %}
-            
 
             <button type="button" class="comment-vote up" {% if comment.comment.deleted %}disabled{%endif%}>Vote Up</button>
             <button type="button" class="comment-vote down" {% if comment.comment.deleted %}disabled{%endif%}>Vote Down</button>
@@ -94,6 +100,11 @@
             <button type="button" class="comment-update" id="update-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%}>Edit</button>
             <button type="button" class="comment-cancel" id="cancel-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
             <button type="button" class="comment-delete" {% if comment.comment.deleted %}disabled{%endif%}>Delete</button>
+            {% endif %}
+            
+            Created {{ comment.comment.created}},
+            {% if comment.comment.edited %}
+            Edited {{ comment.comment.edited }}
             {% endif %}
 
             <p id="content-{{comment.comment.id}}" style="display:block;">

@@ -235,6 +235,15 @@ $(function() {
         })
     })
 
+    $('#comment-sort').on('change', () => {
+        const optionSelected = $("#comment-sort option:selected");
+
+        url = new URL(window.location.href)
+
+        url.searchParams.set("sort", optionSelected.val())
+        window.location.href = url
+    });
+
     // commentOpen = false;
 
     // $("#reply").click(() => {

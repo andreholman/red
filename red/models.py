@@ -1,5 +1,6 @@
 from dateutil.relativedelta import relativedelta
 from unittest.util import _MAX_LENGTH
+from math import log10
 
 from django.db import models
 from django.urls import reverse
@@ -45,8 +46,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True, verbose_name="Email Address")
     avatar = models.CharField(max_length=128, null=True, blank=True)
     description = models.CharField(max_length=256, null=True, blank=True)
-    points = models.IntegerField(default=0)
-    followers = models.IntegerField(default=0)
+    points = models.DecimalField(max_digits=15, decimal_places=6, default=0)
+    followers = models.PositiveIntegerField(default=0)
     is_admin = models.BooleanField(default=False)
 
     flairs = models.ManyToManyField("UserFlair")
@@ -76,11 +77,39 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 # Content Data
 
+class AbstractBaseContent(models.Model):
+    created = models.DateTimeField(auto_now_add=True, null=False, blank=False) # ADD EDITABLE=FALSE TO DISABLE DEBUG
+    edited = models.DateTimeField(null=True, blank=True, default=None)
+    deleted = models.DateTimeField(null=True, blank=True, default=None)
+
+    def soft_delete(self):
+        self.deleted = timezone.now()
+
+    def edit(self):
+        self.edited = timezone.now()
+
+    def score(self):
+        difference = self.likes - self.dislikes
+
+        if difference > 0: majority_vote = 1
+        elif difference == 0: majority_vote = 0
+        else: majority_vote = -1
+
+        if abs(difference) >= 1: z = abs(difference)
+        else: z = 1
+        
+        age = (self.created - timezone.now()).total_seconds()
+
+        return log10(z) + (majority_vote * age) / 45000
+    
+    class Meta:
+        abstract = True
+
 class Sub(models.Model):
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
     
     name = models.CharField(max_length=16, validators=[RegexValidator(regex=r"^[0-9a-zA-Z]*$", message="Sub name must be alphanumeric.", code="nomatch")], unique=True)
-    followers = models.IntegerField(default=0)
+    followers = models.PositiveIntegerField(default=0)
     mods = models.ManyToManyField("User")
     pinned_post = models.ForeignKey("Post", on_delete=models.CASCADE, default=None, null=True, blank=True, related_name="pinned")
 
@@ -107,11 +136,7 @@ class UserFlair(models.Model):
     def __str__(self):
         return f"{self.text} in {self.sub}"
 
-class Post(models.Model):
-    created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-    edited = models.DateTimeField(null=True, blank=True, default=None)
-    deleted = models.DateTimeField(null=True, blank=True, default=None)
-
+class Post(AbstractBaseContent):
     sub = models.ForeignKey(Sub, on_delete=models.CASCADE, related_name="posts")
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
@@ -124,25 +149,14 @@ class Post(models.Model):
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
-    points = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title + " by " + self.author.username
-
-    def soft_delete(self):
-        self.deleted = timezone.now()
-
-    def edit(self):
-        self.edited = timezone.now()
     
     def archived(self):
         return (self.created + relativedelta(months=6)) <= timezone.now()
 
-class Comment(models.Model):
-    created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-    edited = models.DateTimeField(null=True, blank=True, default=None)
-    deleted = models.DateTimeField(null=True, blank=True, default=None)
-
+class Comment(AbstractBaseContent):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
@@ -150,7 +164,6 @@ class Comment(models.Model):
 
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
-    points = models.IntegerField(default=0)
 
     def __str__(self):
         if len(self.content) > 64:
@@ -162,9 +175,3 @@ class Comment(models.Model):
             return str(self.author) + " replies to " + str(self.parent.author) + ": " + comment_content
         else:
             return str(self.author) + ": " + comment_content
-
-    def soft_delete(self):
-        self.deleted = timezone.now()
-
-    def edit(self):
-        self.edited = timezone.now()
