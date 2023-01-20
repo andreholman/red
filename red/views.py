@@ -1,10 +1,12 @@
 import json
+from time import time as epoch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.http import Http404, HttpResponse
 from django.db import IntegrityError
+from django.conf import settings as config
 
 from .models import *
 
@@ -22,8 +24,8 @@ def index(request):
 def user(request, username):
     user = get_object_or_404(User, username__iexact=username)
 
-    user_posts = Post.objects.filter(author__id=user.id).order_by("-created")
-    user_comments = Comment.objects.filter(author__id=user.id).order_by("-created")
+    user_posts = Post.objects.filter(author__id=user.id, deleted__isnull=True).order_by("-created")
+    user_comments = Comment.objects.filter(author__id=user.id, deleted__isnull=True).order_by("-created")
 
     context = {'account': user, "account_posts": user_posts, "account_comments": user_comments}
     return render(request, 'red/user.html', context)
@@ -49,10 +51,9 @@ def post(request, sub, post_id):
         raise Http404("Post does not exist in this sub.")
     
     comment_depth_list = [] # used by view to display in order
-    comments = list(Comment.objects.all())
+    comments = list(Comment.objects.filter(post=post))
 
     sort = request.GET.get("sort", "hot").lower() # default = hot
-    print("sorting="+sort)
     match sort:
         case "new":
             comments = sorted(
@@ -84,7 +85,7 @@ def post(request, sub, post_id):
                 check_children(c, level + 1)
                 unchecked_comments.remove(c)
     
-    top_level_comments = [c for c in comments if not c.parent and c.post == post]
+    top_level_comments = [c for c in comments if not c.parent]
 
     for c in top_level_comments:
         add_comment(c, 0)
@@ -166,14 +167,14 @@ def logout(request):
 ####### HELPER FUNCTIONS #######
 
 def validate_api_request(request, method, post_id, post_author_required=False): 
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated: # not logged in
         return HttpResponse(status=401)
     elif request.method == method.upper(): # correct method
         post_object = get_object_or_404(Post, id=post_id)
         if post_object.deleted:
             return HttpResponse(status=404) # already deleted
         elif post_author_required and post_object.author != request.user:
-            return HttpResponse(status=403)
+            return HttpResponse(status=403) # no perms
         else:
             return post_object
     else:
@@ -307,7 +308,6 @@ def create_comment(request, sub, post_id):
     if type(request_validated) != HttpResponse:
         try:
             request_data = json.loads(request.body)
-
             if request_data.get("parent"):
                 comment_parent_id = int(request_data["parent"])
                 
@@ -420,15 +420,60 @@ def delete_comment(request, sub, post_id):
             request_data = json.loads(request.body)
             comment_object = get_object_or_404(Comment, id=request_data.get("c"))
         except (ValueError, json.decoder.JSONDecodeError): # invalid comment
-            return HttpResponse(400)
+            return HttpResponse(status=400)
         
         if request_validated != comment_object.post:
-            return HttpResponse(404) # wrong post
+            return HttpResponse(status=404) # wrong post
         if comment_object.author != request.user:
             return HttpResponse(status=403) # not the comment owner
 
         comment_object.soft_delete()
         comment_object.save()
         return HttpResponse(status=204) # no response
+    else:
+        return request_validated
+def award_content(request, sub, post_id):
+    request_validated = validate_api_request(request, "POST", post_id)
+    if type(request_validated) != HttpResponse:
+        if request.user == request_validated.author:
+            return HttpResponse(status=403) # can't gift yourself
+        try:
+            request_data = json.loads(request.body)
+            award_type = request_data["type"]
+
+            new_award = {
+                "name": request.user.username,
+                "time": round(epoch()),
+                "anonymous": request_data["anonymous"] # bool
+            }
+            message = request_data["message"]
+            if message:
+                if len(message) > 64:
+                    return HttpResponse(status=400)
+                new_award["message"] = message
+            
+            cost = config.AWARDS_LIST[award_type]
+            if request.user.coins <= cost:
+                return HttpResponse(status=402) # can't afford the award
+            else:
+                request.user.coins -= cost
+                request.user.save()
+
+            comment_id = request_data.get("c")
+            if comment_id:
+                content = get_object_or_404(Comment, id=comment_id)
+            else:
+                content = request_validated
+            
+            current_count = content.awards.get(award_type)
+            if current_count:
+                content.awards[award_type].append()
+            else:
+                content.awards[award_type] = [new_award]
+            content.save()
+
+            return HttpResponse(status=204)
+        except (KeyError, ValueError, json.decoder.JSONDecodeError): # invalid comment
+            return HttpResponse(status=400)
     else:
         return request_validated

@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    {% load mathfilters %}
     {% include "red/includes/account.html" %}
     <h1>{{account.username}}
         {% if user == account %}
@@ -25,13 +26,27 @@
     {% if account_posts %}
     <ul>
         {% for post in account_posts %}
-        {% if not post.deleted %}
         <li>
-            <p>+{{post.likes}} | -{{post.dislikes}}, {{ post.created}} </p> 
-            <a href='{% url "post" post.sub post.id %}'>{{ post.title }}</a>
-            <p>{{ post.content }}</p>
+            {{ post.likes|sub:post.dislikes }} points
+
+            <a href='{% url "sub" post.sub.name %}'>s/{{post.sub.name}}</a>
+            <a href='{% url "post" post.sub.name post.id %}'> {{ post.title }}</a>
+            {% if post.flair %} [{{post.flair.text}}] {% endif %}
+            
+            <b>
+                {% if post.nsfw %}(NSFW){% endif %} {% if post.spoiler %}(Spoiler){% endif %}
+            </b>
+
+            {{ post.comment_count }} comments
+            
+            {% if post.awards %}
+            <p>Awards:
+            {% for name, count in post.award_count.items %}
+                {{ count }}x {{ name }}{% if not forloop.last %},{% endif %}
+            {% endfor %}
+            </p>
+            {% endif %}
         </li>
-        {% endif %}
         {% endfor %}
     </ul>
     {% else %}
@@ -48,8 +63,7 @@
             {% else %}
             <p>On {{ comment.post }}</p>
             {% endif %}
-            <p>+{{comment.likes}} | -{{comment.dislikes}}</p>
-            <p>{{ comment.content }}</p>
+            <p>{{ comment.likes|sub:comment.dislikes }} points | {{ comment.content }}</p>
         </li>
         {% endif %}
         {% endfor %}

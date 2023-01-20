@@ -12,15 +12,18 @@
 <body>
     {% include "red/includes/account.html" %}
     <p>
-    {{ post.created }}
+    Created {{ post.created }}
     {% if post.edited %}
-    {{ post.edited }}
+    , Edited {{ post.edited }}
     {% endif %}
     <a href='{% url "sub" post.sub %}'>s/{{post.sub}}</a> | 
     {% if post.deleted or post.author.deleted %}
     u/[deleted]
     {% else %}
-    <a href='{% url "user" post.author %}'>u/{{post.author}}</a>
+    <a href='{% url "user" post.author %}'>
+        u/{{post.author}}
+        {% if user == post.author %} (Me) {% endif %}
+    </a>
     {% endif %}
     </p>
 
@@ -28,7 +31,17 @@
     {% if post.nsfw or post.spoiler %}
     <b>{% if post.nsfw %}(NSFW){% endif %} {% if post.spoiler %}(Spoiler){% endif %}</b>
     {% endif %}
-    <p>Views: {{post.views}}</p>
+
+    {{ post.comment_count }} comments
+
+    {% if post.awards %}
+    <p>Awards:
+    {% for name, count in post.award_count.items %}
+        {{ count }}x {{ name }}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    </p>
+    {% endif %}
+
     <p>Votes: +{{post.likes}} | -{{post.dislikes}}</p>
 
     {% if post.deleted %}
@@ -47,6 +60,22 @@
     <button type="button" id="update-post" {% if post.deleted %}disabled{%endif%}>Edit</button>
     <button type="button" id="cancel-post" {% if post.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
     <button type="button" id="delete-post" {% if post.deleted %}disabled{%endif%}>Delete</button>
+    {% endif %}
+
+    {% if user.is_authenticated and user %}
+    <h3>Add an award:</h3>
+    <select id="award-type">
+        <option disabled selected hidden>Pick an award</option>
+        <option value="Silver">Silver</option>
+        <option value="Gold">Gold</option>
+        <option value="Platinum">Platinum</option>
+        <option value="Emerald">Emerald</option>
+        <option value="Rhodium">Rhodium</option>
+    </select>
+    <input type="text" id="message" placeholder="Message (optional)" maxlength="64">
+    <input type="checkbox" id="anonymous">
+    <label for="anonymous">Anonymous</label>
+    <button type="button" id="gift">Gift</button>
     {% endif %}
 
     <h2>Comments</h2>
@@ -91,20 +120,24 @@
             u/[deleted]
             {% else %}
             <a href='{% url "user" comment.comment.author.username %}'>u/{{ comment.comment.author }}</a>
-            {% if comment.comment.author == post.author %} <span style="font-weight: bold">OP</span> {% endif %}
+            {% if comment.comment.author == user%}
+            <b>(Me)</b>
+            {% elif comment.comment.author == post.author %}
+            <b>(OP)</b>
+            {% endif %}
             {% endif %}
 
             <button type="button" class="comment-vote up" {% if comment.comment.deleted %}disabled{%endif%}>Vote Up</button>
             <button type="button" class="comment-vote down" {% if comment.comment.deleted %}disabled{%endif%}>Vote Down</button>
-            {% if user == comment.comment.author %}
+            {% if user == comment.comment.author and not comment.comment.deleted%}
             <button type="button" class="comment-update" id="update-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%}>Edit</button>
             <button type="button" class="comment-cancel" id="cancel-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
             <button type="button" class="comment-delete" {% if comment.comment.deleted %}disabled{%endif%}>Delete</button>
             {% endif %}
             
-            Created {{ comment.comment.created}},
+            Created {{ comment.comment.created}}
             {% if comment.comment.edited %}
-            Edited {{ comment.comment.edited }}
+            , Edited {{ comment.comment.edited }}
             {% endif %}
 
             <p id="content-{{comment.comment.id}}" style="display:block;">

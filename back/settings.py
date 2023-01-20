@@ -137,3 +137,15 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Settings
+# Not part of Django API
+
+# Name = Price
+AWARDS_LIST = {
+    "Silver": 100,
+    "Gold": 500,
+    "Platinum": 1800,
+    "Emerald": 20000,
+    "Rhodium": 50000
+}

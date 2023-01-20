@@ -10,8 +10,8 @@
 </head>
 
 <body>
+    {% load mathfilters %}
     {% include "red/includes/account.html" %}
-    {% comment %} <h1>{{ sort type }} : in {{sub.name}}</h1> {% endcomment %}
     <h1>Latest posts in s/{{sub.name}}</h1>
     
     <p>Created {{sub.created}}, {{sub.followers}} {% if sub.followers == 1 %} follower {% else %} followers. {% endif%}</p>
@@ -21,10 +21,26 @@
         {% for post in sub_posts %}
         <li>
             <p>
-                +{{post.likes}}{% if post.dislikes %} | -{{post.dislikes}}{% endif %}
-                <a href='{% url "post" sub.name post.id %}'> {{ post.title }}</a> 
+                {{ post.likes|sub:post.dislikes }}
+
+                <a href='{% url "user" post.author %}'>u/{{post.author}}</a>
+                <a href='{% url "post" sub.name post.id %}'> {{ post.title }}</a>
+
                 {% if post.flair %} [{{post.flair.text}}] {% endif %}
-                <b>{% if post.nsfw %}(NSFW){% endif %} {% if post.spoiler %}(Spoiler){% endif %}</b>
+                
+                <b>
+                    {% if post.nsfw %}(NSFW){% endif %} {% if post.spoiler %}(Spoiler){% endif %}
+                </b>
+
+                {{ post.comment_count }} comments
+
+                {% if post.awards %}
+                <p>Awards:
+                {% for name, count in post.award_count.items %}
+                    {{ count }}x {{ name }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                </p>
+                {% endif %}
             </p>
             
             <p>{{ post.content }}</p>

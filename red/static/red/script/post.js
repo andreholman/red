@@ -21,6 +21,9 @@ $(function() {
                 case 204: // success
                     window.location.reload()
                     break;
+                case 403:
+                    alert("No permission!")
+                    break;
                 case 410:
                     alert("You have already voted on this post.")
                 default:
@@ -44,6 +47,9 @@ $(function() {
                 switch (output.status) {
                     case 204: // success
                         window.location.reload()
+                        break;
+                    case 403:
+                        alert("No permission!")
                         break;
                     case 410:
                         alert("Post has already been deleted!")
@@ -85,6 +91,9 @@ $(function() {
                 case 204: // success
                     window.location.reload()
                     break;
+                case 403:
+                    alert("No permission!")
+                    break;
                 case 410:
                     alert("Post has already been deleted!")
                     window.location.reload()
@@ -114,6 +123,9 @@ $(function() {
                     break;
                 case 400:
                     alert("Bad request!")
+                    break;
+                case 403:
+                    alert("No permission!")
                     break;
                 case 404:
                     alert("Post has been deleted!")
@@ -149,6 +161,9 @@ $(function() {
                 case 204: // success
                     window.location.reload()
                     break;
+                case 403:
+                    alert("No permission!")
+                    break;
                 case 400:
                     alert("You have already voted on this comment.")
                 default:
@@ -177,6 +192,9 @@ $(function() {
                         break;
                     case 400:
                         alert("Invalid data!")
+                    case 403:
+                        alert("No permission!")
+                        break;
                     case 410:
                         alert("Post has already been deleted!")
                         window.location.reload()
@@ -224,6 +242,9 @@ $(function() {
                 case 204: // success
                     window.location.reload()
                     break;
+                case 403:
+                    alert("No permission!")
+                    break;
                 case 410:
                     alert("Comment has already been deleted!")
                     window.location.reload()
@@ -243,6 +264,48 @@ $(function() {
         url.searchParams.set("sort", optionSelected.val())
         window.location.href = url
     });
+
+    $("#gift").click((event) => {
+        const award_type = $("#award-type").val()
+
+        if (!award_type) {
+            alert("Pick an award type.")
+        } else {
+            let request_body = {
+                type: award_type,
+                anonymous: $("#anonymous").is(":checked"),
+                message: $("#message").val()
+            }
+
+            if ($(event.target).hasClass("comment-gift")) {
+                request_body.c = parent_comment_id(event.target)
+            }
+
+            fetch('award/', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify(request_body)
+            }).then((output) => {
+                switch (output.status) {
+                    case 204: // success
+                        window.location.reload()
+                        break;
+                    case 402:
+                        alert("Insufficient Funds")
+                        break;
+                    case 403:
+                        alert("No permission!")
+                        break;
+                    default:
+                        alert("Something went wrong!")
+                        break;
+                }
+            })
+        }
+    })
 
     // commentOpen = false;
 

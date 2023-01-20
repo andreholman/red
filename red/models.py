@@ -5,6 +5,7 @@ from math import log10
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.db.models import JSONField
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
@@ -47,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     avatar = models.CharField(max_length=128, null=True, blank=True)
     description = models.CharField(max_length=256, null=True, blank=True)
     points = models.DecimalField(max_digits=15, decimal_places=6, default=0)
+    coins = models.PositiveIntegerField(default=0)
     followers = models.PositiveIntegerField(default=0)
     is_admin = models.BooleanField(default=False)
 
@@ -81,6 +83,20 @@ class AbstractBaseContent(models.Model):
     created = models.DateTimeField(auto_now_add=True, null=False, blank=False) # ADD EDITABLE=FALSE TO DISABLE DEBUG
     edited = models.DateTimeField(null=True, blank=True, default=None)
     deleted = models.DateTimeField(null=True, blank=True, default=None)
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField(max_length=32767)
+
+    awards = JSONField(blank=True, default=dict)
+
+    @property
+    def award_count(self):
+        awards_list = {}
+    
+        for award_type in self.awards:
+            awards_list[award_type] = len(self.awards[award_type])
+        
+        return awards_list
 
     def soft_delete(self):
         self.deleted = timezone.now()
@@ -138,9 +154,7 @@ class UserFlair(models.Model):
 
 class Post(AbstractBaseContent):
     sub = models.ForeignKey(Sub, on_delete=models.CASCADE, related_name="posts")
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
-    content = models.TextField(max_length=32767)
     attached = models.CharField(max_length=128, null=True, blank=True)
     flair = models.ForeignKey(PostFlair, on_delete=models.SET_NULL, related_name="posts", null=True, blank=True)
     nsfw = models.BooleanField(null=False, blank=False, default=False)
@@ -150,6 +164,10 @@ class Post(AbstractBaseContent):
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
 
+    @property
+    def comment_count(self):
+        return Comment.objects.filter(post=self).count()
+
     def __str__(self):
         return self.title + " by " + self.author.username
     
@@ -157,7 +175,6 @@ class Post(AbstractBaseContent):
         return (self.created + relativedelta(months=6)) <= timezone.now()
 
 class Comment(AbstractBaseContent):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     parent = models.ForeignKey("self", on_delete=models.CASCADE, related_name="comments", null=True, blank=True)
     content = models.CharField(max_length=1024)

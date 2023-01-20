@@ -17,9 +17,10 @@ urlpatterns = [
     path("s/<str:sub>/posts/<int:post_id>/commentvote/", views.comment_vote, name="comment_vote"), # PATCH
     path("s/<str:sub>/posts/<int:post_id>/commentupdate/", views.update_comment, name="update_comment"), # PUT
     path("s/<str:sub>/posts/<int:post_id>/commentdelete/", views.delete_comment, name="delete_comment"), # DELETE
+    path("s/<str:sub>/posts/<int:post_id>/award/", views.award_content, name="award_content"), # POST
     path("s/<str:sub>/post/", views.post_editor, name="post_editor"), # GET
     path("s/<str:sub>/create_post/", views.create_post, name="create_post"), # POST
-    path("login/", views.login, name="login"), # GET, POST
     path("createaccount/", views.create_account, name="signup"), # POST
+    path("login/", views.login, name="login"), # GET, POST
     path("logout/", views.logout, name="logout"), # POST
 ] + staticfiles_urlpatterns() # serve statics

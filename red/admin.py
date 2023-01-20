@@ -50,11 +50,36 @@ class UserAdmin(BaseUserAdmin):
     # that reference specific fields on auth.User.
     list_display = ['username', 'email', 'created', 'is_admin']
     list_filter = ['is_admin']
+    readonly_fields = ['created']
     fieldsets = [
-        (None, {'fields': ['email', 'password']}),
-        ('Settings', {'fields': ['avatar', 'description']}),
-        ('Permissions', {'fields': ['is_admin']}),
+        (None, {'fields': [
+            'edited',
+            'deleted',
+        ]}),
+        ('Credentials', {'fields':[
+            'email',
+            'password'
+        ]}),
+        ('Settings', {'fields': [
+            'avatar',
+            'description'
+        ]}),
+        ('Permissions', {'fields': [
+            'is_admin'
+        ]}),
+        ('Properties', {'fields': [
+            'points',
+            'coins',
+            'followers',
+        ]}),
+        ('Voted Content', {'fields': [
+            'liked_posts',
+            'disliked_posts',
+            'liked_comments',
+            'disliked_comments',
+        ]})
     ]
+
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = [
@@ -63,6 +88,7 @@ class UserAdmin(BaseUserAdmin):
             'fields': ['username', 'email', 'password1', 'password2'],
         }),
     ]
+
     search_fields = ['username', 'email']
     ordering = ['username']
     filter_horizontal = []
