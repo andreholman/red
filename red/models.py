@@ -6,6 +6,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import JSONField
+from django.conf import settings as config
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
@@ -91,12 +92,14 @@ class AbstractBaseContent(models.Model):
 
     @property
     def award_count(self):
-        awards_list = {}
+        award_counts = {}
     
         for award_type in self.awards:
-            awards_list[award_type] = len(self.awards[award_type])
+            award_counts[award_type] = len(self.awards[award_type])
         
-        return awards_list
+        # sort from lowest to highest value awards
+        award_order = list(config.AWARDS_LIST.keys())
+        return {key: award_counts[key] for key in reversed(award_order) if key in award_counts}
 
     def soft_delete(self):
         self.deleted = timezone.now()
