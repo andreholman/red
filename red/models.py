@@ -1,6 +1,8 @@
 from dateutil.relativedelta import relativedelta
 from unittest.util import _MAX_LENGTH
 from math import log10
+from hashlib import sha512
+from base64 import urlsafe_b64encode
 
 from django.db import models
 from django.urls import reverse
@@ -44,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     edited = models.DateTimeField(null=True, blank=True, default=None)
     deleted = models.DateTimeField(null=True, blank=True, default=None)
 
-    username = models.CharField(max_length=16, unique=True)
+    username = models.CharField(max_length=16, unique=True, db_index=True)
     email = models.EmailField(max_length=255, unique=True, verbose_name="Email Address")
     avatar = models.CharField(max_length=128, null=True, blank=True)
     description = models.CharField(max_length=256, null=True, blank=True)
@@ -77,6 +79,28 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "username"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = ["email"]
+
+# class LinkOpenedRequestManager(models.Manager):
+#     # def get_queryset(self):
+#     #     minimum_created = timezone.now() - relativedelta(minutes=15)
+#     #     return super(LinkOpenedRequestManager, self).get_queryset().filter(created__gte=minimum_created)
+    
+#     # def save(self, *args, **kwargs):
+#     #     self.save(*args, **kwargs)
+#     #     print(urlsafe_b64encode(sha512(str(self.id).encode()).digest()).decode()[:-2])
+#     #     self.url = urlsafe_b64encode(sha512(str(self.id).encode()).digest()).decode()[:-2]
+
+class LinkOpenedRequest(models.Model): # resetting password, email verification...
+    created = models.DateTimeField(auto_now_add=True, null=False, blank=False, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    purpose = models.CharField(max_length=1, null=False, blank=False) # P for password, E for email
+
+    # objects = LinkOpenedRequestManager()
+
+    url = models.SlugField(unique=True, null=False, blank=False, max_length=86)
+
+    def __str__(self):
+        return self.url[:16] + "..."
 
 # Content Data
 

@@ -23,4 +23,8 @@ urlpatterns = [
     path("createaccount/", views.create_account, name="signup"), # POST
     path("login/", views.login, name="login"), # GET, POST
     path("logout/", views.logout, name="logout"), # POST
+    path("resetpassword/", views.password_changer, name="reset_password"), # GET
+    path("resetpassword/<slug:slug>/", views.password_changer, name="password_changer"), # GET, POST
+    path("createlinkverifiedrequest/", views.link_verified_request, name="link_verified_request"), # POST
+    path("tos/", views.tos, name="tos"),
 ] + staticfiles_urlpatterns() # serve statics

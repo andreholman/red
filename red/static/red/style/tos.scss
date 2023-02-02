@@ -1,0 +1,105 @@
+/* color palette */
+
+$dark: #0a0f10;
+$bg: #101421;
+$gunmetal: #718a97;
+$blue1: #7091db;
+$blue2: #5572B4;
+$blue3: #3E4E8E;
+$input-margin: 20px;
+$offwhite: #f7f5e4;
+$body: "Inter Tight";
+$sub: "Inter";
+$title: "Overpass";
+* {
+    transition: 0.2s;
+    color: $offwhite;
+}
+
+html,
+body {
+    background-color: $dark;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+section {
+    background-color: $bg;
+    width: 60%;
+    padding: 20px 60px;
+    border-radius: 30px;
+    margin: 60px 0;
+}
+
+h1,
+h2 {
+    color: white;
+    font-family: $title;
+    font-size: 40px;
+}
+
+h1 {}
+
+h2 {
+    font-size: 30px;
+    margin-top: 40px;
+    margin-bottom: 10px;
+}
+
+b {
+    font-family: $sub;
+    font-size: 24px;
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+li,
+p {
+    font-family: $body;
+    font-size: 18px;
+    margin-top: 4px;
+}
+
+a {
+    color: $blue1;
+    text-decoration: none;
+    border-bottom: 2px dotted $blue1;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-family: $body;
+    font-style: italic;
+}
+
+a:hover {
+    color: $blue2;
+    border-bottom: 2px solid $blue2;
+}
+
+@media only screen and (max-width: 811px) {
+    html,
+    body {
+        background-color: $bg;
+    }
+    h1 {
+        font-size: 45px;
+    }
+    p {
+        font-size: 20px;
+    }
+    section {
+        width: 85%;
+        padding: 20px 40px;
+        margin: auto;
+        p {
+            text-align: justify;
+        }
+        b {
+            text-align: auto;
+        }
+    }
+}

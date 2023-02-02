@@ -1,10 +1,13 @@
 import json
 from time import time as epoch
+from datetime import timedelta
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.http import Http404, HttpResponse
+from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.conf import settings as config
 
@@ -13,6 +16,9 @@ from .models import *
 ################################
 #           INTERFACE          #
 ################################
+
+def tos(request):
+    return render(request, "red/tos.html")
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):
@@ -112,6 +118,43 @@ def post_editor(request, sub):
 #             AUTH             #
 ################################
 
+def password_changer(request, slug=None):
+    match request.method:
+        case "POST":
+            try:
+                if slug:
+                    link_request = get_object_or_404(LinkOpenedRequest, url=slug, purpose="P")
+                    if timezone.now() - link_request.created >= timedelta(hours=1):
+                        link_request.delete()
+                        return HttpResponse(status=410) # expired
+                    password = str(json.loads(request.body)["password"])
+                    
+                    if len(password) != 64: # invalid password. should be a hash
+                        return HttpResponse(status=400)
+                    
+                    link_request.user.set_password(password)
+                    link_request.user.save()
+
+                    link_request.delete()
+                    return HttpResponse(status=204)
+                else:
+                    return HttpResponse(status=401)
+            except (IndexError, json.decoder.JSONDecodeError):
+                return HttpResponse(status=400)
+        case "GET":
+            if slug:
+                link_request = get_object_or_404(LinkOpenedRequest, url=slug)
+
+                context = {"verified": True, "username": link_request.user.username}
+                if timezone.now() - link_request.created >= timedelta(hours=1):
+                    link_request.delete()
+                    context["expired"] = True
+            else:
+                context = {"verified": False}
+            return render(request, "red/password_changer.html", context)
+        case _:
+            return HttpResponse(status=405)
+
 def login(request):
     match request.method:
         case "POST":
@@ -150,7 +193,6 @@ def create_account(request):
             return HttpResponse(status=400)
         except IntegrityError:
             return HttpResponse(status=403)
-        print(request_data)
         return HttpResponse(status=204)
     else:
         return HttpResponse(status=405)
@@ -202,6 +244,59 @@ def execute_vote(direction, liked_already, disliked_already, add_like, remove_li
     return HttpResponse(status=204)
 
 ########### ENDPOINTS ##########
+
+def link_verified_request(request):
+    if request.method == "POST":
+        try:
+            request_data = json.loads(request.body)
+
+            if request_data["purpose"] == "P":
+                title = "Red: Reset your password"
+                body = "Click this link to verify your identity and reset your password: {}\nNot you? You can safely ignore this email."
+            elif request_data["purpose"] == "E":
+                title = "Red: Verify your email"
+                body = "Click this link to confirm this email address: {}"
+            else: # no valid purpose included
+                return HttpResponse(status=400)
+
+            user_object = get_object_or_404(User, email__iexact=request_data["email"])
+
+            try:
+                active_request = LinkOpenedRequest.objects.get(
+                    user=user_object,
+                    created__gte=(timezone.now() - timedelta(hours=1))
+                )
+                # ratelimit
+                if active_request:
+                    return HttpResponse(status=429)
+            except LinkOpenedRequest.MultipleObjectsReturned:
+                return HttpResponse(status=429) 
+            except LinkOpenedRequest.DoesNotExist:
+                ver = LinkOpenedRequest(
+                    user=user_object,
+                    purpose=request_data["purpose"]
+                )
+                ver.save() # generates ID from db
+                slug = urlsafe_b64encode(sha512(str(ver.id + epoch()).encode()).digest()).decode()[:-2]
+
+                ver.url = slug
+                ver.save()
+
+                email_response = send_mail(
+                    title, 
+                    body.format("https://red.andreholman.com" + reverse("password_changer", kwargs={"slug":slug})),
+                    config.DEFAULT_FROM_EMAIL,
+                    [request_data["email"]]
+                )
+                
+                if email_response == 1:
+                    return HttpResponse(status=204)
+                else: # didn't work
+                    return HttpResponse(status=503)
+        except (KeyError, json.decoder.JSONDecodeError):
+            return HttpResponse(status=400) 
+    else:
+        return HttpResponse(status=405)
 
 @login_required
 def create_post(request, sub):
