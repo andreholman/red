@@ -325,7 +325,7 @@ def create_post(request, sub):
 
         request.user.liked_posts.add(new_post)
 
-        return redirect(f"/s/{sub}/posts/{new_post.id}") # redirect to new post
+        return redirect(f"/s/{sub}/posts/{new_post.id}/") # redirect to new post
     else:
         return HttpResponse(status=405) # bad request format
 

@@ -56,11 +56,10 @@ $(document).ready(function() {
                 }).catch((error) => {
                     if (error.name == "TypeError") {
                         alert_issue("Servers are unreachable. Check your connection and try again later.");
-                        hideLoader("CHANGE");
                     } else {
                         alert_issue("An unexpected error occured.")
-                        hideLoader("CHANGE");
                     }
+                    hideLoader("CHANGE");
                 })
             })
             $("#change").blur()
@@ -71,7 +70,7 @@ $(document).ready(function() {
 
     $("#send").click(function() {
         let email = $("#email").val()
-        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+        if (/^[a-zA-Z0-9]([\.-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9][a-zA-Z0-9-\.]{0,62}[a-zA-Z0-9](\.[a-zA-Z]{2,63})$/.test(email)) {
             displayLoader();
 
             fetch("/createlinkverifiedrequest/", {

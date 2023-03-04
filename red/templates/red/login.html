@@ -5,11 +5,7 @@
     <meta charset="UTF-8">
     <title>Red: Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,800;1,400;1,800&family=Inter:wght@200;800&family=Overpass:wght@600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css'>
+    {% include "red/includes/css_assets.html" %}
     <link rel="stylesheet" href="{% static 'red/style/login.css' %}">
 </head>
 
@@ -26,7 +22,7 @@
                     <i class="fas fa-user icon"></i>
                 </div>
                 <div class="inputfield hidden" id="emaildiv">
-                    <input type="email" id="email" name="e" placeholder="Email" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="3">
+                    <input type="email" id="email" name="e" placeholder="Email" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="3" maxlength="255">
                     <i class="fas fa-at icon"></i>
                 </div>
                 <div class="inputfield">
@@ -39,7 +35,7 @@
                 </div>
                 <div class="inputfield hidden" id="agreediv">
                     <input type="checkbox" id="agreefield" name="agree">
-                    <label for="agreefield"><i id="checkbox" class="fas fa-check icon"></i> I agree to the <a href="/tos" target="_blank" rel="noreferrer noopener">Terms of Service</a></label>
+                    <label for="agreefield"><i id="checkbox" class="fas fa-check icon"></i> I agree to the<a href="/tos" target="_blank" rel="noreferrer noopener" id="tos">Terms of Service</a></label>
                 </div>
                 <div class="inputfield hidden" id="wrongdiv">
                     <p id="wrongdoing"></p>
@@ -55,9 +51,6 @@
                 </div>
             </form>
         </div>
-    </section>
-    <section class="scrolled">
-        <h2>This text should appear at the bottom</h2>
     </section>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
     <script src="{% static 'red/script/lib.js' %}?checksum=ba411cafee2f0f702522369da0b765e2"></script>

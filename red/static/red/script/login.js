@@ -1,6 +1,6 @@
 let agreed = false;
-const blue = "#3E4E8E";
-const gunmetal = "#5b6d77";
+const blue3 = "#3E4E8E";
+const gray = "#515164";
 const SALT = "J33chivedMDjKs0bx65"
 
 async function sha256(string) {
@@ -16,24 +16,30 @@ async function sha256(string) {
 $(document).ready(function() {
     let attempts = 0;
 
+    function alert_issue(issue) {
+        $("#wrongdoing").text(issue);
+        $("#wrongdiv").removeClass("hidden")
+    }
+
+    function handleRequestError(error) {
+        if (error.name == "TypeError") {
+            alert_issue("Servers are unreachable. Check your connection and try again later.");
+        } else {
+            alert_issue("An unexpected error occured.")
+        }
+    }
+
     $("#agreefield").change(function() {
         if (this.checked) {
             $("#checkbox").addClass("selected");
             agreed = true;
             if ($("#email").val() != "" && $("#password").val() != "") {
                 $("#createaccount").addClass("accentshould");
+                $("#login").removeClass("accentshould");
             }
         } else {
             $("#checkbox").removeClass("selected");
             agreed = false;
-            $("#createaccount").removeClass("accentshould");
-        }
-    });
-
-    $("input").on("keypress", function() {
-        if (agreed && $("#email").val() != "" && $("#password").val() != "") {
-            $("#createaccount").addClass("accentshould");
-        } else {
             $("#createaccount").removeClass("accentshould");
         }
     });
@@ -59,34 +65,34 @@ $(document).ready(function() {
                             params.get("next") ? params.get("next") : "/"
                         );
                         break;
-                    case 400:
-                        alert("Bad request!")
-                        break;
                     case 403:
-                        alert("Invalid Credentials!")
+                        alert("Incorrect username or password.")
+                        break;
                     default:
                         alert("Something went wrong!")
                         break;
                 }
-            })
+            }).catch(handleRequestError)
         })
     });
 
     $("#createaccount").click(function() {
-        $("#emaildiv,#confirmdiv,#agreediv").removeClass("hidden");
-        $("#login").removeClass("accentshould");
-        $(".hidden").css("display", "auto");
-
-        const unfocus = setTimeout(function() {
-            $("#createaccount").blur();
-        }, 300);
-
-        if (!agreed && attempts >= 1) {
-            $("#wrongdoing").text("You must agree to create your account.");
-            $("#wrongdiv").removeClass("hidden");
-        } else if ($("#confirm").val() != $("#password").val() && attempts >= 1) {
-            $("#wrongdoing").text("The passwords you entered do not match.");
-            $("#wrongdiv").removeClass("hidden");
+        let email = $("#email").val()
+        if (attempts == 0) { // first click
+            $("#emaildiv,#confirmdiv,#agreediv").removeClass("hidden");
+        } else if (!(/^[\w-]{3,16}$/.test($("#username").val()))) {
+            alert_issue("Usernames must contain 3 to 16 alphanumeric characters, underscores, and dashes.")
+        } else if (
+            email.length < 7 ||
+            !(/^[a-zA-Z0-9]([\.-]?[a-zA-Z0-9]+)*@[a-zA-Z0-9][a-zA-Z0-9-\.]{0,62}[a-zA-Z0-9](\.[a-zA-Z]{2,63})$/.test(email))
+        ) {
+            alert_issue("Enter a valid email.");
+        } else if (!agreed) {
+            alert_issue("You must agree to create your account.");
+        } else if ($("#confirm").val() != $("#password").val()) {
+            alert_issue("The passwords you entered do not match.");
+        } else if ($("#password").val().length < 8) {
+            alert_issue("Passwords must be eight characters or more.")
         } else {
             sha256(SALT + $("#password").val()).then((hashed) => {
                 fetch('/createaccount/', {
@@ -109,29 +115,41 @@ $(document).ready(function() {
                             );
                             break;
                         case 400:
-                            alert("Bad request!")
+                            alert_issue("Bad request!")
                             break;
                         case 403:
-                            alert("This username or email is taken!")
+                            alert_issue("This username or email is taken!")
+                            break;
                         default:
-                            alert("Something went wrong!")
+                            alert_issue("Something went wrong!")
                             break;
                     }
-                })
+                }).catch(handleRequestError)
             })
         }
         attempts++;
     });
+
     $("label").hover(
         function() {
-            $("#checkbox").css("border-color", blue);
+            $("#checkbox").addClass("hovered");
         },
         function() {
-            $("#checkbox").css("border-color", gunmetal);
+            $("#checkbox").removeClass("hovered");
         }
     );
+
+    $("#tos").hover(
+        function() {
+            $("#checkbox").removeClass("hovered");
+        },
+        function() {
+            $("#checkbox").addClass("hovered");
+        }
+    )
+
     $("input").on("keypress", function(e) {
-        if (e.which == 13) {
+        if (e.which == 13 && !$("#createaccount").is(":focus")) { // on enter
             $(".accentshould").click();
         }
     });
