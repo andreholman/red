@@ -243,6 +243,19 @@ def execute_vote(direction, liked_already, disliked_already, add_like, remove_li
         return HttpResponse(status=400)
     return HttpResponse(status=204)
 
+def increase_user_points(content):
+    try:
+        print("Adding for " + str(content.vote_difference - 100) )
+        content.author.points += config.ADDITIVE_KARMA[content.vote_difference + 100]
+        content.author.save()
+    except IndexError: pass
+
+def decrease_user_points(content):
+    try:
+        content.author.points -= config.ADDITIVE_KARMA[content.vote_difference + 101]
+        content.author.save()
+    except IndexError: pass
+
 ########### ENDPOINTS ##########
 
 def link_verified_request(request):
@@ -337,30 +350,38 @@ def post_vote(request, sub, post_id):
 
             if str(request_validated.sub) != sub:
                 return HttpResponse(status=404)
-            
+
             def add_like():
                 request_validated.likes += 1
                 request_validated.save()
 
                 request.user.liked_posts.add(request_validated)
+                
+                increase_user_points(request_validated)
             
             def remove_like():
                 request_validated.likes -= 1
                 request_validated.save()
 
                 request.user.liked_posts.remove(request_validated)
-            
+
+                decrease_user_points(request_validated)
+
             def add_dislike():
                 request_validated.dislikes += 1
                 request_validated.save()
 
                 request.user.disliked_posts.add(request_validated)
-            
+
+                decrease_user_points(request_validated)
+
             def remove_dislike():
                 request_validated.dislikes -= 1
                 request_validated.save()
 
                 request.user.disliked_posts.remove(request_validated)
+
+                increase_user_points(request_validated)
 
             liked_already = request.user.liked_posts.filter(id=request_validated.id).exists()
             disliked_already = request.user.disliked_posts.filter(id=request_validated.id).exists()
@@ -453,24 +474,32 @@ def comment_vote(request, sub, post_id):
 
                 request.user.liked_comments.add(comment_object)
             
+                increase_user_points(comment_object)
+
             def remove_like():
                 comment_object.likes -= 1
                 comment_object.save()
 
                 request.user.liked_comments.remove(comment_object)
-            
+                
+                decrease_user_points(comment_object)
+
             def add_dislike():
                 comment_object.dislikes += 1
                 comment_object.save()
 
                 request.user.disliked_comments.add(comment_object)
-            
+                
+                decrease_user_points(comment_object)
+
             def remove_dislike():
                 comment_object.dislikes -= 1
                 comment_object.save()
 
                 request.user.disliked_comments.remove(comment_object)
             
+                increase_user_points(comment_object)
+
             liked_already = request.user.liked_comments.filter(id=comment_object.id).exists()
             disliked_already = request.user.disliked_comments.filter(id=comment_object.id).exists()
 

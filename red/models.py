@@ -194,6 +194,10 @@ class Post(AbstractBaseContent):
     @property
     def comment_count(self):
         return Comment.objects.filter(post=self).count()
+    
+    @property
+    def vote_difference(self):
+        return self.likes - self.dislikes
 
     def __str__(self):
         return self.title + " by " + self.author.username
@@ -208,6 +212,10 @@ class Comment(AbstractBaseContent):
 
     likes = models.IntegerField(default=0)
     dislikes = models.IntegerField(default=0)
+
+    @property
+    def vote_difference(self):
+        return self.likes - self.dislikes
 
     def __str__(self):
         if len(self.content) > 64:

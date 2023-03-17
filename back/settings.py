@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import environ
+import decimal
 import os
 
 env = environ.Env()
@@ -57,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CSRF_COOKIE_HTTP_ONLY = False
 
 ROOT_URLCONF = 'back.urls'
 
@@ -160,3 +163,8 @@ AWARDS_LIST = {
     "Emerald": 20000,
     "Rhodium": 50000
 }
+
+# 100k length list
+with open("additive_karma.txt") as file:
+    ADDITIVE_KARMA = file.read().split(', ')
+ADDITIVE_KARMA = [decimal.Decimal(i) for i in ADDITIVE_KARMA] # items are read as strings. convert back to floats
