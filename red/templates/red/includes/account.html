@@ -1,4 +1,6 @@
+<a href="/">Home</a> 
 {% if user.is_authenticated %}
+<a href="/saved">Saved</a>
 <a href='{% url "user" user.username %}'>Logged in as u/{{ user.username }}</a> {{ user.coins }} coins
 <button type="button" id="logout">Logout</button>
 {% else %}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Feed</title>
+
+    <!-- REMOVE THOSE DOWN HERE AND REPLACE WITH CSS ASSETS INCLUDE!! -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,800;1,400;1,800&family=Inter:wght@300;500;800&family=Overpass:wght@700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css'>
+    <!--  REMOVE THOSE UP HERE AND REPLACE WITH CSS ASSETS INCLUDE!!  -->
+    <link rel="stylesheet" href="feed.css">
+</head>
+
+<body>
+    <nav>
+        <a href="/">
+            <header>
+                <img src="r_min.png"></img>
+                <h1>Red</h1>
+            </header>
+        </a>
+
+        <div class="selected tab" id="home">
+            <i class="fa-solid fa-house-user" style="color: #7091db"></i>
+            <h2>Home</h2>
+        </div>
+        <div class="tab" id="search">
+            <i class="fa-solid fa-magnifying-glass" style="color: #63D471"></i>
+            <h2>Search</h2>
+        </div>
+        <div class="tab" id="popular">
+            <i class="fa-solid fa-arrow-trend-up" style="color: #F78764"></i>
+            <h2>Popular</h2>
+        </div>
+        <div class="tab" id="saved">
+            <i class="fa-solid fa-bookmark" style="color: #F4F0BB"></i>
+            <h2>Saved</h2>
+        </div>
+        <div class="tab" id="profile">
+            <i class="fa-solid fa-user" style="color: #725AC1"></i>
+            <h2>My Profile</h2>
+        </div>
+        <div class="tab" id="settings">
+            <i class="fa-solid fa-sliders" style="color: #8dccc5"></i>
+            <h2>Settings</h2>
+        </div>
+
+        <footer>
+            <div id="switch">
+                <div id="selector"></div>
+                <div class="selected option" id="dark">
+                    <i class="fa-solid fa-moon"></i> Dark
+                </div>
+                <div id="spacer"></div>
+                <div class="option" id="light">
+                    <i class="fa-solid fa-sun"></i> Light
+                </div>
+            </div>
+        </footer>
+    </nav>
+
+    <div id="content-wrapper">
+        <div class="image post">
+            <header>
+                <h3>SVG background</h3>
+
+                <div class="info">
+                    <div>
+                        <i class="fa-solid fa-at"></i>
+                        <p class="username">Qi</p>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-clock"></i>
+                        <p>6h</p>
+                    </div>
+                </div>
+            </header>
+
+            <div class="vote">
+                <i class="up fa-solid fa-chevron-up"></i>
+                <p class="odometer">562</p>
+                <i class="down fa-solid fa-chevron-down"></i>
+            </div>
+
+            <img src="cityscape.jpg">
+        </div>
+
+        <div class="image post">
+            <header>
+                <h3>A lot of characters in this title. Can the UI design handle it cleanly?</h3>
+
+                <div class="info">
+                    <div>
+                        <i class=" fa-solid fa-at "></i>
+                        <p class="username ">Qi</p>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-clock "></i>
+                        <p>43m</p>
+                    </div>
+                </div>
+            </header>
+
+            <div class="vote ">
+                <i class="up fa-solid fa-chevron-up "></i>
+                <p class="odometer ">399</p>
+                <i class="down fa-solid fa-chevron-down "></i>
+            </div>
+
+            <img src="cold_climate.png ">
+        </div>
+
+        <div class="text post ">
+            <header>
+                <h3>something new</h3>
+
+                <div class="info">
+                    <div>
+                        <i class="fa-solid fa-at "></i>
+                        <p class="username ">Qi</p>
+                    </div>
+                    <div>
+                        <i class="fa-solid fa-clock "></i>
+                        <p>2d</p>
+                    </div>
+                </div>
+            </header>
+
+            <div class="vote ">
+                <i class="up fa-solid fa-chevron-up "></i>
+                <p class="odometer ">13</p>
+                <i class="down fa-solid fa-chevron-down "></i>
+            </div>
+            <p>
+                This is just a text post. It's styled differently than from the image post. Words in english are being typed here.
+            </p>
+        </div>
+    </div>
+    <section id="sidebar "></section>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js " integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin=" anonymous "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js " integrity="sha512-51WDTV7haD9BBDc8RWH2r5TnuSiRyAqEnbGyuKHYn+qpYCrCckxFeqlr1I5UoOULijyLV2vnHO9LS4MrAzHxwQ==" crossorigin=" anonymous " referrerpolicy="no-referrer "></script>
+    <script src="feed.js "></script>
+</body>
+
+</html>

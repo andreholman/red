@@ -92,14 +92,21 @@ def post(request, sub, post_id):
                 unchecked_comments.remove(c)
     
     top_level_comments = [c for c in comments if not c.parent]
-
+    
     for c in top_level_comments:
         add_comment(c, 0)
         replies = [reply for reply in comments if reply.parent == c]
         if len(replies): # comment has children
             check_children(c, 1)
-    
-    context = {"post": post, "comments": comment_depth_list, "sorting": sort}
+
+    if request.user.is_anonymous:
+        saved = False
+        saved_comments = []
+    else:
+        saved = True
+        saved_comments = request.user.saved_comments.filter(post__id=post_id)
+
+    context = {"post": post, "comments": comment_depth_list, "sorting": sort, "saved": saved, "saved_comments": saved_comments}
     return render(request, "red/post.html", context)
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -245,7 +252,6 @@ def execute_vote(direction, liked_already, disliked_already, add_like, remove_li
 
 def increase_user_points(content):
     try:
-        print("Adding for " + str(content.vote_difference - 100) )
         content.author.points += config.ADDITIVE_KARMA[content.vote_difference + 100]
         content.author.save()
     except IndexError: pass
@@ -391,6 +397,21 @@ def post_vote(request, sub, post_id):
             return HttpResponse(status=400)
     else:
         return request_validated
+    
+def post_save(request, sub, post_id): # toggles save
+    request_validated = validate_api_request(request, "PATCH", post_id)
+    if type(request_validated) != HttpResponse:
+        if str(request_validated.sub) != sub:
+            return HttpResponse(status=404)
+        
+        if request.user.saved_posts.filter(id=post_id).exists():
+            request.user.saved_posts.remove(request_validated)
+        else:
+            request.user.saved_posts.add(request_validated)
+        
+        return HttpResponse(status=204)
+    else:
+        return request_validated
 
 def update_post(request, sub, post_id):
     request_validated = validate_api_request(request, "PUT", post_id, True)
@@ -508,6 +529,19 @@ def comment_vote(request, sub, post_id):
             return HttpResponse(status=400) # improper format 
     else:
         return request_validated
+
+def comment_save(request, sub, post_id):
+    request_validated = validate_api_request(request, "PATCH", post_id)
+    if type(request_validated) != HttpResponse:
+        if str(request_validated.sub) != sub:
+            return HttpResponse(status=404)
+        
+        try:
+            request_data = json.loads(request.body)
+            
+
+        except (KeyError, ValueError, json.decoder.JSONDecodeError):
+            return HttpResponse(status=400)
 
 def update_comment(request, sub, post_id):
     request_validated = validate_api_request(request, "PUT", post_id)

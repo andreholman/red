@@ -33,6 +33,28 @@ $(function() {
         })
     })
 
+    $(".save").click((event) => {
+        fetch("save/", {
+            method: "PATCH",
+            headers: apiHeaders,
+        }).then((output) => {
+            switch (output.status) {
+                case 204: // success
+                    window.location.reload()
+                    break;
+                case 401:
+                    alert("You must be logged in to do that!");
+                    break;
+                case 403:
+                    alert("No permission!")
+                    break;
+                default:
+                    alert("Something went wrong!")
+                    break;
+            }
+        })
+    })
+
     editOpen = false;
 
     $("#update-post").click(() => {
@@ -142,6 +164,7 @@ $(function() {
         return parseInt($(node).parent().attr("id"))
     }
 
+    let parent_id;
     // vote on comment
     $(".comment-vote").click((event) => {
         if ($(event.target).hasClass("down")) {

@@ -56,6 +56,13 @@
 
     <button type="button" class="post-vote up" {% if post.deleted %}disabled{%endif%}>Vote Up</button>
     <button type="button" class="post-vote down" {% if post.deleted %}disabled{%endif%}>Vote Down</button>
+    <button type="button" class="save" {% if post.deleted %}disabled{%endif%}>
+        {% if saved %}
+        Unsave Post
+        {% else %}
+        Save Post
+        {% endif %}
+    </button>
     {% if user == post.author %}
     <button type="button" id="update-post" {% if post.deleted %}disabled{%endif%}>Edit</button>
     <button type="button" id="cancel-post" {% if post.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}
@@ -129,6 +136,13 @@
 
             <button type="button" class="comment-vote up" {% if comment.comment.deleted %}disabled{%endif%}>Vote Up</button>
             <button type="button" class="comment-vote down" {% if comment.comment.deleted %}disabled{%endif%}>Vote Down</button>
+            <button type="button" class="comment-save save" {% if comment.comment.deleted %}disabled{%endif%}>
+                {% if comment.comment in saved_comments %}
+                Unsave Comment
+                {% else %}
+                Save Comment
+                {% endif %}
+            </button>
             {% if user == comment.comment.author and not comment.comment.deleted%}
             <button type="button" class="comment-update" id="update-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%}>Edit</button>
             <button type="button" class="comment-cancel" id="cancel-{{comment.comment.id}}" {% if comment.comment.deleted %}disabled{%endif%} style="display:none;">Cancel</button> {% comment %} for cancelling editing {% endcomment %}

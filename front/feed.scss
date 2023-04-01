@@ -1,0 +1,468 @@
+$outer-spacing: 24px;
+$spacing: 20px;
+$inner-spacing: 12px;
+$border: 16px;
+$section-radius: 27px;
+$radius: 18px;
+$inner-radius: 9px;
+$sidebar-min-width: 200px;
+$black: #131215;
+$dark: #2e2d35;
+$gray: #3c3b43;
+$midgray: #646367;
+$lightgray: #a9a8ad;
+$accent-white: #e2e9fa;
+$offwhite: #f7f5e4;
+$white: #f9fbfd;
+@keyframes shake {
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-3px, 0, 0);
+    }
+    40%,
+    60% {
+        transform: translate3d(3px, 0, 0);
+    }
+}
+
+html {
+    margin: 0;
+    background: $black;
+    height: 100vh;
+}
+
+body {
+    margin: $spacing;
+    padding-right: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    nav,
+    #sidebar {
+        width: 20%;
+        min-width: $sidebar-min-width;
+    }
+    nav {
+        height: calc(100vh - $spacing*2);
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        position: fixed;
+        a {
+            text-decoration: none;
+            margin-bottom: $spacing;
+        }
+        header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            vertical-align: center;
+            justify-content: middle;
+            margin: $spacing 0;
+            img {
+                height: 54px;
+                margin-right: 20px;
+            }
+            h1 {
+                color: white;
+                font-family: "Inter";
+                font-size: 30px;
+                font-weight: 800;
+                line-height: 20px;
+                padding: none;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+            }
+        }
+        div.tab {
+            width: 100%;
+            height: 40px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: $border/2;
+            cursor: pointer;
+            color: $lightgray;
+            border-radius: $inner-radius;
+            transition: 0.2s;
+            i {
+                margin: 0 $border;
+                width: 20px;
+                text-align: center;
+            }
+            h2 {
+                transition: 0.2s;
+                font-family: "Inter";
+                font-weight: 500;
+            }
+        }
+        div.tab:hover {
+            color: white;
+        }
+        div.tab.selected {
+            color: white;
+        }
+        div.tab.selected#home {
+            background: $gray;
+            background: linear-gradient(90deg, #4b76d2 -94%, $gray 28%);
+        }
+        div.tab.selected#search {
+            background: $gray;
+            background: linear-gradient(90deg, #3FCA4F -94%, $gray 28%);
+        }
+        div.tab.selected#popular {
+            background: $gray;
+            background: linear-gradient(90deg, #F4592A -94%, $gray 28%);
+        }
+        div.tab.selected#saved {
+            background: $gray;
+            background: linear-gradient(90deg, #EEE896 -94%, $gray 28%);
+        }
+        div.tab.selected#profile {
+            background: $gray;
+            background: linear-gradient(90deg, #553EA3 -94%, $gray 28%);
+        }
+        div.tab.selected#settings {
+            background: $gray;
+            background: linear-gradient(90deg, #1b998b -94%, $gray 28%);
+        }
+        footer {
+            margin-top: auto;
+            width: 100%;
+            height: 40px + $border;
+            #switch {
+                display: flex;
+                flex-direction: row;
+                height: 40px;
+                background: $dark;
+                border-radius: $radius;
+                padding: calc($border/2);
+                position: relative;
+                z-index: 0;
+                color: $lightgray;
+                cursor: pointer;
+                #spacer {
+                    width: calc($border/2);
+                }
+                .option {
+                    text-align: center;
+                    vertical-align: middle;
+                    display: inline-block;
+                    width: 50%;
+                    height: 100% !important;
+                    line-height: 40px;
+                    transition: 0.2s ease-in;
+                    user-select: none;
+                }
+                #selector {
+                    height: calc(100% - $border);
+                    width: calc(50% - $border* 3/4);
+                    z-index: -1;
+                    position: absolute;
+                    background: $black;
+                    border-radius: $inner-radius;
+                    transition: 333ms cubic-bezier(.43, .79, .75, .95);
+                    left: calc($border/2);
+                    &.light {
+                        left: calc(50% + $border/4);
+                    }
+                }
+                .selected {
+                    color: white;
+                }
+            }
+        }
+    }
+    #content-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: middle;
+        background: $dark;
+        width: 500px;
+        padding: $spacing*2;
+        padding-bottom: $spacing;
+        margin-left: max(200px + $spacing, calc(20% + $spacing*2)); // makes it minimum 200px
+        margin-bottom: $spacing;
+        border-radius: $section-radius;
+    }
+    .post {
+        color: white;
+        border-right: $border solid $black;
+        background: $black;
+        border-radius: $radius;
+        margin: 0;
+        margin-bottom: $spacing;
+        header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            color: $lightgray;
+            padding-left: $border;
+            min-height: 52px;
+            h3 {
+                font-family: "Overpass";
+                font-weight: 700;
+                color: white;
+                display: inline-block;
+                margin: $inner-spacing + 4px $inner-spacing $inner-spacing 0;
+                font-size: 20px;
+                text-align: left;
+            }
+            p {
+                display: inline;
+                font-family: "Inter Tight";
+                font-size: 14px;
+                cursor: help;
+                transition: 0.2s;
+            }
+            .username {
+                margin-right: $inner-spacing;
+                cursor: pointer;
+            }
+            p:hover,
+            i:hover+p {
+                color: $offwhite;
+            }
+            i {
+                display: inline;
+                padding-right: calc($spacing/6);
+                transition: 0.2s;
+            }
+            .info {
+                margin-left: auto;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                div {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                }
+            }
+            .white {
+                // Used for making the pointers white 
+                color: $offwhite;
+            }
+        }
+        .vote {
+            float: left;
+            width: 60px;
+            padding: 0;
+            margin-bottom: $border - 2px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            i {
+                z-index: 9;
+                font-size: 28px;
+                line-height: 28px;
+                height: 28px;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+            .up:hover,
+            .up.voted {
+                color: tomato;
+            }
+            .down:hover,
+            .down.voted {
+                color: blueviolet;
+            }
+            i.fa-bounce {
+                animation: fa-bounce 0.8s infinite linear !important;
+            }
+            i.shake {
+                animation: shake 0.6s ease-in-out both;
+            }
+            p {
+                font-family: "JetBrains Mono";
+                font-size: 20px;
+                margin: 2px 0 0 0;
+                transition: 0.2s;
+            }
+        }
+    }
+    .image {
+        // image posts
+        position: relative;
+        img {
+            float: right;
+            width: calc(100% - 60px);
+            object-fit: contain;
+            margin: 0;
+            padding: 0;
+            border-radius: $inner-radius;
+        }
+        img::selection {
+            background: none !important;
+        }
+        .options {
+            height: 60px;
+        }
+    }
+    .text {
+        p {
+            font-family: "Inter Tight";
+        }
+    }
+    #sidebar {
+        // background: $dark;
+        position: sticky;
+        top: $spacing;
+        height: auto;
+    }
+}
+
+////////////////////////////////////////////
+/// 
+/// LIGHT THEME
+/// 
+////////////////////////////////////////////
+html.light {
+    background: $white;
+}
+
+body.light {
+    nav {
+        header {
+            h1 {
+                color: $black;
+            }
+        }
+        footer {
+            #switch {
+                background: $accent-white;
+                color: $midgray;
+                #selector {
+                    background: $white;
+                }
+                .selected {
+                    color: $black;
+                }
+            }
+        }
+    }
+    #content-wrapper {
+        background: $accent-white;
+    }
+    .post {
+        color: $black;
+        border-right: $border solid $white;
+        background: $white;
+        header {
+            color: $midgray;
+            h3 {
+                color: $black;
+            }
+            .white {
+                // Used for making the pointers white 
+                color: $offwhite;
+            }
+        }
+        .vote {
+            .up:hover,
+            .up.voted {
+                color: tomato;
+            }
+            .down:hover,
+            .down.voted {
+                color: blueviolet;
+            }
+        }
+    }
+}
+
+.odometer.odometer-auto-theme,
+.odometer.odometer-theme-minimal {
+    display: inline-block;
+    vertical-align: middle;
+    *vertical-align: auto;
+    *zoom: 1;
+    *display: inline;
+    position: relative;
+}
+
+.odometer.odometer-auto-theme .odometer-digit,
+.odometer.odometer-theme-minimal .odometer-digit {
+    display: inline-block;
+    vertical-align: middle;
+    *vertical-align: auto;
+    *zoom: 1;
+    *display: inline;
+    position: relative;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-digit-spacer,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-digit-spacer {
+    display: inline-block;
+    vertical-align: middle;
+    *vertical-align: auto;
+    *zoom: 1;
+    *display: inline;
+    visibility: hidden;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-digit-inner,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-digit-inner {
+    text-align: left;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-ribbon,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-ribbon {
+    display: block;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-ribbon-inner {
+    display: block;
+    backface-visibility: hidden;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-value,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-value {
+    display: block;
+    transform: translateZ(0);
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-value.odometer-last-value,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-value.odometer-last-value {
+    position: absolute;
+}
+
+.odometer.odometer-auto-theme.odometer-animating-up .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-up .odometer-ribbon-inner {
+    transition: transform 0.75s;
+}
+
+.odometer.odometer-auto-theme.odometer-animating-up.odometer-animating .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-up.odometer-animating .odometer-ribbon-inner {
+    transform: translateY(-100%);
+}
+
+.odometer.odometer-auto-theme.odometer-animating-down .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-down .odometer-ribbon-inner {
+    transform: translateY(-100%);
+}
+
+.odometer.odometer-auto-theme.odometer-animating-down.odometer-animating .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-down.odometer-animating .odometer-ribbon-inner {
+    transition: transform 0.75s;
+    transform: translateY(0);
+}
