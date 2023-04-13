@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load mathfilters %}
+{% load humanize %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Red: Home</title>
+    <!-- REMOVE THOSE DOWN HERE AND REPLACE WITH CSS ASSETS INCLUDE!! -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,800;1,400;1,800&family=Inter:wght@300;500;800&family=Overpass:wght@700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    />
+    <!--  REMOVE THOSE UP HERE AND REPLACE WITH CSS ASSETS INCLUDE!!  -->
+    <link rel="stylesheet" href="{% static 'red/style/feed.css' %}">
+</head>
+
+<body>
+    <nav>
+        <a href="/">
+            <header>
+                <img src="{% static 'red/assets/r_min.png' %}"></img>
+                <h1>Red</h1>
+            </header>
+        </a>
+        <div class="selected tab" id="home">
+            <i class="fa-solid fa-house-user"></i>
+            <h2>Home</h2>
+        </div>
+        <div class="tab" id="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <h2>Search</h2>
+        </div>
+        <div class="tab" id="popular">
+            <i class="fa-solid fa-arrow-trend-up"></i>
+            <h2>Popular</h2>
+        </div>
+        <div class="tab" id="saved">
+            <i class="fa-solid fa-bookmark"></i>
+            <h2>Saved</h2>
+        </div>
+        <div class="tab" id="profile">
+            <i class="fa-solid fa-user"></i>
+            <h2>My Profile</h2>
+        </div>
+        <div class="tab" id="settings">
+            <i class="fa-solid fa-sliders"></i>
+            <h2>Settings</h2>
+        </div>
+        <footer>
+            <div id="switch">
+                <div id="selector"></div>
+                <div class="selected option" id="dark">
+                    <i class="fa-solid fa-moon"></i> Dark
+                </div>
+                <div id="spacer"></div>
+                <div class="option" id="light">
+                    <i class="fa-solid fa-sun"></i> Light
+                </div>
+            </div>
+        </footer>
+    </nav>
+    <div id="content-wrapper">
+        {% if post_list %}
+        {% for post in post_list %}
+            <div class="{% if post.attached %} image {% else %} text {% endif %} post" data-id={{ post.id }}>
+                <header>
+                    <a href="{% url 'post' post.sub.name post.id %}">
+                        <h3>{{post.title}}</h3>
+                    </a>
+
+                    {% if post.awards %}
+                    <div class="tags">
+                        <h5>Awards:</h5>
+                        {% for name, count in post.award_count.items %}
+                        <div class="{{name}}">
+                        {% if name == "shrimp" %}
+                            <i class="fa-solid fa-shrimp"></i>
+                        {% elif name == "silver" %}
+                            <span class="fa-stack">
+                                <i class="fa-solid fa-circle fa-stack-2x"></i>
+                                <i class="fa-solid fa-s fa-stack-1x fa-fw"></i>
+                            </span>
+                        {% elif name == "fish" %}
+                            <i class="fa-solid fa-fish-fins"></i>
+                        {% elif name == "gold" %}
+                            <i class="fa-solid fa-medal"></i>
+                        {% elif name == "platinum" %}
+                            <i class="fa-solid fa-trophy"></i>
+                        {% elif name == "emerald" %}
+                            <i class="fa-solid fa-gem"></i>
+                        {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="info">
+                        <a href='{% url "user" post.author %}'>
+                            <div>
+                                {% if user == post.author %}
+                                <i class="fa-solid fa-at self"></i>
+                                <p class="username self">{{post.author}}</p>
+                                {% else %}
+                                <i class="fa-solid fa-at"></i>
+                                <p class="username">{{post.author}}</p>
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div>
+                            <i class="fa-solid fa-clock"></i>
+                            <p title="{{ post.created }}">{{ post.delta_timestamp }}</p>
+                        </div>
+                    </div>
+                </header>
+                <div class="vote">
+                    <i class="up fa-solid fa-chevron-up {% if post in liked %}voted{% endif %}"></i>
+                    <p class="odometer">{{ post.likes|sub:post.dislikes }}</p>
+                    <i class="down fa-solid fa-chevron-down {% if post in disliked %}voted{% endif %}"></i>
+                </div>
+
+                {% if post.attached %}
+                {% if post.nsfw or post.spoiler %}
+                <div class="wrapper">
+                    <div class="hider">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span>
+                            {% if post.nsfw and post.spoiler %}
+                            NSFW + Spoiler
+                            {% elif post.nsfw %}
+                            NSFW
+                            {% elif post.spoiler %}
+                            Spoiler
+                            {% endif %}
+                        </span>
+                    </div>
+                    <img src="{{post.attached}}" class="post-content hidden">
+                </div>
+                {% else %}
+                <img src="{{post.attached}}" class="post-content">
+                {% endif%}
+                {% else %}
+                <p class="{% if post.nsfw or post.spoiler %}hidden{%endif%} post-content">{{post.content}}</p>
+                {% endif %}
+
+                {% if post.nsfw or post.spoiler %}
+                {% if not post.attached %} {% comment %} have to nest this because django doesn't support parentheses in the if statements {% endcomment %}
+                <div class="hider">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>
+                        {% if post.nsfw and post.spoiler %}
+                        NSFW + Spoiler
+                        {% elif post.nsfw %}
+                        NSFW
+                        {% elif post.spoiler %}
+                        Spoiler
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+                {% endif %}
+                <footer>
+                    <a href='{% url "sub" post.sub.name %}'>
+                        <p class="sub">
+                            <i class="fa-solid fa-section"></i> {{post.sub.name}}
+                        </p>
+                    </a>
+                    <p class="comments">
+                        <i class="fa-solid fa-message"></i> {{ post.comment_count }}
+                    </p>
+                    <div class="buttons">
+                        {% if post.author != user %}
+                        <button class="award">
+                            <span>Award</span>
+                            <i class="fa-solid fa-award"></i>
+                        </button>
+                        {% endif %}
+                        
+                        <button class="share">
+                            <span>Share</span>
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </button>
+                        <button class="save">
+                            <span>
+                                {% if post in saved %}
+                                Unsave
+                                {% else %}
+                                Save
+                                {% endif %}
+                            </span>
+                            <i class="fa-solid fa-bookmark {% if post in saved %}saved{% endif %}"></i>
+                        </button>
+                    </div>
+                </footer>
+            </div>
+        {% endfor %}
+        {% else %}
+        <h3>There are no posts</h3>
+        {% endif %}
+        
+    </div>
+    {% if user.is_authenticated %}
+    <div id="award-modal">
+        <header>
+            <h2>Give an award</h2>
+            <p>
+                <i class="fa-solid fa-coins"></i> {{ user.coins|intcomma }}
+            </p>
+        </header>
+        <div id="awards">
+            <div class="first-fields row">
+                <div class="award-type shrimp {% if user.coins <= 50 %}disabled{% endif %}" id="shrimp">
+                    <h4>Shrimp</h4>
+                    <i class="fa-solid fa-shrimp"></i>
+                    <p>50</p>
+                </div>
+                <div class="award-type silver {% if user.coins <= 100 %}disabled{% endif %}" id="silver">
+                    <h4>Silver</h4>
+                    <span class="fa-stack">
+                        <i class="fa-solid fa-circle fa-stack-2x"></i>
+                        <i class="fa-solid fa-s fa-stack-1x fa-fw"></i>
+                    </span>
+                    <p>100</p>
+                </div>
+                <div class="award-type fish {% if user.coins <= 250 %}disabled{% endif %}" id="fish">
+                    <h4>Fish</h4>
+                    <i class="fa-solid fa-fish-fins"></i>
+                    <p>250</p>
+                </div>
+            </div>
+            <div class="first-fields row">
+                <div class="award-type gold {% if user.coins <= 500 %}disabled{% endif %}" id="gold">
+                    <h4>Gold</h4>
+                    <i class="fa-solid fa-medal"></i>
+                    <p>500</p>
+                </div>
+                <div class="award-type platinum {% if user.coins <= 1800 %}disabled{% endif %}" id="platinum">
+                    <h4>Platinum</h4>
+                    <i class="fa-solid fa-trophy"></i>
+                    <p>1,800</p>
+                </div>
+                <div class="award-type emerald {% if user.coins <= 20000 %}disabled{% endif %}" id="emerald">
+                    <h4>Emerald</h4>
+                    <i class="fa-solid fa-gem"></i>
+                    <p>20,000</p>
+                </div>
+            </div>
+            <div class="next-fields row">
+                <input type="text" placeholder="Optional message" id="message">
+            </div>
+            <div class="next-fields row">
+                <input type="checkbox" id="anon">
+                <label for="anon"><i id="checkbox" class="fas fa-check icon"></i>Anonymous</label>
+                <button>
+                    <span>Send</span>
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <p id="cancel">Press ESC to cancel</p>
+    </div>
+    {% endif %}
+    <section id=" sidebar "></section>
+    <script type="text/javascript">
+        {% if user.is_authenticated %}
+        const loggedIn = true;
+        {% else %}
+        const loggedIn = false;
+        {% endif %}
+    </script>
+   
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js " integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin=" anonymous "></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js " integrity="sha512-51WDTV7haD9BBDc8RWH2r5TnuSiRyAqEnbGyuKHYn+qpYCrCckxFeqlr1I5UoOULijyLV2vnHO9LS4MrAzHxwQ==" crossorigin=" anonymous " referrerpolicy="no-referrer "></script>
+    <script src="{% static 'red/script/lib.js' %}"></script>
+    <script src="{% static 'red/script/feed.js' %}"></script>
+</body>
+
+</html>

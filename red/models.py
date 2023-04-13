@@ -129,6 +129,27 @@ class AbstractBaseContent(models.Model):
         award_order = list(config.AWARDS_LIST.keys())
         return {key: award_counts[key] for key in reversed(award_order) if key in award_counts}
 
+    @property
+    def delta_timestamp(self):
+        seconds = int((timezone.now() - self.created).total_seconds())
+        periods = [
+            ('y', 31536000), # year
+            ('d', 86400),    # day
+            ('h', 3600),     # hour
+            ('m', 60),       # minute
+            ('s', 1)         # second
+        ]
+        parts = []
+        parts_appended = 0
+        for period_name, period_seconds in periods:
+            if seconds >= period_seconds:
+                period_value, seconds = divmod(seconds, period_seconds)
+                parts.append('{}{}'.format(period_value, period_name))
+                parts_appended += 1
+            if parts_appended > 1:
+                break # stops after listing two date types
+        return ' '.join(parts) if len(parts) > 0 else '0s'
+    
     def soft_delete(self):
         self.deleted = timezone.now()
 

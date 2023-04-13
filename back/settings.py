@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'mathfilters',
     'red'
 ]
@@ -157,11 +158,12 @@ DEFAULT_FROM_EMAIL = "red@andreholman.com"
 
 # Name = Price
 AWARDS_LIST = {
-    "Silver": 100,
-    "Gold": 500,
-    "Platinum": 1800,
-    "Emerald": 20000,
-    "Rhodium": 50000
+    "shrimp": 50,
+    "silver": 100,
+    "fish": 250,
+    "gold": 500,
+    "platinum": 1800,
+    "emerald": 20000,
 }
 
 # 100k length list

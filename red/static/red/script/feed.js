@@ -1,21 +1,8 @@
-(function($) {
-    $.fn.extend({
-        addTemporaryClass: function(className, duration) {
-            var elements = this;
-            setTimeout(function() {
-                elements.removeClass(className);
-            }, duration);
-
-            return this.each(function() {
-                $(this).addClass(className);
-            });
-        }
-    });
-})(jQuery);
-
 window.odometerOptions = {
     duration: 750 // milliseconds. must change css as well!
 };
+let postAwardID, awardType, awardsOpen; // awarding
+
 
 $(document).ready(function() {
 
@@ -55,7 +42,7 @@ $(document).ready(function() {
                 "flex-direction": "column",
             })
             infobox.find(".username").css({ "margin-right": 0 })
-            infobox.children(":first").css("margin-bottom", 4)
+            infobox.find("div").first().css("margin-bottom", "4px")
         }
     });
 
@@ -67,11 +54,12 @@ $(document).ready(function() {
         }
     }
 
+    function postUrl(parentElement) { // get the url of a post from its DOM element
+        return $(parentElement.find("a")[0]).attr("href")
+    }
+
     minifyButtons()
-
-    let postAwardIndex, awardType, awardsOpen; // awarding
-
-    // end INIT
+        // end INIT
 
     $(window).resize(minifyButtons)
 
@@ -90,11 +78,24 @@ $(document).ready(function() {
     })
 
     $("i").click(function() { // voting
-        let postIndex = $(this).closest(".post").index()
+        let parentElement = $(this).closest(".post");
+        let postIndex = parentElement.index()
 
         counter = $(this).closest(".vote").find(".odometer");
 
+        function vote(direction) {
+            fetch(postUrl(parentElement) + "vote/", {
+                method: "PATCH",
+                headers: apiHeaders,
+                body: JSON.stringify({
+                    v: direction // 1 for up 0 for down
+                })
+            })
+        }
+
         if ($(this).hasClass("up")) {
+            vote(1)
+
             let downButton = $(this).closest(".vote").find(".down")
             if ($(this).hasClass("voted")) {
                 counts[postIndex]--;
@@ -108,6 +109,8 @@ $(document).ready(function() {
                 }
             }
         } else if ($(this).hasClass("down")) {
+            vote(0)
+
             let upButton = $(this).closest(".vote").find(".up")
             if ($(this).hasClass("voted")) {
                 counts[postIndex]++;
@@ -126,16 +129,26 @@ $(document).ready(function() {
         $(this).toggleClass("voted");
     });
 
-    $(".award").click((e) => { // Opening award dialogue
-        postAwardIndex = $(e.target).closest(".post").attr("data-id")
-
-        console.log("award the " + postAwardIndex)
-        $("#award-modal").addClass("open")
+    $(".post:has(.hider)").click((e) => { // revealing nsfw and spoiler posts
+        $thisPost = $(e.currentTarget)
+        $thisPost.find(".hider").remove()
+        $thisPost.find(".post-content").removeClass("hidden")
     })
 
-    $(".award-type:not(.disabled):not(.selected)").click((e) => {
+    $(".award").click((e) => { // Opening award dialogue
+        if (loggedIn) {
+            postAwardID = $(e.target).closest(".post").attr("data-id")
+            awardsOpen = true;
+
+            console.log("award the " + postAwardID)
+            $("#award-modal").addClass("open")
+        } else { // redirect
+            window.location.href = "/login";
+        }
+    })
+
+    $(".award-type:not(.disabled):not(.selected)").click((e) => { // selecting award type
         let awardBox = $(e.target).closest(".award-type");
-        awardsOpen = true;
 
         $(".next-fields").addClass("open")
         $(".award-type.selected").removeClass("selected")
@@ -150,6 +163,47 @@ $(document).ready(function() {
             $("#checkbox").removeClass("selected");
         }
     });
+
+    $(".next-fields button").click((e) => { // submitting award
+        let request_body = {
+            type: awardType,
+            anonymous: $("#anon").is(":checked"),
+            message: $("#message").val()
+        }
+        let parentElement = $(".post[data-id=" + postAwardID + "]")
+
+        fetch(postUrl(parentElement) + 'award/', {
+            method: "POST",
+            headers: apiHeaders,
+            body: JSON.stringify(request_body)
+        }).then((output) => {
+            if (output.status == 204) {
+                window.location.href = postUrl(parentElement)
+            } else {
+                alert("Something went wrong!")
+            }
+        })
+    })
+
+    $(".share").click((e) => {
+        copyToClipboard("https://red.andreholman.com" + postUrl($(e.target).closest(".post")))
+        let $span = $(e.currentTarget).find("span")
+        if ($span.css("display") == "none") {
+            $(e.currentTarget)
+                .addTemporaryClass("success", 5000)
+                .find("i") // these below applied to the i
+                .removeClass("fa-share-nodes")
+                .addClass("fa-check")
+            setTimeout(() => {
+                $(e.currentTarget).find("i").removeClass("fa-check").addClass("fa-share-nodes")
+            }, 5000)
+        } else {
+            $span.text("Copied!")
+            setTimeout(() => {
+                $span.text("Share")
+            }, 5000)
+        }
+    })
 
     $("label").hover(
         function() {
@@ -168,6 +222,7 @@ $(document).ready(function() {
         } else if (e.keyCode == 27 && awardsOpen) {
             e.preventDefault();
             $("#award-modal").removeClass("open")
+            awardsOpen = false;
         }
     })
 });

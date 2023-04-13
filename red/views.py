@@ -23,8 +23,14 @@ def tos(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def index(request):
     all_posts = Post.objects.order_by("-created").filter(deleted__isnull=True)
-    context = {"latest_posts_list": all_posts}
-    return render(request, "red/index.html", context)
+
+    context = {"post_list": all_posts}
+
+    if request.user.is_authenticated:
+        context["liked"] = request.user.liked_posts.all()
+        context["disliked"] = request.user.disliked_posts.all()
+        context["saved"] = request.user.saved_posts.all()
+    return render(request, "red/feed.html", context)
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def user(request, username):
@@ -397,21 +403,6 @@ def post_vote(request, sub, post_id):
             return HttpResponse(status=400)
     else:
         return request_validated
-    
-def post_save(request, sub, post_id): # toggles save
-    request_validated = validate_api_request(request, "PATCH", post_id)
-    if type(request_validated) != HttpResponse:
-        if str(request_validated.sub) != sub:
-            return HttpResponse(status=404)
-        
-        if request.user.saved_posts.filter(id=post_id).exists():
-            request.user.saved_posts.remove(request_validated)
-        else:
-            request.user.saved_posts.add(request_validated)
-        
-        return HttpResponse(status=204)
-    else:
-        return request_validated
 
 def update_post(request, sub, post_id):
     request_validated = validate_api_request(request, "PUT", post_id, True)
@@ -530,19 +521,6 @@ def comment_vote(request, sub, post_id):
     else:
         return request_validated
 
-def comment_save(request, sub, post_id):
-    request_validated = validate_api_request(request, "PATCH", post_id)
-    if type(request_validated) != HttpResponse:
-        if str(request_validated.sub) != sub:
-            return HttpResponse(status=404)
-        
-        try:
-            request_data = json.loads(request.body)
-            
-
-        except (KeyError, ValueError, json.decoder.JSONDecodeError):
-            return HttpResponse(status=400)
-
 def update_comment(request, sub, post_id):
     request_validated = validate_api_request(request, "PUT", post_id)
     if type(request_validated) != HttpResponse:
@@ -590,6 +568,7 @@ def delete_comment(request, sub, post_id):
         return HttpResponse(status=204) # no response
     else:
         return request_validated
+
 def award_content(request, sub, post_id):
     request_validated = validate_api_request(request, "POST", post_id)
     if type(request_validated) != HttpResponse:
@@ -597,7 +576,7 @@ def award_content(request, sub, post_id):
             return HttpResponse(status=403) # can't gift yourself
         try:
             request_data = json.loads(request.body)
-            award_type = request_data["type"]
+            award_type = request_data["type"].lower()
 
             new_award = {
                 "name": request.user.username,
@@ -607,6 +586,7 @@ def award_content(request, sub, post_id):
             message = request_data["message"]
             if message:
                 if len(message) > 64:
+                    print("too long!")
                     return HttpResponse(status=400)
                 new_award["message"] = message
             
@@ -625,13 +605,29 @@ def award_content(request, sub, post_id):
             
             current_count = content.awards.get(award_type)
             if current_count:
-                content.awards[award_type].append()
+                content.awards[award_type].append(new_award)
             else:
                 content.awards[award_type] = [new_award]
             content.save()
 
             return HttpResponse(status=204)
         except (KeyError, ValueError, json.decoder.JSONDecodeError): # invalid comment
+            print("error!", request_data)
             return HttpResponse(status=400)
+    else:
+        return request_validated
+
+def save_content(request, sub, post_id): # toggles save
+    request_validated = validate_api_request(request, "PATCH", post_id)
+    if type(request_validated) != HttpResponse:
+        if str(request_validated.sub) != sub:
+            return HttpResponse(status=404)
+        
+        if request.user.saved_posts.filter(id=post_id).exists():
+            request.user.saved_posts.remove(request_validated)
+        else:
+            request.user.saved_posts.add(request_validated)
+        
+        return HttpResponse(status=204)
     else:
         return request_validated
