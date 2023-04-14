@@ -75,16 +75,15 @@
 
                     {% if post.awards %}
                     <div class="tags">
-                        <h5>Awards:</h5>
                         {% for name, count in post.award_count.items %}
                         <div class="{{name}}">
+                        {% if count > 1%}
+                            <p>{{count}}x</p>
+                        {% endif %}
                         {% if name == "shrimp" %}
                             <i class="fa-solid fa-shrimp"></i>
                         {% elif name == "silver" %}
-                            <span class="fa-stack">
-                                <i class="fa-solid fa-circle fa-stack-2x"></i>
-                                <i class="fa-solid fa-s fa-stack-1x fa-fw"></i>
-                            </span>
+                            <i class="fa-solid fa-circle"></i>
                         {% elif name == "fish" %}
                             <i class="fa-solid fa-fish-fins"></i>
                         {% elif name == "gold" %}

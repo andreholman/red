@@ -496,6 +496,7 @@ body {
 }
 
 #content-wrapper {
+    z-index: 200;
     display: flex;
     flex-direction: column;
     justify-content: middle;
@@ -544,6 +545,8 @@ body {
             background-color: $darker;
             border-radius: $button-radius;
             padding: $inner-spacing/2;
+            margin-right: $inner-spacing/2;
+            white-space: nowrap; // stops awards from going UNDER the box
             h5 {
                 font-size: 14px;
                 margin-right: $inner-spacing/2;
@@ -551,7 +554,12 @@ body {
             div {
                 margin-right: $inner-spacing/2;
                 height: 18px;
-                width: 18px;
+                p {
+                    font-size: 12px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    line-height: 12px;
+                }
             }
             i {
                 font-size: 16px;
@@ -568,27 +576,9 @@ body {
             .shrimp {
                 margin-top: 2px;
             }
-            .silver {
-                margin: -1px $inner-spacing/2 + 2px 0 0;
-                i {
-                    width: 50%;
-                    transform: translateY(-50%);
-                }
-                span {
-                    margin-bottom: 0;
-                    height: auto;
-                }
-            }
              :last-child {
                 margin-right: 0;
             }
-        }
-        p {
-            display: inline;
-            font-family: "Inter Tight";
-            font-size: 14px;
-            cursor: help;
-            transition: 0.2s;
         }
         .username {
             margin-right: $inner-spacing;
@@ -614,6 +604,14 @@ body {
                 pointer-events: none;
                 * {
                     pointer-events: auto;
+                }
+                p {
+                    display: inline;
+                    font-family: "Inter Tight";
+                    font-size: 14px;
+                    cursor: help;
+                    transition: 0.2s;
+                    white-space: nowrap;
                 }
             }
             div:hover {
