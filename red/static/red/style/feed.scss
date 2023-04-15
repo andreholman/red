@@ -1,0 +1,978 @@
+$outer-spacing: 24px;
+$spacing: 20px;
+$inner-spacing: 12px;
+$border: 16px;
+$post-section-height: 52px;
+$section-radius: 27px;
+$radius: 18px;
+$inner-radius: 9px;
+$button-radius: 6px;
+$sidebar-min-width: 200px;
+$tab-accent-position: -104%;
+$tab-gray-position: 23%;
+$light-accent-offset: 28%;
+$black: #131215;
+$darker: #1f1e20;
+$dark: #2e2d35;
+$gray: #3c3b43;
+$midgray: #646367;
+$lightgray: #a9a8ad;
+$accent-white: #e2e9fa;
+$mist: #c7d3da;
+$offwhite: #f7f5e4;
+$white: #f9fbfd;
+$blue1: #7091db;
+$blue2: #5572B4;
+$blue3: #3E4E8E;
+@keyframes shake {
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-3px, 0, 0);
+    }
+    40%,
+    60% {
+        transform: translate3d(3px, 0, 0);
+    }
+}
+
+::selection {
+    background: $blue3;
+    color: white;
+}
+
+html {
+    margin: 0;
+    background: $black;
+    height: 100vh;
+    transition: 0.2s; // for theme switch
+}
+
+body {
+    margin: $spacing;
+    padding-right: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    transition: 0.2s; // for theme switch
+    p.hidden {
+        filter: blur(6px);
+        user-select: none;
+    }
+    img.hidden {
+        filter: blur(4vw);
+    }
+    a {
+        color: inherit;
+        text-decoration: inherit;
+    }
+    button {
+        color: $white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: $inner-spacing/2 $inner-spacing;
+        border-radius: $button-radius;
+        background: $darker;
+        border: 0;
+        outline: 1px solid $dark;
+        cursor: pointer;
+        font-family: "Inter Tight";
+        font-size: 14px;
+        transition: 0.2s;
+        span {
+            margin-right: $inner-spacing/2;
+        }
+        i {
+            font-size: 16px;
+        }
+    }
+    button:hover {
+        outline: 3px solid $white;
+    }
+    label {
+        cursor: pointer;
+        font-family: "Inter Tight";
+        color: $white;
+        user-select: none;
+        font-size: 14px;
+        height: 20px;
+        line-height: 20px;
+        width: auto;
+        vertical-align: middle;
+        margin-top: $border/2 - 2px;
+    }
+    input,
+    #checkbox {
+        width: 100%;
+        height: 40px;
+        border: 0;
+        transition: 0.2s;
+        background: $black;
+        vertical-align: middle;
+        z-index: 10;
+    }
+    #checkbox {
+        align-items: center;
+        text-align: center;
+        width: $inner-spacing*2;
+        height: $inner-spacing*2;
+        font-size: $inner-spacing*1.5;
+        line-height: $inner-spacing*2;
+        margin-top: -3px;
+        margin-right: $inner-spacing - 3px;
+        color: transparent;
+        border-radius: $button-radius;
+    }
+    #checkbox:not(.selected):hover,
+    #checkbox:not(.selected).hovered {
+        outline: 3px solid $offwhite;
+        box-shadow: 0 0 1px 2px $offwhite;
+    }
+    #checkbox.selected {
+        color: $offwhite !important;
+        background-color: $blue2 !important;
+    }
+    input[type="checkbox"] {
+        display: none;
+        width: 1rem;
+        position: relative;
+        z-index: 3;
+    }
+    input[type="text"] {
+        padding: 0 $inner-spacing;
+        color: $offwhite;
+        box-sizing: border-box;
+        font-family: "Inter Tight";
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 40px;
+        vertical-align: top;
+        border-radius: $inner-radius;
+    }
+    input::placeholder {
+        color: $gray;
+        opacity: 1;
+        user-select: none;
+    }
+    input:active,
+    input:focus {
+        outline: 3px solid $offwhite;
+        border: 0;
+    }
+    input:focus::placeholder {
+        opacity: 0;
+    }
+    .shrimp i {
+        color: #F78764;
+    }
+    .silver i {
+        color: $lightgray;
+        &.fa-s {
+            color: $black;
+            line-height: 40px;
+            font-size: 20px !important;
+        }
+    }
+    .silver span {
+        margin-bottom: $spacing;
+    }
+    .fish i {
+        color: $blue2;
+    }
+    .gold i {
+        color: #ffcb59;
+    }
+    .platinum i {
+        color: $white;
+        text-shadow: 0 0 $inner-spacing $blue3;
+    }
+    .emerald i {
+        color: #63D471;
+    }
+    #sidebar {
+        width: 20%;
+        min-width: $sidebar-min-width;
+    }
+    nav {
+        width: 20%;
+        min-width: $sidebar-min-width;
+        height: calc(100vh - $spacing*2);
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        position: fixed;
+        left: $spacing;
+        a {
+            text-decoration: none;
+            margin-bottom: $spacing;
+        }
+        header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            vertical-align: center;
+            justify-content: middle;
+            margin: $spacing 0;
+            img {
+                height: 54px;
+                margin-right: 20px;
+            }
+            h1 {
+                color: white;
+                font-family: "Inter";
+                font-size: 30px;
+                font-weight: 800;
+                line-height: 20px;
+                padding: none;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                transition: 0.2s; // for theme switch
+            }
+        }
+        div.tab {
+            width: 100%;
+            height: 40px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: $border/2;
+            cursor: pointer;
+            color: $lightgray;
+            border-top: 1px solid $black;
+            border-radius: $button-radius;
+            transition: 0.2s; // for theme switch -- doesn't work on gradient!
+            transition-property: color; // without this, the top border will show when switching tabs. It's changed dynamically via js,
+            i {
+                margin: 0 $border;
+                width: 20px;
+                text-align: center;
+                transition: 0.2s; // for theme switch
+            }
+            h2 {
+                font-family: "Inter";
+                font-weight: 500;
+                transition: 0.15s;
+            }
+        }
+        div.tab:hover,
+        div.tab.selected {
+            color: white;
+        }
+        div.tab.selected {
+            background: $gray;
+            border-top: 1px solid $midgray;
+            box-shadow: 0px 6px 12px -1px rgba(0, 0, 0, 1);
+        }
+        div.tab#home {
+            z-index: 109;
+            i {
+                color: #7091db;
+            }
+            &.selected {
+                background: linear-gradient(90deg, #4b76d2 $tab-accent-position, $gray $tab-gray-position);
+            }
+        }
+        div.tab#search {
+            z-index: 108;
+            i {
+                color: #63D471;
+            }
+            &.selected {
+                background: linear-gradient(90deg, #3FCA4F $tab-accent-position, $gray $tab-gray-position);
+            }
+        }
+        div.tab#popular {
+            z-index: 107;
+            i {
+                color: #F78764;
+            }
+            &.selected {
+                background: linear-gradient(90deg, #F4592A $tab-accent-position, $gray $tab-gray-position);
+            }
+        }
+        div.tab#saved {
+            z-index: 106;
+            i {
+                color: #F4F0BB;
+            }
+            &.selected {
+                background: linear-gradient(90deg, #EEE896 $tab-accent-position, $gray $tab-gray-position);
+            }
+        }
+        div.tab#profile {
+            z-index: 105;
+            i {
+                color: #725AC1;
+            }
+            &.selected {
+                background: linear-gradient(90deg, #553EA3 $tab-accent-position, $gray $tab-gray-position);
+            }
+        }
+        div.tab#settings {
+            z-index: 104;
+            i {
+                color: #8dccc5;
+            }
+            &.selected {
+                background: linear-gradient(90deg, #1b998b $tab-accent-position, $gray $tab-gray-position);
+            }
+        }
+        footer {
+            margin-top: auto;
+            width: 100%;
+            height: 40px + $border;
+            #switch {
+                display: flex;
+                flex-direction: row;
+                height: 40px;
+                background: $dark;
+                border-radius: $radius;
+                padding: calc($border/2);
+                position: relative;
+                z-index: 0;
+                color: $lightgray;
+                cursor: pointer;
+                #spacer {
+                    width: calc($border/2);
+                }
+                .option {
+                    text-align: center;
+                    vertical-align: middle;
+                    display: inline-block;
+                    width: 50%;
+                    height: 100% !important;
+                    line-height: 40px;
+                    transition: 0.2s ease-in;
+                    user-select: none;
+                }
+                #selector {
+                    height: calc(100% - $border);
+                    width: calc(50% - $border* 3/4);
+                    z-index: -1;
+                    position: absolute;
+                    background: $black;
+                    border-radius: $inner-radius;
+                    transition: 333ms cubic-bezier(.43, .79, .75, .95);
+                    left: calc($border/2);
+                    &.light {
+                        left: calc(50% + $border/4);
+                    }
+                }
+                .selected {
+                    color: white;
+                }
+            }
+        }
+    }
+    #award-modal {
+        visibility: hidden;
+        opacity: 0;
+        transition: 0.2s;
+        z-index: 6767;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        box-shadow: 0 0 0 calc(100vw + 100vh) rgba(0, 0, 0, 0.67);
+        background: $dark;
+        padding: $border;
+        padding-top: 0;
+        border-radius: $radius;
+        header {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 48px;
+            h2 {
+                color: $white;
+                font-size: 24px;
+                font-family: "Overpass";
+                margin-top: 4px;
+                margin-right: auto;
+            }
+            p {
+                color: $white;
+                font-size: 18px;
+                font-weight: 800;
+            }
+        }
+        #awards {
+            display: flex;
+            flex-direction: column;
+            .row {
+                display: flex;
+                margin-bottom: $inner-spacing;
+                transition: 0.2s;
+            }
+            .first-fields:not(:has(~ .first-fields)) {
+                margin: 0;
+            }
+            .next-fields {
+                height: 0;
+                opacity: 0;
+                visibility: hidden;
+                margin: 0;
+                button {
+                    margin-left: auto;
+                }
+            }
+            .next-fields.open {
+                height: auto;
+                opacity: 1;
+                visibility: visible;
+                margin-top: $inner-spacing;
+            }
+            .award-type {
+                background: $black;
+                color: $offwhite;
+                margin-right: $inner-spacing;
+                border-radius: $inner-radius;
+                width: 96px;
+                text-align: center;
+                padding-top: $inner-spacing;
+                cursor: pointer;
+                transition: 0.2s;
+                >* {
+                    margin-bottom: $inner-spacing;
+                }
+                i {
+                    font-size: 40px;
+                }
+                h4 {
+                    user-select: none;
+                    font-family: "Inter";
+                    font-size: 18px;
+                }
+                &:last-of-type {
+                    margin: 0;
+                }
+                p {
+                    user-select: none;
+                }
+            }
+            .award-type.disabled {
+                background: $dark;
+                color: $lightgray !important;
+                cursor: not-allowed;
+                i {
+                    opacity: 0.2;
+                }
+            }
+            .award-type:not(.disabled, .selected):hover {
+                outline: 3px solid $white;
+            }
+            .award-type.selected {
+                outline: 3px solid $blue1;
+            }
+        }
+        #cancel {
+            position: absolute;
+            bottom: -20px;
+            font-size: 14px;
+            color: $lightgray;
+            width: calc(100% - $border*2);
+            text-align: center;
+            font-family: "Inter";
+            text-shadow: 0 0 3px black;
+        }
+    }
+    // Popup for choosing an award
+    #award-modal.open {
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+#content-wrapper {
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: middle;
+    background: $dark;
+    width: 500px;
+    padding: $spacing*2;
+    padding-bottom: $spacing;
+    margin-left: max(200px + $spacing, calc(20% + $spacing*2)); // makes it minimum 200px
+    margin-bottom: $spacing;
+    border-radius: $section-radius;
+    transition: 0.2s; // for theme switch
+}
+
+.post {
+    color: white;
+    border-right: $border solid $black;
+    background: $black;
+    border-radius: $radius;
+    margin: 0;
+    margin-bottom: $spacing;
+    position: relative;
+    transition: 0.2s; // for theme switch
+    .post-content {
+        transition: filter 0.1s cubic-bezier(.05, .49, .27, .92), color 0.2s;
+    }
+    header {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        color: $lightgray;
+        padding-left: $border;
+        min-height: $post-section-height;
+        h3 {
+            font-family: "Overpass";
+            font-weight: 700;
+            color: white;
+            display: inline-block;
+            margin: $inner-spacing + 4px $inner-spacing $inner-spacing 0;
+            font-size: 20px;
+            text-align: left;
+            transition: 0.2s; // for theme switch
+        }
+        .tags {
+            display: flex;
+            align-items: center;
+            background-color: $darker;
+            border-radius: $button-radius;
+            padding: $inner-spacing/2;
+            margin-right: $inner-spacing/2;
+            white-space: nowrap; // stops awards from going UNDER the box
+            h5 {
+                font-size: 14px;
+                margin-right: $inner-spacing/2;
+            }
+            div {
+                margin-right: $inner-spacing/2;
+                height: 18px;
+                p {
+                    font-size: 12px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    line-height: 12px;
+                }
+            }
+            i {
+                font-size: 16px;
+                // for silver
+                &.fa-circle {
+                    font-size: 18px;
+                }
+                &.fa-s {
+                    font-size: 12px !important;
+                    line-height: 20px;
+                }
+            }
+            .platinum,
+            .shrimp {
+                margin-top: 2px;
+            }
+             :last-child {
+                margin-right: 0;
+            }
+        }
+        .username {
+            margin-right: $inner-spacing;
+            cursor: pointer;
+        }
+        .self {
+            color: $blue1;
+        }
+        i {
+            display: inline;
+            padding-right: calc($spacing/6);
+            transition: 0.2s;
+        }
+        .info {
+            margin-left: auto;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            div {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                pointer-events: none;
+                * {
+                    pointer-events: auto;
+                }
+                p {
+                    display: inline;
+                    font-family: "Inter Tight";
+                    font-size: 14px;
+                    cursor: help;
+                    transition: 0.2s;
+                    white-space: nowrap;
+                }
+            }
+            div:hover {
+                color: $offwhite;
+            }
+        }
+        .white {
+            // Used for making the pointers white 
+            color: $offwhite;
+        }
+    }
+    .vote {
+        float: left;
+        width: 60px;
+        padding: 0;
+        margin-bottom: $border - 2px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        i {
+            z-index: 9;
+            font-size: 28px;
+            line-height: 28px;
+            height: 28px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .up:hover,
+        .up.voted {
+            color: tomato;
+        }
+        .down:hover,
+        .down.voted {
+            color: blueviolet;
+        }
+        i.fa-bounce {
+            animation: fa-bounce 0.8s infinite linear !important;
+        }
+        i.shake {
+            animation: shake 0.6s ease-in-out both;
+        }
+        p {
+            font-family: "JetBrains Mono";
+            font-size: 20px;
+            margin: 2px 0 0 0;
+            transition: 0.2s;
+        }
+    }
+    .hider {
+        position: absolute;
+        top: 50%;
+        left: calc(50% + 30px - $border); // half of vote width
+        transform: translate(-50%, -50%);
+        color: $white;
+        padding: $inner-spacing;
+        font-size: 16px;
+        user-select: none;
+        cursor: pointer;
+    }
+    footer {
+        background: $black;
+        box-shadow: 0px 0 - $inner-spacing $outer-spacing 0 $black;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        left: $border;
+        height: $post-section-height - $inner-spacing;
+        width: calc(100% - $border);
+        margin: $inner-spacing $inner-spacing/2;
+        p,
+        button {
+            margin-right: $inner-spacing;
+            color: $white;
+            transition: 0.2s; // p - for theme switch
+        }
+        .comments {
+            color: $lightgray;
+        }
+        .buttons {
+            display: flex;
+            margin-left: auto;
+            button.success {
+                outline: 1px solid #63D471;
+            }
+            button.success:hover {
+                outline: 1px solid #63D471;
+            }
+            button.save i.saved {
+                color: #F4F0BB;
+            }
+        }
+    }
+}
+
+.post:hover .hider span {
+    display: none;
+}
+
+.post:hover .hider::after {
+    content: "Click to reveal";
+}
+
+.image {
+    // image posts
+    .hider {
+        background: $black;
+        border-radius: $inner-radius;
+        left: 50%;
+        z-index: 333;
+    }
+    img,
+    .wrapper {
+        position: relative;
+        float: right;
+        width: calc(100% - 60px);
+        margin: 0;
+        margin-bottom: $inner-spacing + $post-section-height;
+        padding: 0;
+        border-radius: $inner-radius;
+        overflow: hidden;
+    }
+    .wrapper img {
+        width: 100%;
+        margin-bottom: 0;
+    }
+    img::selection {
+        background: none !important;
+    }
+    .options {
+        height: 60px;
+    }
+}
+
+.text {
+    .vote {
+        margin-bottom: $post-section-height;
+    }
+    >p {
+        font-family: "Inter Tight";
+        line-height: 20px;
+        font-size: 16px;
+        max-height: 80px;
+        overflow: hidden;
+    }
+}
+
+#sidebar {
+    width: 0;
+}
+
+////////////////////////////////////////////
+/// 
+/// LIGHT THEME
+/// 
+////////////////////////////////////////////
+html.light {
+    background: $white;
+}
+
+body.light {
+    nav {
+        header {
+            h1 {
+                color: $black;
+            }
+        }
+        div.tab {
+            color: $gray;
+            border-top-color: $white;
+        }
+        div.tab.selected {
+            background: $white;
+            border-top-color: $white;
+            color: $black;
+        }
+        div.tab#home {
+            &.selected {
+                background: linear-gradient(90deg, #4b76d2 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                box-shadow: none;
+            }
+        }
+        div.tab#search {
+            &.selected {
+                background: linear-gradient(90deg, #3FCA4F $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                box-shadow: none;
+            }
+        }
+        div.tab#popular {
+            &.selected {
+                background: linear-gradient(90deg, #F4592A $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                box-shadow: none;
+            }
+        }
+        div.tab#saved {
+            i {
+                color: #8b6551;
+            }
+            &.selected {
+                background: linear-gradient(90deg, #533e33 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                box-shadow: none;
+            }
+        }
+        div.tab#profile {
+            &.selected {
+                background: linear-gradient(90deg, #553EA3 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                box-shadow: none;
+            }
+        }
+        div.tab#settings {
+            i {
+                color: #449c92;
+            }
+            &.selected {
+                background: linear-gradient(90deg, #1b998b $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                box-shadow: none;
+            }
+        }
+        footer {
+            #switch {
+                background: $accent-white;
+                color: $midgray;
+                #selector {
+                    background: $white;
+                }
+                .selected {
+                    color: $black;
+                }
+            }
+        }
+    }
+    #content-wrapper {
+        background: $accent-white;
+    }
+    .post {
+        color: $black;
+        border-right: $border solid $white;
+        background: $white;
+        header {
+            color: $midgray;
+            h3 {
+                color: $black;
+            }
+            .white {
+                // Pointers need to be visible on the bg
+                color: $offwhite;
+            }
+            p:hover,
+            i:hover+p {
+                color: $black;
+            }
+        }
+        .vote {
+            .up:hover,
+            .up.voted {
+                color: tomato;
+            }
+            .down:hover,
+            .down.voted {
+                color: blueviolet;
+            }
+        }
+        footer {
+            p,
+            button {
+                color: $black;
+            }
+            .comments {
+                color: $midgray;
+            }
+        }
+    }
+}
+
+////////////////////////////////////////////
+/// 
+/// ODOMETER
+/// 
+////////////////////////////////////////////
+.odometer.odometer-auto-theme,
+.odometer.odometer-theme-minimal {
+    display: inline-block;
+    vertical-align: middle;
+    *vertical-align: auto;
+    *zoom: 1;
+    *display: inline;
+    position: relative;
+}
+
+.odometer.odometer-auto-theme .odometer-digit,
+.odometer.odometer-theme-minimal .odometer-digit {
+    display: inline-block;
+    vertical-align: middle;
+    *vertical-align: auto;
+    *zoom: 1;
+    *display: inline;
+    position: relative;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-digit-spacer,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-digit-spacer {
+    display: inline-block;
+    vertical-align: middle;
+    *vertical-align: auto;
+    *zoom: 1;
+    *display: inline;
+    visibility: hidden;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-digit-inner,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-digit-inner {
+    text-align: left;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-ribbon,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-ribbon {
+    display: block;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-ribbon-inner {
+    display: block;
+    backface-visibility: hidden;
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-value,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-value {
+    display: block;
+    transform: translateZ(0);
+}
+
+.odometer.odometer-auto-theme .odometer-digit .odometer-value.odometer-last-value,
+.odometer.odometer-theme-minimal .odometer-digit .odometer-value.odometer-last-value {
+    position: absolute;
+}
+
+.odometer.odometer-auto-theme.odometer-animating-up .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-up .odometer-ribbon-inner {
+    transition: transform 0.75s;
+}
+
+.odometer.odometer-auto-theme.odometer-animating-up.odometer-animating .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-up.odometer-animating .odometer-ribbon-inner {
+    transform: translateY(-100%);
+}
+
+.odometer.odometer-auto-theme.odometer-animating-down .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-down .odometer-ribbon-inner {
+    transform: translateY(-100%);
+}
+
+.odometer.odometer-auto-theme.odometer-animating-down.odometer-animating .odometer-ribbon-inner,
+.odometer.odometer-theme-minimal.odometer-animating-down.odometer-animating .odometer-ribbon-inner {
+    transition: transform 0.75s;
+    transform: translateY(0);
+}

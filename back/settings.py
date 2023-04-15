@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'livereload',
     'mathfilters',
     'red'
 ]
@@ -57,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'livereload.middleware.LiveReloadScript',
 ]
 
 CSRF_COOKIE_HTTP_ONLY = False
@@ -157,11 +160,12 @@ DEFAULT_FROM_EMAIL = "red@andreholman.com"
 
 # Name = Price
 AWARDS_LIST = {
-    "Silver": 100,
-    "Gold": 500,
-    "Platinum": 1800,
-    "Emerald": 20000,
-    "Rhodium": 50000
+    "shrimp": 50,
+    "silver": 100,
+    "fish": 250,
+    "gold": 500,
+    "platinum": 1800,
+    "emerald": 20000,
 }
 
 # 100k length list
