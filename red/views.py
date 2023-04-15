@@ -623,11 +623,19 @@ def save_content(request, sub, post_id): # toggles save
         if str(request_validated.sub) != sub:
             return HttpResponse(status=404)
         
-        if request.user.saved_posts.filter(id=post_id).exists():
-            request.user.saved_posts.remove(request_validated)
+        try:
+            request_data = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return HttpResponse(status=400)
+
+        if request_data:
+            if request.user.saved_posts.filter(id=post_id).exists(): # toggles
+                request.user.saved_posts.remove(request_validated)
+            else:
+                request.user.saved_posts.add(request_validated)
         else:
-            request.user.saved_posts.add(request_validated)
-        
+            comment_object = get_object_or_404(Comment, id=request_data.get("c"))
+
         return HttpResponse(status=204)
     else:
         return request_validated

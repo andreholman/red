@@ -198,12 +198,13 @@ body {
     .emerald i {
         color: #63D471;
     }
-    nav,
     #sidebar {
         width: 20%;
         min-width: $sidebar-min-width;
     }
     nav {
+        width: 20%;
+        min-width: $sidebar-min-width;
         height: calc(100vh - $spacing*2);
         display: flex;
         flex-direction: column;
