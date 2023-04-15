@@ -13,9 +13,9 @@
     {% load mathfilters %}
     {% include "red/includes/account.html" %}
     <h1>Latest Posts</h1>
-    {% if latest_posts_list %}
+    {% if post_list %}
     <ul>
-        {% for post in latest_posts_list %}
+        {% for post in post_list %}
         <li>
             <p>
                 {{ post.likes|sub:post.dislikes }}

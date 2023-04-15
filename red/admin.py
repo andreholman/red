@@ -72,11 +72,13 @@ class UserAdmin(BaseUserAdmin):
             'coins',
             'followers',
         ]}),
-        ('Voted Content', {'fields': [
+        ('Content Interaction', {'fields': [
             'liked_posts',
             'disliked_posts',
             'liked_comments',
             'disliked_comments',
+            'saved_posts',
+            'saved_comments'
         ]})
     ]
 
