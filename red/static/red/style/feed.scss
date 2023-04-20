@@ -19,6 +19,7 @@ $midgray: #646367;
 $lightgray: #a9a8ad;
 $accent-white: #e2e9fa;
 $mist: #c7d3da;
+$light-buttons: #e3e7e9;
 $offwhite: #f7f5e4;
 $white: #f9fbfd;
 $blue1: #7091db;
@@ -44,7 +45,7 @@ $blue3: #3E4E8E;
     }
 }
 
-::selection {
+ ::selection {
     background: $blue3;
     color: white;
 }
@@ -90,9 +91,11 @@ body {
         transition: 0.2s;
         span {
             margin-right: $inner-spacing/2;
+            transition: 0.2s;
         }
         i {
             font-size: 16px;
+            transition: 0.2s;
         }
     }
     button:hover {
@@ -211,6 +214,7 @@ body {
         align-items: start;
         position: fixed;
         left: $spacing;
+        margin-right: $spacing;
         a {
             text-decoration: none;
             margin-bottom: $spacing;
@@ -274,12 +278,21 @@ body {
             box-shadow: 0px 6px 12px -1px rgba(0, 0, 0, 1);
         }
         div.tab#home {
-            z-index: 109;
+            z-index: 110;
             i {
                 color: #7091db;
             }
             &.selected {
                 background: linear-gradient(90deg, #4b76d2 $tab-accent-position, $gray $tab-gray-position);
+            }
+        }
+        div.tab#sub-tab {
+            z-index: 109;
+            i {
+                color: $white;
+            }
+            &.selected {
+                background: linear-gradient(90deg, $white $tab-accent-position, $gray $tab-gray-position);
             }
         }
         div.tab#search {
@@ -503,17 +516,41 @@ body {
     justify-content: middle;
     background: $dark;
     width: 500px;
+    min-height: calc(100vh - $spacing*5);
     padding: $spacing*2;
     padding-bottom: $spacing;
     margin-left: max(200px + $spacing, calc(20% + $spacing*2)); // makes it minimum 200px
     margin-bottom: $spacing;
     border-radius: $section-radius;
     transition: 0.2s; // for theme switch
+    #no-posts {
+        i {
+            font-size: 32px;
+            margin-bottom: $inner-spacing;
+            transition: 0.2s;
+            &.voted {
+                font-size: 40px;
+            }
+        }
+        h3 {
+            font-family: "Inter";
+            font-size: 20px;
+            transition: 0.2s;
+        }
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: calc(100% - $spacing*4);
+        padding: $spacing $spacing*2 $spacing*5 $spacing*2;
+        color: $lightgray;
+    }
 }
 
 .post {
     color: white;
     border-right: $border solid $black;
+    border-bottom: $border solid $black;
     background: $black;
     border-radius: $radius;
     margin: 0;
@@ -521,6 +558,7 @@ body {
     position: relative;
     transition: 0.2s; // for theme switch
     .post-content {
+        z-index: 33;
         transition: filter 0.1s cubic-bezier(.05, .49, .27, .92), color 0.2s;
     }
     header {
@@ -628,10 +666,11 @@ body {
         float: left;
         width: 60px;
         padding: 0;
-        margin-bottom: $border - 2px;
+        margin-bottom: $inner-spacing;
         text-align: center;
         display: flex;
         flex-direction: column;
+        z-index: 34;
         i {
             z-index: 9;
             font-size: 28px;
@@ -673,21 +712,31 @@ body {
         cursor: pointer;
     }
     footer {
+        z-index: 3;
         background: $black;
         box-shadow: 0px 0 - $inner-spacing $outer-spacing 0 $black;
         display: flex;
         align-items: center;
         position: absolute;
         bottom: 0;
-        left: $border;
-        height: $post-section-height - $inner-spacing;
+        left: 0;
+        height: $post-section-height - $border;
         width: calc(100% - $border);
-        margin: $inner-spacing $inner-spacing/2;
+        margin: 0 $border;
+        transition: 0.2s;
         p,
         button {
             margin-right: $inner-spacing;
             color: $white;
             transition: 0.2s; // p - for theme switch
+        }
+        .flair {
+            background: $gray;
+            font-family: "Inter Tight";
+            border-radius: $inner-radius;
+            padding: $inner-spacing/2;
+            font-size: 14px;
+            margin-right: $inner-spacing;
         }
         .comments {
             color: $lightgray;
@@ -703,6 +752,9 @@ body {
             }
             button.save i.saved {
                 color: #F4F0BB;
+            }
+             :last-child {
+                margin-right: 0;
             }
         }
     }
@@ -730,7 +782,7 @@ body {
         float: right;
         width: calc(100% - 60px);
         margin: 0;
-        margin-bottom: $inner-spacing + $post-section-height;
+        margin-bottom: $post-section-height;
         padding: 0;
         border-radius: $inner-radius;
         overflow: hidden;
@@ -742,14 +794,11 @@ body {
     img::selection {
         background: none !important;
     }
-    .options {
-        height: 60px;
-    }
 }
 
 .text {
     .vote {
-        margin-bottom: $post-section-height;
+        margin-bottom: $post-section-height - $border;
     }
     >p {
         font-family: "Inter Tight";
@@ -783,53 +832,62 @@ body.light {
         div.tab {
             color: $gray;
             border-top-color: $white;
+            &#home {
+                &.selected {
+                    background: linear-gradient(90deg, #4b76d2 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                    box-shadow: none;
+                }
+            }
+            &#sub-tab {
+                i {
+                    color: $black;
+                }
+                &.selected {
+                    background: linear-gradient(90deg, $black $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                    box-shadow: none;
+                }
+            }
+            &#search {
+                &.selected {
+                    background: linear-gradient(90deg, #3FCA4F $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                    box-shadow: none;
+                }
+            }
+            &#popular {
+                &.selected {
+                    background: linear-gradient(90deg, #F4592A $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                    box-shadow: none;
+                }
+            }
+            &#saved {
+                i {
+                    color: #8b6551;
+                }
+                &.selected {
+                    background: linear-gradient(90deg, #533e33 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                    box-shadow: none;
+                }
+            }
+            &#profile {
+                &.selected {
+                    background: linear-gradient(90deg, #553EA3 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                    box-shadow: none;
+                }
+            }
+            &#settings {
+                i {
+                    color: #449c92;
+                }
+                &.selected {
+                    background: linear-gradient(90deg, #1b998b $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
+                    box-shadow: none;
+                }
+            }
         }
         div.tab.selected {
             background: $white;
             border-top-color: $white;
             color: $black;
-        }
-        div.tab#home {
-            &.selected {
-                background: linear-gradient(90deg, #4b76d2 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
-                box-shadow: none;
-            }
-        }
-        div.tab#search {
-            &.selected {
-                background: linear-gradient(90deg, #3FCA4F $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
-                box-shadow: none;
-            }
-        }
-        div.tab#popular {
-            &.selected {
-                background: linear-gradient(90deg, #F4592A $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
-                box-shadow: none;
-            }
-        }
-        div.tab#saved {
-            i {
-                color: #8b6551;
-            }
-            &.selected {
-                background: linear-gradient(90deg, #533e33 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
-                box-shadow: none;
-            }
-        }
-        div.tab#profile {
-            &.selected {
-                background: linear-gradient(90deg, #553EA3 $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
-                box-shadow: none;
-            }
-        }
-        div.tab#settings {
-            i {
-                color: #449c92;
-            }
-            &.selected {
-                background: linear-gradient(90deg, #1b998b $tab-accent-position + $light-accent-offset, $accent-white $tab-gray-position);
-                box-shadow: none;
-            }
         }
         footer {
             #switch {
@@ -846,6 +904,9 @@ body.light {
     }
     #content-wrapper {
         background: $accent-white;
+        #no-posts {
+            color: $gray;
+        }
     }
     .post {
         color: $black;
@@ -853,6 +914,12 @@ body.light {
         background: $white;
         header {
             color: $midgray;
+            div.tags {
+                background: $light-buttons;
+                i {
+                    text-shadow: 0 0 9px black;
+                }
+            }
             h3 {
                 color: $black;
             }
@@ -876,9 +943,21 @@ body.light {
             }
         }
         footer {
+            background: $white;
+            box-shadow: 0px 0 - $inner-spacing $outer-spacing 0 $white;
             p,
             button {
                 color: $black;
+            }
+            button {
+                background: $light-buttons;
+                outline-color: $lightgray;
+                .saved {
+                    color: #8b6551 !important;
+                }
+            }
+            button:hover {
+                outline: 3px solid $black;
             }
             .comments {
                 color: $midgray;

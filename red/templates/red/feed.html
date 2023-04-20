@@ -13,10 +13,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,800;1,400;1,800&family=Inter:wght@300;500;800&family=Overpass:wght@700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <!--  REMOVE THOSE UP HERE AND REPLACE WITH CSS ASSETS INCLUDE!!  -->
     <link rel="stylesheet" href="{% static 'red/style/feed.css' %}">
+    {% if sub %}
+    <style>
+        {% for flair in sub_flairs %}
+        .flair-{{ flair.id }} {
+            background-color: #{{ flair.color }} !important;
+        }
+        {% endfor %}
+    </style>
+    {% endif %}
 </head>
 
 <body>
@@ -27,27 +35,33 @@
                 <h1>Red</h1>
             </header>
         </a>
-        <div class="selected tab" id="home">
+        <div class="{% if tab == "home" %}selected{% endif %} tab" id="home">
             <i class="fa-solid fa-house-user"></i>
             <h2>Home</h2>
         </div>
-        <div class="tab" id="search">
+        {% if sub %}
+        <div class="selected tab" id="sub-tab">
+            <i class="fa-solid fa-section"></i>
+            <h2>{{ sub }}</h2>
+        </div>
+        {% endif %}
+        <div class="{% if tab == "search" %}selected{% endif %} tab" id="search">
             <i class="fa-solid fa-magnifying-glass"></i>
             <h2>Search</h2>
         </div>
-        <div class="tab" id="popular">
+        <div class="{% if tab == "popular" %}selected{% endif %} tab" id="popular">
             <i class="fa-solid fa-arrow-trend-up"></i>
             <h2>Popular</h2>
         </div>
-        <div class="tab" id="saved">
+        <div class="{% if tab == "saved" %}selected{% endif %} tab" id="saved">
             <i class="fa-solid fa-bookmark"></i>
             <h2>Saved</h2>
         </div>
-        <div class="tab" id="profile">
+        <div class="{% if tab == "profile" %}selected{% endif %} tab" id="profile">
             <i class="fa-solid fa-user"></i>
             <h2>My Profile</h2>
         </div>
-        <div class="tab" id="settings">
+        <div class="{% if tab == "settings" %}selected{% endif %} tab" id="settings">
             <i class="fa-solid fa-sliders"></i>
             <h2>Settings</h2>
         </div>
@@ -162,11 +176,18 @@
                 {% endif %}
                 {% endif %}
                 <footer>
+                    {% if sub and post.flair %}
+                    <div class="flair flair-{{post.flair.id}}">
+                        {{ post.flair.text }}
+                    </div>
+                    {% endif %}
+                    {% if not sub %}
                     <a href='{% url "sub" post.sub.name %}'>
                         <p class="sub">
                             <i class="fa-solid fa-section"></i> {{post.sub.name}}
                         </p>
                     </a>
+                    {% endif %}
                     <p class="comments">
                         <i class="fa-solid fa-message"></i> {{ post.comment_count }}
                     </p>
@@ -197,7 +218,10 @@
             </div>
         {% endfor %}
         {% else %}
-        <h3>There are no posts</h3>
+        <div id="no-posts">
+            <i class="fa-regular fa-circle-question"></i>
+            <h3>Nothing to see here, yet.</h3>
+        </div>
         {% endif %}
         
     </div>
@@ -262,7 +286,7 @@
         <p id="cancel">Press ESC to cancel</p>
     </div>
     {% endif %}
-    <section id=" sidebar "></section>
+    <section id="sidebar"></section>
     <script type="text/javascript">
         {% if user.is_authenticated %}
         const loggedIn = true;

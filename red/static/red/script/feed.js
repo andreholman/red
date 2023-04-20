@@ -62,7 +62,6 @@ $(document).ready(function() {
         });
     }
 
-
     function minifyButtons() { // post option buttons
         if (Math.ceil($("#content-wrapper").width()) < 500) {
             $(".buttons span").css("display", "none")

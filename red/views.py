@@ -21,15 +21,52 @@ def tos(request):
     return render(request, "red/tos.html")
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
-def index(request):
-    all_posts = Post.objects.order_by("-created").filter(deleted__isnull=True)
+def feed(request, sub=None):
+    context = {"sub": sub}
+    
+    if sub:
+        sub_object = get_object_or_404(Sub, name__iexact=sub)
+        
+        context["tab"] = sub
+        context["sub_flairs"] = PostFlair.objects.filter(sub=sub_object.id)
+        post_list = Post.objects.filter(sub=sub_object.id, deleted__isnull=True)
 
-    context = {"post_list": all_posts}
+        if request.user.is_authenticated:
+            context["liked"] = request.user.liked_posts.filter(sub=sub_object.id)
+            context["disliked"] = request.user.disliked_posts.filter(sub=sub_object.id)
+            context["saved"] = request.user.saved_posts.filter(sub=sub_object.id)
+    else:
+        context["tab"] = "home"
+        post_list = Post.objects.filter(deleted__isnull=True)
 
-    if request.user.is_authenticated:
-        context["liked"] = request.user.liked_posts.all()
-        context["disliked"] = request.user.disliked_posts.all()
-        context["saved"] = request.user.saved_posts.all()
+        if request.user.is_authenticated:
+            context["liked"] = request.user.liked_posts.all()
+            context["disliked"] = request.user.disliked_posts.all()
+            context["saved"] = request.user.saved_posts.all()
+
+    sort = request.GET.get("sort", "hot").lower() # default = hot
+    match sort:
+        case "old":
+            post_list = post_list.order_by("created")
+        case "new":
+            post_list = post_list.order_by("-created")
+        case "top":
+            post_list = post_list.order_by("likes")
+        case "best":
+            post_list = sorted(
+                post_list,
+                key=lambda i: i.likes-i.dislikes,
+                reverse=True
+            )
+        case _: # hot
+            post_list = sorted(
+                post_list,
+                key=lambda i: i.score(),
+                reverse=True
+            )
+
+    context["post_list"] = post_list
+
     return render(request, "red/feed.html", context)
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
@@ -624,17 +661,20 @@ def save_content(request, sub, post_id): # toggles save
             return HttpResponse(status=404)
         
         try:
-            request_data = json.loads(request.body)
+            if request.body != b'':
+                request_data = json.loads(request.body)
+            else: # empty
+                request_data = {}
         except json.decoder.JSONDecodeError:
             return HttpResponse(status=400)
 
         if request_data:
+            comment_object = get_object_or_404(Comment, id=request_data.get("c"))
+        else:
             if request.user.saved_posts.filter(id=post_id).exists(): # toggles
                 request.user.saved_posts.remove(request_validated)
-            else:
+            else: 
                 request.user.saved_posts.add(request_validated)
-        else:
-            comment_object = get_object_or_404(Comment, id=request_data.get("c"))
 
         return HttpResponse(status=204)
     else:

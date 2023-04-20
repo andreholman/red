@@ -5,9 +5,9 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-    path("", views.index, name="index"), # GET
+    path("", views.feed, name="index"), # GET
     path("u/<str:username>/", views.user, name="user"), # GET
-    path("s/<str:sub>/", views.sub, name="sub"), # GET
+    path("s/<str:sub>/", views.feed, name="sub"), # GET
     path("s/<str:sub>/posts/", views.sub_posts, name="sub_posts"), # GET 303
     path("s/<str:sub>/posts/<int:post_id>/", views.post, name="post"), # GET
     path("s/<str:sub>/posts/<int:post_id>/vote/", views.post_vote, name="post_vote"), # PATCH
