@@ -130,8 +130,8 @@ class AbstractBaseContent(models.Model):
         return {key: award_counts[key] for key in reversed(award_order) if key in award_counts}
 
     @property
-    def delta_timestamp(created):
-        seconds = int(timezone.now() - created).total_seconds()
+    def delta_timestamp(self):
+        seconds = int((timezone.now() - self.created).total_seconds())
         periods = [
             ('y', 31536000), # year
             ('mo', 2628000),  # month
