@@ -68,6 +68,8 @@ MIDDLEWARE = [
 
 CSRF_COOKIE_HTTP_ONLY = False
 
+CSRF_TRUSTED_ORIGINS = ["https://red3.herokuapp.com", "https://red.andreholman.com"]
+
 ROOT_URLCONF = 'back.urls'
 
 TEMPLATES = [
