@@ -34,7 +34,7 @@ SECRET_KEY = env("DJANGO_SALT")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["andreholman.com", "127.0.0.1", "localhost", "0.0.0.0", "red3.herokuapp.com"]
+ALLOWED_HOSTS = ["red.andreholman.com", "127.0.0.1", "localhost", "0.0.0.0", "red3.herokuapp.com"]
 
 # Application definition
 
