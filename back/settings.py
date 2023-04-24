@@ -70,6 +70,9 @@ CSRF_COOKIE_HTTP_ONLY = False
 
 CSRF_TRUSTED_ORIGINS = ["https://red3.herokuapp.com", "https://red.andreholman.com"]
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+
 ROOT_URLCONF = 'back.urls'
 
 TEMPLATES = [
@@ -150,7 +153,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
