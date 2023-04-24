@@ -34,7 +34,6 @@ class RedUserManager(BaseUserManager):
             email=self.normalize_email(email),
         )
 
-        user.is_staff = True
         user.is_admin = True
         user.is_superuser = True
         user.set_password(password)
