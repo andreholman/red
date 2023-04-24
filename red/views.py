@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import Http404, HttpResponse
 from django.core.mail import send_mail
 from django.db import IntegrityError
@@ -20,6 +21,7 @@ from .models import *
 def tos(request):
     return render(request, "red/tos.html")
 
+@ensure_csrf_cookie
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def feed(request, sub=None):
     context = {"sub": sub}
@@ -69,6 +71,7 @@ def feed(request, sub=None):
 
     return render(request, "red/feed.html", context)
 
+@ensure_csrf_cookie
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def user(request, username):
     user = get_object_or_404(User, username__iexact=username)
@@ -79,6 +82,7 @@ def user(request, username):
     context = {'account': user, "account_posts": user_posts, "account_comments": user_comments}
     return render(request, 'red/user.html', context)
 
+@ensure_csrf_cookie
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def sub(request, sub):
     sub_object = get_object_or_404(Sub, name__iexact=sub)
@@ -89,10 +93,12 @@ def sub(request, sub):
     context = {"sub": sub_object, "sub_posts": sub_posts}
     return render(request, "red/sub.html", context)
 
+@ensure_csrf_cookie
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def sub_posts(request, sub): # For redirecting s/sub/posts 
     return redirect("sub", sub=sub)
 
+@ensure_csrf_cookie
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def post(request, sub, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -152,6 +158,7 @@ def post(request, sub, post_id):
     context = {"post": post, "comments": comment_depth_list, "sorting": sort, "saved": saved, "saved_comments": saved_comments}
     return render(request, "red/post.html", context)
 
+@ensure_csrf_cookie
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required 
 def post_editor(request, sub):
@@ -168,6 +175,7 @@ def post_editor(request, sub):
 #             AUTH             #
 ################################
 
+@ensure_csrf_cookie
 def password_changer(request, slug=None):
     match request.method:
         case "POST":
@@ -205,6 +213,7 @@ def password_changer(request, slug=None):
         case _:
             return HttpResponse(status=405)
 
+@ensure_csrf_cookie
 def login(request):
     match request.method:
         case "POST":
