@@ -186,7 +186,7 @@ body {
         }
     }
     .silver span {
-        margin-bottom: $spacing;
+        margin-bottom: $spacing !important;
     }
     .fish i {
         color: $blue2;
@@ -216,8 +216,8 @@ body {
         left: $spacing;
         margin-right: $spacing;
         a {
+            width: 100%;
             text-decoration: none;
-            margin-bottom: $spacing;
         }
         header {
             display: flex;
@@ -226,6 +226,7 @@ body {
             vertical-align: center;
             justify-content: middle;
             margin: $spacing 0;
+            margin-bottom: $spacing*2;
             img {
                 height: 54px;
                 margin-right: 20px;
@@ -810,7 +811,9 @@ body {
 }
 
 #sidebar {
-    width: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
 }
 
 ////////////////////////////////////////////
@@ -910,7 +913,7 @@ body.light {
     }
     .post {
         color: $black;
-        border-right: $border solid $white;
+        border-color: $white;
         background: $white;
         header {
             color: $midgray;

@@ -4,10 +4,25 @@
 {% load mathfilters %}
 {% load humanize %}
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V93W38ZYBJ"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-V93W38ZYBJ');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Red: Home</title>
+    <title>
+    {% if sub %}
+    Red: s/{{ sub }}
+    {% else %}
+    Red: Home
+    {% endif %}
+    </title>
     <!-- REMOVE THOSE DOWN HERE AND REPLACE WITH CSS ASSETS INCLUDE!! -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,36 +50,56 @@
                 <h1>Red</h1>
             </header>
         </a>
+        <a href="/">
         <div class="{% if tab == "home" %}selected{% endif %} tab" id="home">
             <i class="fa-solid fa-house-user"></i>
             <h2>Home</h2>
         </div>
+        </a>
         {% if sub %}
+        <a href="{% url "sub" sub %}">
         <div class="selected tab" id="sub-tab">
             <i class="fa-solid fa-section"></i>
             <h2>{{ sub }}</h2>
         </div>
+        </a>
         {% endif %}
+        <a href="">
         <div class="{% if tab == "search" %}selected{% endif %} tab" id="search">
             <i class="fa-solid fa-magnifying-glass"></i>
             <h2>Search</h2>
         </div>
+        </a>
+        <a href="/all/">
         <div class="{% if tab == "popular" %}selected{% endif %} tab" id="popular">
             <i class="fa-solid fa-arrow-trend-up"></i>
             <h2>Popular</h2>
         </div>
+        </a>
+        <a href="/saved">
         <div class="{% if tab == "saved" %}selected{% endif %} tab" id="saved">
             <i class="fa-solid fa-bookmark"></i>
             <h2>Saved</h2>
         </div>
+        </a>
+        <a href="
+        {% if user.is_authenticated %}
+            {% url "user" user.username %}
+        {% else %}
+            {% url "login" %}
+        {% endif %}
+        ">
         <div class="{% if tab == "profile" %}selected{% endif %} tab" id="profile">
             <i class="fa-solid fa-user"></i>
             <h2>My Profile</h2>
         </div>
+        </a>
+        <a href="/settings/">
         <div class="{% if tab == "settings" %}selected{% endif %} tab" id="settings">
             <i class="fa-solid fa-sliders"></i>
             <h2>Settings</h2>
         </div>
+        </a>
         <footer>
             <div id="switch">
                 <div id="selector"></div>
@@ -218,7 +253,7 @@
             </div>
         {% endfor %}
         {% else %}
-        <div id="no-posts">
+        <div id="no-posts"> <!-- for empty feeds -->
             <i class="fa-regular fa-circle-question"></i>
             <h3>Nothing to see here, yet.</h3>
         </div>
