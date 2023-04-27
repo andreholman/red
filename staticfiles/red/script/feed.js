@@ -117,53 +117,57 @@ $(document).ready(function() {
     $("i").click(function() { // voting
         let parentElement = $(this).closest(".post");
         let postIndex = parentElement.index()
+        console.log("login")
+        if (loggedIn) {
+            counter = $(this).closest(".vote").find(".odometer");
 
-        counter = $(this).closest(".vote").find(".odometer");
-
-        function vote(direction) {
-            fetch(postUrl(parentElement) + "vote/", {
-                method: "PATCH",
-                headers: apiHeaders,
-                body: JSON.stringify({
-                    v: direction // 1 for up 0 for down
+            function vote(direction) {
+                fetch(postUrl(parentElement) + "vote/", {
+                    method: "PATCH",
+                    headers: apiHeaders,
+                    body: JSON.stringify({
+                        v: direction // 1 for up 0 for down
+                    })
                 })
-            })
-        }
-
-        if ($(this).hasClass("up")) {
-            vote(1)
-
-            let downButton = $(this).closest(".vote").find(".down")
-            if ($(this).hasClass("voted")) {
-                counts[postIndex]--;
-            } else {
-                counts[postIndex]++;
-                $(this).addTemporaryClass("fa-bounce", 800);
-
-                if (downButton.hasClass("voted")) {
-                    downButton.removeClass("voted");
-                    counts[postIndex]++;
-                }
             }
-        } else if ($(this).hasClass("down")) {
-            vote(0)
 
-            let upButton = $(this).closest(".vote").find(".up")
-            if ($(this).hasClass("voted")) {
-                counts[postIndex]++;
-            } else {
-                counts[postIndex]--;
-                $(this).addTemporaryClass("shake", 800);
+            if ($(this).hasClass("up")) {
+                vote(1)
 
-                if (upButton.hasClass("voted")) {
-                    upButton.removeClass("voted");
+                let downButton = $(this).closest(".vote").find(".down")
+                if ($(this).hasClass("voted")) {
                     counts[postIndex]--;
+                } else {
+                    counts[postIndex]++;
+                    $(this).addTemporaryClass("fa-bounce", 800);
+
+                    if (downButton.hasClass("voted")) {
+                        downButton.removeClass("voted");
+                        counts[postIndex]++;
+                    }
+                }
+            } else if ($(this).hasClass("down")) {
+                vote(0)
+
+                let upButton = $(this).closest(".vote").find(".up")
+                if ($(this).hasClass("voted")) {
+                    counts[postIndex]++;
+                } else {
+                    counts[postIndex]--;
+                    $(this).addTemporaryClass("shake", 800);
+
+                    if (upButton.hasClass("voted")) {
+                        upButton.removeClass("voted");
+                        counts[postIndex]--;
+                    }
                 }
             }
-        }
 
-        counter.html(counts[postIndex])
-        $(this).toggleClass("voted");
+            counter.html(counts[postIndex])
+            $(this).toggleClass("voted");
+        } else {
+            window.location.href = "/login?next=" + postUrl(parentElement)
+        }
     });
 
     $(".post:has(.hider)").click((e) => { // revealing nsfw and spoiler posts
@@ -257,6 +261,22 @@ $(document).ready(function() {
             $("#checkbox").removeClass("hovered");
         }
     );
+
+    $("#logout").click(() => {
+        fetch('/logout/', {
+            method: "POST",
+            headers: apiHeaders
+        }).then((output) => {
+            switch (output.status) {
+                case 204: // success
+                    window.location.reload()
+                    break;
+                default:
+                    alert("Something went wrong!")
+                    break;
+            }
+        })
+    })
 
     // KEYBIND HANDLING
 

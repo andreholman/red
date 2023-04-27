@@ -8,6 +8,7 @@ $radius: 18px;
 $inner-radius: 9px;
 $button-radius: 6px;
 $sidebar-min-width: 200px;
+$avatar-size: 36px;
 $tab-accent-position: -104%;
 $tab-gray-position: 23%;
 $light-accent-offset: 28%;
@@ -186,7 +187,7 @@ body {
         }
     }
     .silver span {
-        margin-bottom: $spacing;
+        margin-bottom: $spacing !important;
     }
     .fish i {
         color: $blue2;
@@ -205,6 +206,9 @@ body {
         width: 20%;
         min-width: $sidebar-min-width;
     }
+    .mono-number {
+        font-family: "JetBrains Mono";
+    }
     nav {
         width: 20%;
         min-width: $sidebar-min-width;
@@ -216,8 +220,8 @@ body {
         left: $spacing;
         margin-right: $spacing;
         a {
+            width: 100%;
             text-decoration: none;
-            margin-bottom: $spacing;
         }
         header {
             display: flex;
@@ -226,15 +230,17 @@ body {
             vertical-align: center;
             justify-content: middle;
             margin: $spacing 0;
+            margin-bottom: $spacing*2;
             img {
                 height: 54px;
                 margin-right: 20px;
             }
             h1 {
                 color: white;
-                font-family: "Inter";
-                font-size: 30px;
+                font-family: "gilroy-extrabold";
+                font-size: 36px;
                 font-weight: 800;
+                letter-spacing: 0.01em;
                 line-height: 20px;
                 padding: none;
                 display: flex;
@@ -343,11 +349,11 @@ body {
         footer {
             margin-top: auto;
             width: 100%;
-            height: 40px + $border;
+            height: 32px + $border;
             #switch {
                 display: flex;
                 flex-direction: row;
-                height: 40px;
+                height: 32px;
                 background: $dark;
                 border-radius: $radius;
                 padding: calc($border/2);
@@ -364,7 +370,7 @@ body {
                     display: inline-block;
                     width: 50%;
                     height: 100% !important;
-                    line-height: 40px;
+                    line-height: 32px;
                     transition: 0.2s ease-in;
                     user-select: none;
                 }
@@ -412,8 +418,8 @@ body {
             h2 {
                 color: $white;
                 font-size: 24px;
-                font-family: "Overpass";
-                margin-top: 4px;
+                font-family: "gilroy-extrabold";
+                letter-spacing: 0.04em;
                 margin-right: auto;
             }
             p {
@@ -494,7 +500,7 @@ body {
         #cancel {
             position: absolute;
             bottom: -20px;
-            font-size: 14px;
+            font-size: 15px;
             color: $lightgray;
             width: calc(100% - $border*2);
             text-align: center;
@@ -519,7 +525,6 @@ body {
     min-height: calc(100vh - $spacing*5);
     padding: $spacing*2;
     padding-bottom: $spacing;
-    margin-left: max(200px + $spacing, calc(20% + $spacing*2)); // makes it minimum 200px
     margin-bottom: $spacing;
     border-radius: $section-radius;
     transition: 0.2s; // for theme switch
@@ -569,11 +574,12 @@ body {
         padding-left: $border;
         min-height: $post-section-height;
         h3 {
-            font-family: "Overpass";
+            font-family: "gilroy-extrabold";
             font-weight: 700;
+            letter-spacing: 0.04em;
             color: white;
             display: inline-block;
-            margin: $inner-spacing + 4px $inner-spacing $inner-spacing 0;
+            margin: $inner-spacing - 2px $inner-spacing $inner-spacing 0;
             font-size: 20px;
             text-align: left;
             transition: 0.2s; // for theme switch
@@ -621,7 +627,7 @@ body {
         }
         .username {
             margin-right: $inner-spacing;
-            cursor: pointer;
+            cursor: pointer !important;
         }
         .self {
             color: $blue1;
@@ -694,7 +700,6 @@ body {
             animation: shake 0.6s ease-in-out both;
         }
         p {
-            font-family: "JetBrains Mono";
             font-size: 20px;
             margin: 2px 0 0 0;
             transition: 0.2s;
@@ -810,7 +815,81 @@ body {
 }
 
 #sidebar {
-    width: 0;
+    position: fixed;
+    right: $outer-spacing;
+    top: $outer-spacing;
+    #account {
+        background: $dark;
+        border-radius: $radius;
+        padding: $inner-spacing;
+        display: flex;
+        align-items: center;
+        #avatar {
+            width: $avatar-size;
+            height: $avatar-size;
+            margin-right: $inner-spacing;
+            i {
+                line-height: $avatar-size;
+                text-align: center;
+                font-size: $avatar-size;
+                color: $black;
+                border-radius: $avatar-size;
+            }
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        #user-text {
+            display: flex;
+            flex-direction: column;
+            font-family: "Inter";
+            h5 {
+                color: $offwhite;
+                font-weight: 400;
+                font-size: 18px;
+                margin-bottom: $avatar-size - 18px - 14px; // aligns second line at bottom of div
+            }
+            p {
+                color: $lightgray;
+                font-size: 14px;
+            }
+        }
+        >a {
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        >i,
+        a i {
+            margin: $inner-spacing/2;
+            margin-left: auto;
+            color: $lightgray;
+            padding: $inner-spacing/2;
+            font-size: 20px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        >i:hover {
+            color: $offwhite;
+        }
+        button {
+            outline-color: $gray;
+        }
+        button:hover {
+            outline-color: $white;
+        }
+        a p {
+            // For anonymous users
+            margin-left: $inner-spacing;
+            color: white;
+            font-family: "Inter";
+            font-size: 18px;
+        }
+    }
+    #account:hover i#login {
+        color: white;
+    }
 }
 
 ////////////////////////////////////////////
@@ -910,7 +989,7 @@ body.light {
     }
     .post {
         color: $black;
-        border-right: $border solid $white;
+        border-color: $white;
         background: $white;
         header {
             color: $midgray;
@@ -927,9 +1006,10 @@ body.light {
                 // Pointers need to be visible on the bg
                 color: $offwhite;
             }
-            p:hover,
-            i:hover+p {
-                color: $black;
+            .info {
+                div:hover {
+                    color: $dark;
+                }
             }
         }
         .vote {
