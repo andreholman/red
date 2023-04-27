@@ -150,7 +150,7 @@ class AbstractBaseContent(models.Model):
                 previous_index = periods.index((period_name, period_seconds))
                 
                 period_value, seconds = divmod(seconds, period_seconds)
-                parts.append('{}{}'.format(period_value, period_name))
+                parts.append('<span class="mono-number">{}</span>{}'.format(period_value, period_name))
                 
                 parts_appended += 1
                 if parts_appended >= 2:

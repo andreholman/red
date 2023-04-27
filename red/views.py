@@ -273,9 +273,10 @@ def create_account(request):
         return HttpResponse(status=405)
 
 def logout(request):
+    auth_logout(request)
     if request.method == "POST":
-        auth_logout(request)
         return HttpResponse(status=204)
+    return HttpResponse(status=200)
 
 ################################
 #             API              #

@@ -8,6 +8,7 @@ $radius: 18px;
 $inner-radius: 9px;
 $button-radius: 6px;
 $sidebar-min-width: 200px;
+$avatar-size: 36px;
 $tab-accent-position: -104%;
 $tab-gray-position: 23%;
 $light-accent-offset: 28%;
@@ -205,6 +206,9 @@ body {
         width: 20%;
         min-width: $sidebar-min-width;
     }
+    .mono-number {
+        font-family: "JetBrains Mono";
+    }
     nav {
         width: 20%;
         min-width: $sidebar-min-width;
@@ -344,11 +348,11 @@ body {
         footer {
             margin-top: auto;
             width: 100%;
-            height: 40px + $border;
+            height: 32px + $border;
             #switch {
                 display: flex;
                 flex-direction: row;
-                height: 40px;
+                height: 32px;
                 background: $dark;
                 border-radius: $radius;
                 padding: calc($border/2);
@@ -365,7 +369,7 @@ body {
                     display: inline-block;
                     width: 50%;
                     height: 100% !important;
-                    line-height: 40px;
+                    line-height: 32px;
                     transition: 0.2s ease-in;
                     user-select: none;
                 }
@@ -495,7 +499,7 @@ body {
         #cancel {
             position: absolute;
             bottom: -20px;
-            font-size: 14px;
+            font-size: 15px;
             color: $lightgray;
             width: calc(100% - $border*2);
             text-align: center;
@@ -621,7 +625,7 @@ body {
         }
         .username {
             margin-right: $inner-spacing;
-            cursor: pointer;
+            cursor: pointer !important;
         }
         .self {
             color: $blue1;
@@ -694,7 +698,6 @@ body {
             animation: shake 0.6s ease-in-out both;
         }
         p {
-            font-family: "JetBrains Mono";
             font-size: 20px;
             margin: 2px 0 0 0;
             transition: 0.2s;
@@ -811,8 +814,80 @@ body {
 
 #sidebar {
     position: fixed;
-    right: 0;
-    top: 0;
+    right: $outer-spacing;
+    top: $outer-spacing;
+    #account {
+        background: $dark;
+        border-radius: $radius;
+        padding: $inner-spacing;
+        display: flex;
+        align-items: center;
+        #avatar {
+            width: $avatar-size;
+            height: $avatar-size;
+            margin-right: $inner-spacing;
+            i {
+                line-height: $avatar-size;
+                text-align: center;
+                font-size: $avatar-size;
+                color: $black;
+                border-radius: $avatar-size;
+            }
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        #user-text {
+            display: flex;
+            flex-direction: column;
+            font-family: "Inter";
+            h5 {
+                color: $offwhite;
+                font-weight: 400;
+                font-size: 18px;
+                margin-bottom: $avatar-size - 18px - 14px; // aligns second line at bottom of div
+            }
+            p {
+                color: $lightgray;
+                font-size: 14px;
+            }
+        }
+        >a {
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        >i,
+        a i {
+            margin: $inner-spacing/2;
+            margin-left: auto;
+            color: $lightgray;
+            padding: $inner-spacing/2;
+            font-size: 20px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        >i:hover {
+            color: $offwhite;
+        }
+        button {
+            outline-color: $gray;
+        }
+        button:hover {
+            outline-color: $white;
+        }
+        a p {
+            // For anonymous users
+            margin-left: $inner-spacing;
+            color: white;
+            font-family: "Inter";
+            font-size: 18px;
+        }
+    }
+    #account:hover i#login {
+        color: white;
+    }
 }
 
 ////////////////////////////////////////////
@@ -929,9 +1004,10 @@ body.light {
                 // Pointers need to be visible on the bg
                 color: $offwhite;
             }
-            p:hover,
-            i:hover+p {
-                color: $black;
+            .info {
+                div:hover {
+                    color: $dark;
+                }
             }
         }
         .vote {

@@ -149,7 +149,10 @@
                     <div class="info">
                         <a href='{% url "user" post.author %}'>
                             <div>
-                                {% if user == post.author %}
+                                {% if post.author.is_staff %}
+                                <i class="fa-solid fa-gear" title="This user is a system administrator."></i>
+                                <p class="username" style="font-weight: 700" title="This user is a system administrator.">{{post.author}}</p>
+                                {% elif user == post.author %}
                                 <i class="fa-solid fa-at self"></i>
                                 <p class="username self">{{post.author}}</p>
                                 {% else %}
@@ -160,13 +163,13 @@
                         </a>
                         <div>
                             <i class="fa-solid fa-clock"></i>
-                            <p title="{{ post.created }}">{{ post.delta_timestamp }}</p>
+                            <p title="{{ post.created }}">{{ post.delta_timestamp|safe }}</p>
                         </div>
                     </div>
                 </header>
                 <div class="vote">
                     <i class="up fa-solid fa-chevron-up {% if post in liked %}voted{% endif %}"></i>
-                    <p class="odometer">{{ post.likes|sub:post.dislikes }}</p>
+                    <p class="odometer mono-number">{{ post.likes|sub:post.dislikes }}</p>
                     <i class="down fa-solid fa-chevron-down {% if post in disliked %}voted{% endif %}"></i>
                 </div>
 
@@ -321,7 +324,31 @@
         <p id="cancel">Press ESC to cancel</p>
     </div>
     {% endif %}
-    <section id="sidebar"></section>
+    <section id="sidebar">
+        <div id="account">
+            {% if user.is_authenticated %}
+            <div id="avatar">
+                {% if user.avatar %}
+                <img src="{{user.avatar}}">
+                {% else %}
+                <i class="fa-solid fa-user-circle"></i>
+                {% endif %}
+            </div>
+            <div id="user-text">
+                <h5>{{ user.username }}</h5>
+                <p>
+                    <span class="mono-number">{{ user.points|floatformat:2 }}</span> points
+                </p>
+            </div>
+            <i id="logout" class="fa-solid fa-arrow-right-from-bracket" title="Sign Out"></i> <!-- Logout button -->
+            {% else %}
+            <a href="{% url "login" %}">
+            <p>Log In / Sign Up</p>
+            <i id="login" class="fa-solid fa-arrow-right-to-bracket"></i>
+            </a>
+            {% endif %}
+        </div>
+    </section>
     <script type="text/javascript">
         {% if user.is_authenticated %}
         const loggedIn = true;
