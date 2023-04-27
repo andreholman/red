@@ -237,9 +237,10 @@ body {
             }
             h1 {
                 color: white;
-                font-family: "Inter";
-                font-size: 30px;
+                font-family: "gilroy-extrabold";
+                font-size: 36px;
                 font-weight: 800;
+                letter-spacing: 0.01em;
                 line-height: 20px;
                 padding: none;
                 display: flex;
@@ -417,8 +418,8 @@ body {
             h2 {
                 color: $white;
                 font-size: 24px;
-                font-family: "Overpass";
-                margin-top: 4px;
+                font-family: "gilroy-extrabold";
+                letter-spacing: 0.04em;
                 margin-right: auto;
             }
             p {
@@ -573,11 +574,12 @@ body {
         padding-left: $border;
         min-height: $post-section-height;
         h3 {
-            font-family: "Overpass";
+            font-family: "gilroy-extrabold";
             font-weight: 700;
+            letter-spacing: 0.04em;
             color: white;
             display: inline-block;
-            margin: $inner-spacing + 4px $inner-spacing $inner-spacing 0;
+            margin: $inner-spacing - 2px $inner-spacing $inner-spacing 0;
             font-size: 20px;
             text-align: left;
             transition: 0.2s; // for theme switch
