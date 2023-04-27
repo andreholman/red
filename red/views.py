@@ -28,23 +28,36 @@ def feed(request, sub=None):
     
     if sub:
         sub_object = get_object_or_404(Sub, name__iexact=sub)
+
+        if request.user.is_authenticated:
+            context["liked"] = request.user.liked_posts.filter(sub=sub_object.id, deleted__isnull=True)
+            context["disliked"] = request.user.disliked_posts.filter(sub=sub_object.id, deleted__isnull=True)
+            context["saved"] = request.user.saved_posts.filter(sub=sub_object.id, deleted__isnull=True)
         
         context["tab"] = sub
         context["sub_flairs"] = PostFlair.objects.filter(sub=sub_object.id)
         post_list = Post.objects.filter(sub=sub_object.id, deleted__isnull=True)
-
-        if request.user.is_authenticated:
-            context["liked"] = request.user.liked_posts.filter(sub=sub_object.id)
-            context["disliked"] = request.user.disliked_posts.filter(sub=sub_object.id)
-            context["saved"] = request.user.saved_posts.filter(sub=sub_object.id)
+    elif request.user.is_authenticated:
+        context["liked"] = request.user.liked_posts.filter(deleted__isnull=True)
+        context["disliked"] = request.user.disliked_posts.filter(deleted__isnull=True)
+        context["saved"] = request.user.saved_posts.filter(deleted__isnull=True)
+    
+    if request.META['PATH_INFO'] == "/saved/":
+        if request.user.is_anonymous:
+            return redirect("/login?next=/saved/")
+        else:
+            context["tab"] = "saved"
+            user_object = get_object_or_404(User, id=request.user.id)
+            post_list = user_object.saved_posts.filter(deleted__isnull=True)
+    elif request.META['PATH_INFO'] == "/all/":
+        context["tab"] = "popular"
+        post_list = Post.objects.filter(deleted__isnull=True)       
     else:
-        context["tab"] = "home"
-        post_list = Post.objects.filter(deleted__isnull=True)
-
-        if request.user.is_authenticated:
-            context["liked"] = request.user.liked_posts.all()
-            context["disliked"] = request.user.disliked_posts.all()
-            context["saved"] = request.user.saved_posts.all()
+        if request.user.is_anonymous:
+            context["tab"] = "popular"
+        else:
+            context["tab"] = "home"
+        post_list = Post.objects.filter(deleted__isnull=True)       
 
     sort = request.GET.get("sort", "hot").lower() # default = hot
     match sort:
@@ -60,12 +73,15 @@ def feed(request, sub=None):
                 key=lambda i: i.likes-i.dislikes,
                 reverse=True
             )
-        case _: # hot
-            post_list = sorted(
-                post_list,
-                key=lambda i: i.score(),
-                reverse=True
-            )
+        case _: # none, use default
+            if request.META['PATH_INFO'] == "/saved/":
+                post_list = post_list.order_by("-created")
+            else: # default sort for feeds is hot, but new for saved
+                post_list = sorted(
+                    post_list,
+                    key=lambda i: i.score(),
+                    reverse=True
+                )
 
     context["post_list"] = post_list
 

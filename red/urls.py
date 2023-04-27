@@ -6,6 +6,8 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path("", views.feed, name="index"), # GET
+    path("saved/", views.feed, name="saved"), # GET
+    path("all/", views.feed, name="all"), # GET
     path("u/<str:username>/", views.user, name="user"), # GET
     path("s/<str:sub>/", views.feed, name="sub"), # GET
     path("s/<str:sub>/posts/", views.sub_posts, name="sub_posts"), # GET 303

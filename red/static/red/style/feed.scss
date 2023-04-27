@@ -520,7 +520,6 @@ body {
     min-height: calc(100vh - $spacing*5);
     padding: $spacing*2;
     padding-bottom: $spacing;
-    margin-left: max(200px + $spacing, calc(20% + $spacing*2)); // makes it minimum 200px
     margin-bottom: $spacing;
     border-radius: $section-radius;
     transition: 0.2s; // for theme switch
