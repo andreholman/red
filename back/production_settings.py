@@ -174,7 +174,8 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = "red@andreholman.com"
-
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+ADMINS = [("Andre", "andre@andreholman.com")]
 
 # Settings
 # Not part of Django API
