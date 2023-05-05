@@ -185,8 +185,13 @@ class Sub(models.Model):
     
     name = models.CharField(max_length=16, validators=[RegexValidator(regex=r"^[0-9a-zA-Z]*$", message="Sub name must be alphanumeric.", code="nomatch")], unique=True)
     followers = models.PositiveIntegerField(default=0)
+    description = models.CharField(max_length=64, default="No description.")
     mods = models.ManyToManyField("User")
     pinned_post = models.ForeignKey("Post", on_delete=models.CASCADE, default=None, null=True, blank=True, related_name="pinned")
+
+    @property
+    def initials(self):
+        return self.name[0]
 
     def __str__(self):
         return self.name

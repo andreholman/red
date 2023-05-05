@@ -28,6 +28,7 @@ def feed(request, sub=None):
     
     if sub:
         sub_object = get_object_or_404(Sub, name__iexact=sub)
+        context["sub_object"] = sub_object
 
         if request.user.is_authenticated:
             context["liked"] = request.user.liked_posts.filter(sub=sub_object.id, deleted__isnull=True)
@@ -52,7 +53,7 @@ def feed(request, sub=None):
     elif request.META['PATH_INFO'] == "/all/":
         context["tab"] = "popular"
         post_list = Post.objects.filter(deleted__isnull=True)       
-    else:
+    elif request.META['PATH_INFO'] == "/": # can't just do else because it would override sub's tab
         if request.user.is_anonymous:
             context["tab"] = "popular"
         else:

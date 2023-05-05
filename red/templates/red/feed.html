@@ -367,21 +367,79 @@
                 {% if user.avatar %}
                 <img src="{{user.avatar}}">
                 {% else %}
-                <i class="fa-solid fa-user-circle"></i>
+                <i class="fa-solid fa-user"></i>
                 {% endif %}
             </div>
             <div id="user-text">
-                <h5>{{ user.username }}</h5>
+                <h5>
+                    <a href="{% url 'user' user.username %}">
+                        {{ user.username }}
+                    </a>
+                </h5>
                 <p>
                     <span class="mono-number">{{ user.points|floatformat:2 }}</span> points
                 </p>
             </div>
             <i id="logout" class="fa-solid fa-arrow-right-from-bracket" title="Sign Out"></i> <!-- Logout button -->
             {% else %}
+            <div id="avatar" class="anon">
+                <i class="fa-solid fa-user-secret"></i>
+            </div>
             <a href="{% url "login" %}">
             <p>Log In / Sign Up</p>
             <i id="login" class="fa-solid fa-arrow-right-to-bracket"></i>
             </a>
+            {% endif %}
+        </div>
+        <div id="tab-description">
+            {% if sub %}
+            <header>
+                <div id="tab-icon-box">
+                    <p>{{ sub_object.initials }}</p>
+                </div>
+                <div id="tab-text">
+                    <h2>{{sub_object.name}}</h2>
+                    <p><span class="mono-number">{{sub_object.followers}}</span> followers</p>
+                </div>
+            </header>
+            <p>{{sub_object.description}}</p>
+            <p>Created on {{ sub_object.created|date:"M j, Y" }}</p>
+            <button id="follow">Follow <i class="fa-solid fa-plus"></i></button>
+            <a href="/post/?s={{ sub_object.name }}"><button>Submit a post <i class="fa-solid fa-paper-plane"></i></button></a>
+            {% else %}
+            <header>
+                <div id="tab-icon-box" class="i">
+                    {% if tab == "home" %}
+                    <i class="fa-solid fa-house-user"></i>
+                    {% elif tab == "search" %}
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    {% elif tab == "popular" %}
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                    {% elif tab == "saved" %}
+                    <i class="fa-solid fa-bookmark"></i>
+                    {% elif tab == "profile" %}
+                    <i class="fa-solid fa-user"></i>
+                    {% endif%}
+                </div>
+                <div id="tab-text">
+                    <h2>{{ tab|title }}</h2>
+                </div>
+            </header>
+            <p class="desc-only">
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            {% if tab == "home" %}
+Your personalized front page! Stay updated on your favorite communities. It allows you to access the latest posts, comments, and discussions relevant to your interests.
+            {% elif tab == "search" %}
+Enter keywords to quickly and easily find posts and comments. Filter and sort based on relevance and content type.
+            {% elif tab == "popular" %}
+Red's Popular feed showcases trending posts across all subreddits, sorted by popularity and engagement. It provides you with a snapshot of the most popular content on the website at any given moment.
+            {% elif tab == "saved" %}
+The saving feature lets you bookmark and store posts and comments that you want to revisit later. It is a handy tool for keeping track of content that is particularly useful or interesting.
+            {% elif tab == "profile" %}
+            {{ user.description }}
+            {% endif%}
+            </p>
+            <a href="/post/"><button>Submit a post <i class="fa-solid fa-paper-plane"></i></button></a>
             {% endif %}
         </div>
     </section>
