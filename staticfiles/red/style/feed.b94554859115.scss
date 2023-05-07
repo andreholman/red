@@ -7,8 +7,8 @@ $section-radius: 27px;
 $radius: 18px;
 $inner-radius: 9px;
 $button-radius: 6px;
-$sidebar-min-width: 200px;
-$avatar-size: 36px;
+$sidebar-min-width: 180px;
+$avatar-size: 40px;
 $tab-accent-position: -104%;
 $tab-gray-position: 23%;
 $light-accent-offset: 28%;
@@ -373,6 +373,7 @@ body {
                     line-height: 32px;
                     transition: 0.2s ease-in;
                     user-select: none;
+                    font-family: "Inter";
                 }
                 #selector {
                     height: calc(100% - $border);
@@ -425,7 +426,7 @@ body {
             p {
                 color: $white;
                 font-size: 18px;
-                font-weight: 800;
+                font-family: "JetBrains Mono";
             }
         }
         #awards {
@@ -480,6 +481,7 @@ body {
                 }
                 p {
                     user-select: none;
+                    font-family: "JetBrains Mono";
                 }
             }
             .award-type.disabled {
@@ -521,7 +523,9 @@ body {
     flex-direction: column;
     justify-content: middle;
     background: $dark;
-    width: 500px;
+    max-width: 500px;
+    min-width: 200px;
+    width: calc(50vw - $spacing*4);
     min-height: calc(100vh - $spacing*5);
     padding: $spacing*2;
     padding-bottom: $spacing;
@@ -604,6 +608,8 @@ body {
                     display: inline-block;
                     vertical-align: middle;
                     line-height: 12px;
+                    font-family: "Inter Tight";
+                    margin-right: -$inner-spacing/2;
                 }
             }
             i {
@@ -728,12 +734,14 @@ body {
         height: $post-section-height - $border;
         width: calc(100% - $border);
         margin: 0 $border;
+        margin-bottom: -4px;
         transition: 0.2s;
         p,
         button {
             margin-right: $inner-spacing;
             color: $white;
             transition: 0.2s; // p - for theme switch
+            font-family: "Inter";
         }
         .flair {
             background: $gray;
@@ -818,21 +826,32 @@ body {
     position: fixed;
     right: $outer-spacing;
     top: $outer-spacing;
-    #account {
+    #account,
+    #tab-description {
         background: $dark;
         border-radius: $radius;
         padding: $inner-spacing;
         display: flex;
         align-items: center;
+        margin-bottom: $inner-spacing;
+    }
+    #account {
         #avatar {
             width: $avatar-size;
             height: $avatar-size;
             margin-right: $inner-spacing;
+            border-radius: $inner-radius;
+            text-align: center;
+            background: $blue3;
+            &.anon {
+                width: $avatar-size + $inner-spacing;
+                margin-right: 0;
+            }
             i {
                 line-height: $avatar-size;
                 text-align: center;
-                font-size: $avatar-size;
-                color: $black;
+                font-size: $avatar-size - $spacing;
+                color: $offwhite;
                 border-radius: $avatar-size;
             }
             img {
@@ -881,14 +900,83 @@ body {
         }
         a p {
             // For anonymous users
-            margin-left: $inner-spacing;
+            margin: 0 $inner-spacing;
             color: white;
             font-family: "Inter";
-            font-size: 18px;
+            font-size: clamp(14px, 1.6vw, 18px);
         }
     }
     #account:hover i#login {
         color: white;
+    }
+    #tab-description {
+        flex-direction: column;
+        align-items: start;
+        >* {
+            margin-bottom: $inner-spacing;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            #tab-icon-box {
+                width: $avatar-size;
+                height: $avatar-size;
+                border-radius: $inner-radius;
+                background: $blue3;
+                font-family: "gilroy-extrabold";
+                font-size: $avatar-size - $inner-spacing;
+                color: $offwhite;
+                text-align: center;
+                line-height: $avatar-size;
+                margin-right: $inner-spacing;
+                &.i {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                i {
+                    font-size: $avatar-size - $spacing;
+                }
+            }
+            #tab-text {
+                display: flex;
+                flex-direction: column;
+                font-family: "Inter";
+                h2 {
+                    color: $offwhite;
+                    font-family: "gilroy-extrabold";
+                    font-weight: 400;
+                    font-size: 20px;
+                }
+                p {
+                    color: $lightgray;
+                    font-size: 14px;
+                }
+            }
+        }
+        >p {
+            color: $offwhite;
+            font-size: 14px;
+            line-height: 19px;
+            padding: 0 2px;
+            text-align: left;
+            font-family: "Inter Tight";
+        }
+        >a {
+            width: 100%;
+            &:last-of-type {
+                margin-bottom: 0;
+            }
+        }
+        button {
+            padding-top: $inner-spacing;
+            padding-bottom: $inner-spacing;
+            width: 100%;
+            i {
+                margin-left: $inner-spacing/2;
+            }
+        }
     }
 }
 
