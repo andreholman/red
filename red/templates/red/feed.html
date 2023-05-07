@@ -7,15 +7,17 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V93W38ZYBJ"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-    gtag('config', 'G-V93W38ZYBJ');
+        gtag('config', 'G-V93W38ZYBJ');
     </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
     <title>
     {% if sub %}
     Red: s/{{ sub }}
@@ -23,13 +25,8 @@
     Red: Home
     {% endif %}
     </title>
-    <!-- REMOVE THOSE DOWN HERE AND REPLACE WITH CSS ASSETS INCLUDE!! -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,800;1,400;1,800&family=Inter:wght@300;500;800&family=Overpass:wght@700&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <!--  REMOVE THOSE UP HERE AND REPLACE WITH CSS ASSETS INCLUDE!!  -->
+
+    {% include "red/includes/css_assets.html" %}
     <link rel="stylesheet" href="{% static 'red/style/feed.css' %}">
     {% if sub %}
     <style>
@@ -40,42 +37,6 @@
         {% endfor %}
     </style>
     {% endif %}
-    <style>
-        /*
-        * Web Fonts from Fontspring.com
-        *
-        * All OpenType features and all extended glyphs have been removed.
-        * Fully installable fonts can be purchased at https://www.fontspring.com
-        *
-        * The fonts included in this stylesheet are subject to the End User License you purchased
-        * from Fontspring. The fonts are protected under domestic and international trademark and 
-        * copyright law. You are prohibited from modifying, reverse engineering, duplicating, or
-        * distributing this font software.
-        *
-        * (c) 2010-2022 Fontspring
-        *
-        *
-        *
-        *
-        * The fonts included are copyrighted by the vendor listed below.
-        *
-        * Vendor:      Radomir Tinkov
-        * License URL: https://www.fontspring.com/licenses/radomir-tinkov/webfont
-        *
-        *
-        */
-
-        @font-face {
-            font-family: 'gilroy-extrabold';
-            src: url({% static 'red/style/gilroy-extrabold-webfont.woff2'%}) format('woff2'),
-                url({% static 'red/style/gilroy-extrabold-webfont.woff'%}) format('woff');
-            font-weight: normal;
-            font-style: normal;
-
-        }
-    </style>
-
-
 </head>
 
 <body>
@@ -443,17 +404,10 @@ The saving feature lets you bookmark and store posts and comments that you want 
             {% endif %}
         </div>
     </section>
-    <script type="text/javascript">
-        {% if user.is_authenticated %}
-        const loggedIn = true;
-        {% else %}
-        const loggedIn = false;
-        {% endif %}
-    </script>
    
     <script src="https://code.jquery.com/jquery-3.6.4.min.js " integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin=" anonymous "></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js " integrity="sha512-51WDTV7haD9BBDc8RWH2r5TnuSiRyAqEnbGyuKHYn+qpYCrCckxFeqlr1I5UoOULijyLV2vnHO9LS4MrAzHxwQ==" crossorigin=" anonymous " referrerpolicy="no-referrer "></script>
-    <script src="{% static 'red/script/lib.js' %}"></script>
+    {% include "red/includes/lib.html" %}
     <script src="{% static 'red/script/feed.js' %}"></script>
 </body>
 

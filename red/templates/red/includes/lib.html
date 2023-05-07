@@ -1,4 +1,10 @@
-// place after jquery script tag
+{% comment %} The file type is just so the jinja2 can be used in javascript {% endcomment %}
+<script> 
+{% if user.is_authenticated %}
+    const loggedIn = true;
+{% else %}
+    const loggedIn = false;
+{% endif %}
 
 function getCookie(name) {
     let cookieValue = null;
@@ -55,3 +61,4 @@ $.fn.extend({
         });
     }
 });
+</script>
