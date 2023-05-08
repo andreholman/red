@@ -178,15 +178,8 @@ def post(request, sub, post_id):
 @ensure_csrf_cookie
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required 
-def post_editor(request, sub):
-    sub_object = get_object_or_404(Sub, name__iexact=sub)
-    sub_flairs = PostFlair.objects.filter(sub__id=sub_object.id)
-
-    context = {
-        "sub": sub_object,
-        "post_flairs": sub_flairs
-    }
-    return render(request, "red/post_editor.html", context=context)
+def post_editor(request):
+    return render(request, "red/editor.html")
 
 ################################
 #             AUTH             #

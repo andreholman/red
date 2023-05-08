@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models import JSONField
 from django.conf import settings as config
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
 # User/Auth schema
@@ -188,6 +188,7 @@ class Sub(models.Model):
     description = models.CharField(max_length=64, default="No description.")
     mods = models.ManyToManyField("User")
     pinned_post = models.ForeignKey("Post", on_delete=models.CASCADE, default=None, null=True, blank=True, related_name="pinned")
+    rules = models.ManyToManyField("SubRule", related_name="subrules")
 
     @property
     def initials(self):
@@ -195,6 +196,35 @@ class Sub(models.Model):
 
     def __str__(self):
         return self.name
+    
+class SubRule(models.Model):
+    order = models.PositiveSmallIntegerField(validators=[MinValueValidator(limit_value=1)])
+    title = models.CharField(max_length=48)
+    description = models.CharField(max_length=256, null=True, blank=True)
+
+    class Meta:
+        ordering = ['order'] # querying these will automatically have them in the right order
+
+    def __str__(self):
+        return f"{self.order}. {self.title}"
+    
+class AbstractReport(models.Model):
+    created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
+    
+    sub = models.ForeignKey(Sub, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    rule_broken = models.ForeignKey("SubRule", on_delete=models.CASCADE, null=False, blank=False)
+    reason = models.CharField(max_length=128)
+
+    class Meta:
+        ordering = ["-created"]
+        abstract = True
+
+class PostReport(AbstractReport):
+    post = models.ForeignKey("Post", on_delete=models.CASCADE, related_name="reported")
+
+class CommentReport(AbstractReport):
+    comment = models.ForeignKey("Comment", on_delete=models.CASCADE, related_name="reported")
 
 class PostFlair(models.Model): # Can be applied to posts and users.
     created = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
