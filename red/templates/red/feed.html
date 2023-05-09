@@ -387,20 +387,78 @@
                 </div>
             </header>
             <p class="desc-only">
-            &nbsp;&nbsp;&nbsp;&nbsp;
             {% if tab == "home" %}
-Your personalized front page! Stay updated on your favorite communities. It allows you to access the latest posts, comments, and discussions relevant to your interests.
+            Your personalized front page! Stay updated on your favorite communities. It allows you to access the latest posts, comments, and discussions relevant to your interests.
             {% elif tab == "search" %}
-Enter keywords to quickly and easily find posts and comments. Filter and sort based on relevance and content type.
+            Enter keywords to quickly and easily find posts and comments. Filter and sort based on relevance and content type.
             {% elif tab == "popular" %}
-Red's Popular feed showcases trending posts across all subreddits, sorted by popularity and engagement. It provides you with a snapshot of the most popular content on the website at any given moment.
+            Red's Popular feed showcases trending posts across all subreddits, sorted by popularity and engagement. It provides you with a snapshot of the most popular content on the website at any given moment.
             {% elif tab == "saved" %}
-The saving feature lets you bookmark and store posts and comments that you want to revisit later. It is a handy tool for keeping track of content that is particularly useful or interesting.
+            The saving feature lets you bookmark and store posts and comments that you want to revisit later. It is a handy tool for keeping track of content that is particularly useful or interesting.
             {% elif tab == "profile" %}
             {{ user.description }}
             {% endif%}
             </p>
             <a href="/post/"><button>Submit a post <i class="fa-solid fa-paper-plane"></i></button></a>
+            {% endif %}
+        </div>
+
+        <div id="rules">
+            {% if sub %}
+            <header>
+                Rules for <i class="fa-solid fa-section"></i> {{ sub_object.name }}
+            </header>
+            <ol>
+                {% for rule in sub_object.rules.all %}
+                <li class="rule">
+                    <div>
+                        <h4>{{rule.order}}. {{ rule.title }}</h4>
+                    {% if rule.description %}
+                        <i class="fa-solid fa-caret-right"></i>
+                    </div>
+                    <p>{{ rule.description }}</p>
+                    {% else %}
+                    </div>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+            {% else %}
+            <header>
+                General rules for Red
+            </header>
+
+            <ol>
+                <li class="rule">
+                    <div>
+                        <h4>1. Use common sense.</h4>
+                        <i class="fa-solid fa-caret-right"></i>
+                    </div>
+                    <p>By using basic logic, you can make informed decisions about what actions to take and which ones to avoid. </p>
+                </li>
+                <li class="rule">
+                    <div>
+                        <h4>2. Treat people how they deserve to be treated.</h4>
+                        <i class="fa-solid fa-caret-right"></i>
+                    </div>
+                    <p>Consider the consequences of your actions and be fair and respectful with your decisions.</p>
+                </li>
+                <li class="rule">
+                    <div>
+                        <h4>3. Follow the Terms of Services</h4>
+                        <i class="fa-solid fa-caret-right"></i>
+                    </div>
+                    <p>Chapters 5, 6, 9, and 10 of the ToS serve as guidelines for your content.</p>
+                </li>
+                <li class="rule">
+                    <div>
+                        <h4>4. Follow community rules.</h4>
+                        <i class="fa-solid fa-caret-right"></i>
+                    </div>
+                    <p>Each community on Red moderates themselves to their own discretion to the extent of following these general rules.</p>
+                </li>
+            </ol>
+
             {% endif %}
         </div>
     </section>

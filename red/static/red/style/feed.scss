@@ -14,6 +14,7 @@ $tab-gray-position: 23%;
 $light-accent-offset: 28%;
 $black: #131215;
 $darker: #1f1e20;
+$sidebar-dark: #24242A;
 $dark: #2e2d35;
 $gray: #3c3b43;
 $midgray: #646367;
@@ -63,7 +64,7 @@ body {
     padding-right: 0;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-end;
     transition: 0.2s; // for theme switch
     p.hidden {
         filter: blur(6px);
@@ -215,7 +216,7 @@ body {
         height: calc(100vh - $spacing*2);
         display: flex;
         flex-direction: column;
-        align-items: start;
+        align-items: flex-start;
         position: fixed;
         left: $spacing;
         margin-right: $spacing;
@@ -405,7 +406,7 @@ body {
         transform: translate(-50%, -50%);
         display: flex;
         flex-direction: column;
-        align-items: start;
+        align-items: flex-start;
         box-shadow: 0 0 0 calc(100vw + 100vh) rgba(0, 0, 0, 0.67);
         background: $dark;
         padding: $border;
@@ -419,8 +420,7 @@ body {
             h2 {
                 color: $white;
                 font-size: 24px;
-                font-family: "gilroy-extrabold";
-                letter-spacing: 0.04em;
+                font-family: "Space Grotesk";
                 margin-right: auto;
             }
             p {
@@ -523,14 +523,13 @@ body {
     flex-direction: column;
     justify-content: middle;
     background: $dark;
-    max-width: 500px;
-    min-width: 200px;
-    width: calc(50vw - $spacing*4);
-    min-height: calc(100vh - $spacing*5);
+    width: calc(100vw - (max(20vw, $sidebar-min-width)) * 2 - $spacing * 4 - $spacing*2 - $inner-spacing);
+    height: calc(100vh - $spacing*5);
+    overflow: scroll;
     padding: $spacing*2;
     padding-bottom: $spacing;
     margin-bottom: $spacing;
-    border-radius: $section-radius;
+    border-radius: $section-radius 0 0 $section-radius;
     transition: 0.2s; // for theme switch
     #no-posts {
         i {
@@ -578,9 +577,8 @@ body {
         padding-left: $border;
         min-height: $post-section-height;
         h3 {
-            font-family: "gilroy-extrabold";
+            font-family: "Space Grotesk";
             font-weight: 700;
-            letter-spacing: 0.04em;
             color: white;
             display: inline-block;
             margin: $inner-spacing - 2px $inner-spacing $inner-spacing 0;
@@ -721,6 +719,7 @@ body {
         font-size: 16px;
         user-select: none;
         cursor: pointer;
+        font-family: "Inter";
     }
     footer {
         z-index: 3;
@@ -823,17 +822,20 @@ body {
 }
 
 #sidebar {
-    position: fixed;
-    right: $outer-spacing;
-    top: $outer-spacing;
-    #account,
-    #tab-description {
-        background: $dark;
-        border-radius: $radius;
+    border-radius: 0 $section-radius $section-radius 0;
+    background: $sidebar-dark;
+    overflow: scroll;
+    height: calc(100vh - $spacing*2);
+    border-left: 1px solid $gray;
+    >div {
         padding: $inner-spacing;
         display: flex;
         align-items: center;
-        margin-bottom: $inner-spacing;
+        border-bottom: 1px solid $gray;
+        &:last-child {
+            border: none;
+            border-bottom-right-radius: $section-radius; // hella long css property
+        }
     }
     #account {
         #avatar {
@@ -911,20 +913,20 @@ body {
     }
     #tab-description {
         flex-direction: column;
-        align-items: start;
+        align-items: flex-start;
         >* {
             margin-bottom: $inner-spacing;
         }
         header {
             display: flex;
             align-items: center;
-            justify-content: start;
+            justify-content: flex-start;
             #tab-icon-box {
                 width: $avatar-size;
                 height: $avatar-size;
                 border-radius: $inner-radius;
                 background: $blue3;
-                font-family: "gilroy-extrabold";
+                font-family: "Space Grotesk";
                 font-size: $avatar-size - $inner-spacing;
                 color: $offwhite;
                 text-align: center;
@@ -945,7 +947,7 @@ body {
                 font-family: "Inter";
                 h2 {
                     color: $offwhite;
-                    font-family: "gilroy-extrabold";
+                    font-family: "Space Grotesk";
                     font-weight: 400;
                     font-size: 20px;
                 }
@@ -975,6 +977,56 @@ body {
             width: 100%;
             i {
                 margin-left: $inner-spacing/2;
+            }
+        }
+    }
+    #rules {
+        flex-direction: column;
+        header {
+            color: $offwhite;
+            font-family: "Space Grotesk";
+            margin-bottom: $border;
+            width: 100%;
+        }
+        .rule {
+            display: list-item;
+            margin-bottom: $inner-spacing;
+            cursor: pointer;
+            user-select: none;
+            color: $offwhite;
+            div {
+                display: flex;
+                width: 100%;
+                align-items: center;
+            }
+            i {
+                margin-left: auto;
+                display: inline;
+                color: $offwhite;
+                transition: 0.2s;
+            }
+            h4 {
+                color: $offwhite;
+                display: inline;
+                font-family: "Inter Tight";
+                font-size: 16px;
+            }
+            p {
+                margin: $inner-spacing 0 0 $inner-spacing;
+                max-height: 0;
+                overflow: hidden;
+                transition: 0.2s;
+                font-family: "Inter Tight";
+                font-size: 14px;
+                line-height: 18px;
+            }
+            &.expanded {
+                i {
+                    transform: rotate(90deg);
+                }
+                p {
+                    max-height: 40vh;
+                }
             }
         }
     }

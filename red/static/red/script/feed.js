@@ -278,6 +278,10 @@ $(document).ready(function() {
         })
     })
 
+    $(".rule").click((e) => {
+        $(e.currentTarget).toggleClass("expanded")
+    })
+
     // KEYBIND HANDLING
 
     $(window).keydown((e) => {
