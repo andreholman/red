@@ -448,7 +448,7 @@
                         <h4>3. Follow the Terms of Services</h4>
                         <i class="fa-solid fa-caret-right"></i>
                     </div>
-                    <p>Chapters 5, 6, 9, and 10 of the ToS serve as guidelines for your content.</p>
+                    <p>Chapters 5, 6, 9, and 10 of the <a href="{% url "tos" %}" class="tos-link" rel="noreferrer noopener" target="_blank">Terms of Service</a> serve as guidelines for your content.</p>
                 </li>
                 <li class="rule">
                     <div>
@@ -461,6 +461,21 @@
 
             {% endif %}
         </div>
+        <footer>
+            <p class="tos-link"><a href="{% url "tos" %}" rel="noreferrer noopener" target="_blank">Terms of Service</a></p>
+            <p><i class="fa-regular fa-copyright"></i> 2023 Andre Holman.<br> All rights reserved.</p>
+            <p>This is a demo application. Unaffiliated with Reddit.</p>
+            <div>
+                <a href="mailto:andre@andreholman.com"><i class="fa-solid fa-envelope"></i></a>
+                <a href="https://github.com/andreholman/"><i class="fa-brands fa-github"></i></a>
+                <i id="discord" class="fa-brands fa-discord">
+                    <p id="discord-tag">Qi#4698</p>
+                </i>
+                <a href="https://www.linkedin.com/in/andre-holman-25a3bb256/"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="https://paypal.me/Algrithm"><i class="fa-brands fa-paypal"></i></a>
+                <a href="https://andreholman.com"><i class="fa-solid fa-house"></i></a>
+            </div>
+        </footer>
     </section>
    
     <script src="https://code.jquery.com/jquery-3.6.4.min.js " integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin=" anonymous "></script>
