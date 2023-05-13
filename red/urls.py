@@ -11,6 +11,7 @@ urlpatterns = [
     path("post/", views.post_editor, name="post_editor"), # GET
     path("u/<str:username>/", views.user, name="user"), # GET
     path("s/<str:sub>/", views.feed, name="sub"), # GET
+    path("s/<str:sub>/rules/", views.sub_rules, name="sub_rules"), # GET
     path("s/<str:sub>/posts/", views.sub_posts, name="sub_posts"), # GET 303
     path("s/<str:sub>/posts/<int:post_id>/", views.post, name="post"), # GET
     path("s/<str:sub>/posts/<int:post_id>/vote/", views.post_vote, name="post_vote"), # PATCH

@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.conf import settings as config
@@ -702,3 +702,14 @@ def save_content(request, sub, post_id): # toggles save
         return HttpResponse(status=204)
     else:
         return request_validated
+
+def sub_rules(request, sub):
+    if request.method == "GET":
+        sub_object = get_object_or_404(Sub, name__iexact=sub)
+        sub_rules_queryset = sub_object.rules.all()
+
+        sub_rules_list = []
+        for rule in sub_rules_queryset:
+            sub_rules_list.append({rule.title: rule.description})
+
+        return JsonResponse(sub_rules_list, safe=False)
