@@ -192,7 +192,7 @@ class Sub(models.Model):
 
     @property
     def initials(self):
-        return self.name[0]
+        return self.name[0].upper()
 
     def __str__(self):
         return self.name

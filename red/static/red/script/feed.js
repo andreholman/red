@@ -105,15 +105,6 @@ $(document).ready(function() {
         $(this).toggleClass("selected")
     })
 
-    $("#switch").click(function() { // theme toggle
-        $(".option").toggleClass("selected");
-        $("#selector,html,body").toggleClass("light");
-        $("div.tab").css("transition-property", "all")
-        setTimeout(() => { // prevents instant switching of the top border
-            $("div.tab").css("transition-property", "color")
-        }, 200)
-    })
-
     $("i").click(function() { // voting
         let parentElement = $(this).closest(".post");
         let postIndex = parentElement.index()

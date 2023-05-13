@@ -314,7 +314,7 @@
                 <label for="anon"><i id="checkbox" class="fas fa-check icon"></i>Anonymous</label>
                 <button>
                     <span>Send</span>
-                    <i class="fa-solid fa-paper-plane"></i>
+                    <i class="fa-solid fa-pen-nib"></i>
                 </button>
             </div>
         </div>
@@ -366,7 +366,7 @@
             <p>{{sub_object.description}}</p>
             <p>Created on {{ sub_object.created|date:"M j, Y" }}</p>
             <button id="follow">Follow <i class="fa-solid fa-plus"></i></button>
-            <a href="/post/?s={{ sub_object.name }}"><button>Submit a post <i class="fa-solid fa-paper-plane"></i></button></a>
+            <a href="/post/?s={{ sub_object.name }}"><button>Submit a post <i class="fa-solid fa-pen-nib"></i></button></a>
             {% else %}
             <header>
                 <div id="tab-icon-box" class="i">
@@ -399,7 +399,7 @@
             {{ user.description }}
             {% endif%}
             </p>
-            <a href="/post/"><button>Submit a post <i class="fa-solid fa-paper-plane"></i></button></a>
+            <a href="/post/"><button>Submit a post <i class="fa-solid fa-pen-nib"></i></button></a>
             {% endif %}
         </div>
 

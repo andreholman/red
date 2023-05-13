@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V93W38ZYBJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-V93W38ZYBJ');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>
+        Red: New Post
+    </title>
+
+    {% include "red/includes/css_assets.html" %}
+    <link rel="stylesheet" href="{% static 'red/style/feed.css' %}">
+    <link rel="stylesheet" href="{% static 'red/style/editor.css' %}">
+</head>
+
+<body>
+    <nav>
+        <h2>Pick a sub</h2>
+        <input type="text" placeholder="Search for a sub..." id="sub-search">
+        <div id="subs">
+            {% for sub in sub_list %}
+            <div class="sub">
+                <div class="sub-icon-box">
+                    <p>{{ sub.initials }}</p> 
+                </div>
+                <div class="sub-text">
+                    <h3>{{sub.name}}</h3>
+                    <p><span class="mono-number">{{sub.followers}}</span> followers</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <footer>
+            <div id="switch">
+                <div id="selector"></div>
+                <div class="selected option" id="dark">
+                    <i class="fa-solid fa-moon"></i> Dark
+                </div>
+                <div id="spacer"></div>
+                <div class="option" id="light">
+                    <i class="fa-solid fa-sun"></i> Light
+                </div>
+            </div>
+        </footer>
+    </nav>
+
+    <form action="">
+        <input id="title" type="text" placeholder="Title">
+        <textarea id="content" placeholder="Content"></textarea>
+        <footer>
+            <button type="submit" id="post">Submit Post <i class="fa-solid fa-paper-plane"></i></button>
+        </footer>
+    </form>
+    <div id="sidebar">
+        <div id="tab-description">
+            <header>
+                <div id="tab-icon-box">
+                    <p>{{ sub_object.initials }}</p>
+                </div>
+                <div id="tab-text">
+                    <h2>{{sub_object.name}}</h2>
+                    <p><span class="mono-number">{{sub_object.followers}}</span> followers</p>
+                </div>
+            </header>
+            <p>Description: {{sub_object.description}}</p>
+            <p>Created on {{ sub_object.created|date:"M j, Y" }}</p>
+        </div>
+
+        <div id="rules">
+            <header>
+                Rules for <i class="fa-solid fa-section"></i> {{ sub_object.name }}
+            </header>
+            <ol>
+                {% for rule in sub_object.rules.all %}
+                <li class="rule">
+                    <div>
+                        <h4>{{rule.order}}. {{ rule.title }}</h4>
+                    {% if rule.description %}
+                        <i class="fa-solid fa-caret-right"></i>
+                    </div>
+                    <p>{{ rule.description }}</p>
+                    {% else %}
+                    </div>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js " integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin=" anonymous "></script>
+    {% include "red/includes/lib.html" %}
+    <script src="{% static 'red/script/editor.js' %}"></script>
+</body>
+
+</html>

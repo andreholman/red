@@ -25,11 +25,11 @@
     </title>
 
     {% include "red/includes/css_assets.html" %}
-    <link rel="stylesheet" href="{% static 'red/style/.css' %}">
+    <link rel="stylesheet" href="{% static 'red/style/editor.css' %}">
 </head>
 
 <body>
-    <nav>
+    <<nav>
         <a href="/">
             <header>
                 <img src="{% static 'red/assets/Rlogo.svg' %}"></img>
@@ -37,33 +37,25 @@
             </header>
         </a>
         <a href="/">
-            <div class="{% if tab == " home " %}selected{% endif %} tab" id="home">
+            <div class="{% if tab == "home" %}selected{% endif %} tab" id="home">
                 <i class="fa-solid fa-house-user"></i>
                 <h2>Home</h2>
             </div>
         </a>
-        {% if sub %}
-        <a href="{% url " sub " sub %}">
-            <div class="selected tab" id="sub-tab">
-                <i class="fa-solid fa-section"></i>
-                <h2>{{ sub }}</h2>
-            </div>
-        </a>
-        {% endif %}
         <a href="">
-            <div class="{% if tab == " search " %}selected{% endif %} tab" id="search">
+            <div class="{% if tab == "search" %}selected{% endif %} tab" id="search">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <h2>Search</h2>
             </div>
         </a>
         <a href="/all/">
-            <div class="{% if tab == " popular " %}selected{% endif %} tab" id="popular">
+            <div class="{% if tab == "popular" %}selected{% endif %} tab" id="popular">
                 <i class="fa-solid fa-arrow-trend-up"></i>
                 <h2>Popular</h2>
             </div>
         </a>
         <a href="/saved">
-            <div class="{% if tab == " saved " %}selected{% endif %} tab" id="saved">
+            <div class="{% if tab == "saved" %}selected{% endif %} tab" id="saved">
                 <i class="fa-solid fa-bookmark"></i>
                 <h2>Saved</h2>
             </div>
@@ -72,16 +64,16 @@
         {% if user.is_authenticated %}
             {% url " user " user.username %}
         {% else %}
-            {% url "login " %}
+            {% url "login" %}
         {% endif %}
         ">
-            <div class="{% if tab == " profile " %}selected{% endif %} tab" id="profile">
+            <div class="{% if tab == "profile" %}selected{% endif %} tab" id="profile">
                 <i class="fa-solid fa-user"></i>
                 <h2>My Profile</h2>
             </div>
         </a>
         <a href="/settings/">
-            <div class="{% if tab == " settings " %}selected{% endif %} tab" id="settings">
+            <div class="{% if tab == "settings" %}selected{% endif %} tab" id="settings">
                 <i class="fa-solid fa-sliders"></i>
                 <h2>Settings</h2>
             </div>
@@ -100,11 +92,11 @@
         </footer>
     </nav>
 
-
+>
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js " integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin=" anonymous "></script>
     {% include "red/includes/lib.html" %}
-    <script src="{% static 'red/script/.js' %}"></script>
+    <script src="{% static 'red/script/editor.js' %}"></script>
 </body>
 
 </html>

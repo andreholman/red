@@ -1,0 +1,162 @@
+$outer-spacing: 24px;
+$spacing: 20px;
+$inner-spacing: 12px;
+$border: 16px;
+$post-section-height: 52px;
+$section-radius: 27px;
+$radius: 18px;
+$inner-radius: 9px;
+$button-radius: 6px;
+$sidebar-min-width: 180px;
+$avatar-size: 36px; // DIFFERENT FROM FEED
+$tab-accent-position: -104%;
+$tab-gray-position: 23%;
+$light-accent-offset: 28%;
+$black: #131215;
+$darker: #1f1e20;
+$sidebar-dark: #24242A;
+$dark: #2e2d35;
+$gray: #3c3b43;
+$midgray: #646367;
+$lightgray: #a9a8ad;
+$accent-white: #e2e9fa;
+$mist: #c7d3da;
+$light-buttons: #e3e7e9;
+$offwhite: #f7f5e4;
+$white: #f9fbfd;
+$blue1: #7091db;
+$blue2: #5572B4;
+$blue3: #3E4E8E;
+.hidden {
+    display: none !important;
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    nav {
+        color: white;
+        border-radius: $section-radius;
+        // background: $dark;
+        width: 28vw;
+        min-width: $sidebar-min-width*1.5;
+        h2 {
+            font-family: "Space Grotesk";
+            font-size: 26px;
+            padding: $inner-spacing;
+        }
+        input {
+            background: $darker;
+            width: calc(100% - $inner-spacing);
+            &::placeholder {
+                color: $lightgray;
+            }
+        }
+        #subs {
+            padding: $inner-spacing;
+            width: calc(100% - $inner-spacing*2);
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            .sub {
+                padding: $inner-spacing/2;
+                margin-left: -$inner-spacing/2;
+                border-radius: $inner-radius;
+                user-select: none;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                width: 100%;
+                cursor: pointer;
+                transition: 0.2s;
+                .sub-icon-box {
+                    width: $avatar-size;
+                    height: $avatar-size;
+                    border-radius: $inner-radius;
+                    background: $blue3;
+                    font-family: "Space Grotesk";
+                    font-size: $avatar-size - $inner-spacing;
+                    color: $offwhite;
+                    text-align: center;
+                    line-height: $avatar-size;
+                    margin-right: $inner-spacing;
+                    &.i {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    i {
+                        font-size: $avatar-size - $spacing;
+                    }
+                }
+                .sub-text {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    h3 {
+                        color: $offwhite;
+                        font-family: "Space Grotesk";
+                        font-weight: 400;
+                        font-size: 18px;
+                    }
+                    p {
+                        color: $lightgray;
+                        font-size: 14px;
+                        font-family: "Inter";
+                    }
+                }
+                &:hover {
+                    background: $darker;
+                }
+                &.selected {
+                    background: $dark;
+                }
+            }
+        }
+    }
+    form {
+        font-family: "Inter Tight";
+        border-radius: $section-radius 0 0 $section-radius;
+        background: $dark;
+        padding: $spacing;
+        width: calc(100vw - (max(28vw, $sidebar-min-width*1.5) + max(20vw, $sidebar-min-width)) - $spacing * 4 - $inner-spacing*2);
+        >* {
+            margin-bottom: $inner-spacing;
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+        input,
+        textarea {
+            &::placeholder {
+                opacity: 1;
+                color: $midgray;
+                user-select: nones;
+            }
+        }
+        #title {
+            font-family: "Space Grotesk";
+            font-size: 18px;
+        }
+        input {
+            width: 100%;
+        }
+        textarea {
+            font-family: inherit;
+            resize: none;
+            border: none;
+            border-radius: $inner-radius;
+            padding: $inner-spacing;
+            background: $black;
+            font-size: 14px;
+            transition: 0.2s;
+            width: calc(100% - $spacing - 4px);
+            color: $offwhite;
+            &:active,
+            &:focus {
+                border: none;
+                outline: 3px solid $offwhite;
+            }
+        }
+    }
+}

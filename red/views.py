@@ -179,7 +179,10 @@ def post(request, sub, post_id):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @login_required 
 def post_editor(request):
-    return render(request, "red/editor.html")
+    sub_list = Sub.objects.order_by("name")
+
+    context = {"sub_list": sub_list}
+    return render(request, "red/editor.html", context)
 
 ################################
 #             AUTH             #
